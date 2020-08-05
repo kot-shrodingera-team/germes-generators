@@ -7,7 +7,7 @@ import {
 } from '@kot-shrodingera-team/germes-utils';
 
 export const initializeGenerator = (
-  authCheckReady: () => Promise<boolean>,
+  authCheckReady: () => Promise<void>,
   checkAuth: () => boolean,
   balanceReady: () => Promise<boolean>,
   updateBalance: () => void,
