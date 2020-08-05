@@ -58,7 +58,7 @@ export const doStakeGenerator = (options: {
   doStakeButtonSelector: string;
   getCoefficient: () => number;
   clearDoStakeTime: () => void;
-}): boolean => {
+}) => (): boolean => {
   log('Делаем ставку', 'orange');
   const stakeButton = document.querySelector(
     options.doStakeButtonSelector
