@@ -133,9 +133,9 @@ export const getCoefficientGenerator = (options: {
   return coefficient;
 };
 
-export const getCurrentSumGenerator = () => (options: {
+export const getCurrentSumGenerator = (options: {
   sumInput: string;
-}): number => {
+}) => (): number => {
   const sumInput = document.querySelector(options.sumInput) as HTMLInputElement;
   if (!sumInput) {
     log('Не найдено поле ввода суммы ставки', 'crimson');
