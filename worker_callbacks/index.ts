@@ -79,7 +79,7 @@ export const doStakeGenerator = (options: {
   return true;
 };
 
-export const checkCouponLoading = (options: {
+export const checkCouponLoadingGenerator = (options: {
   getDoStakeTime: () => Date;
   bookmakerName: string;
   timeout?: number;
