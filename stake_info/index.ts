@@ -88,7 +88,7 @@ export const balanceReadyGenerator = (options: {
 
 export const getBalanceGenerator = (options: {
   balanceSelector: string;
-  balanceRegex: RegExp;
+  balanceRegex?: RegExp;
 }) => (): number => {
   const balanceElement = document.querySelector(
     options.balanceSelector
