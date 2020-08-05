@@ -4,7 +4,7 @@ import {
   stakeInfoString,
 } from '@kot-shrodingera-team/germes-utils';
 
-export const getStakeInfoGenerator = () => (
+export const getStakeInfoGenerator = (
   checkAuth: () => boolean,
   getStakeCount: () => number,
   getBalance: () => number,
@@ -14,7 +14,7 @@ export const getStakeInfoGenerator = () => (
   checkStakeEnabled: () => boolean,
   getCoefficient: () => number,
   getParameter: () => number
-): void => {
+) => (): void => {
   worker.StakeInfo.Auth = checkAuth();
   worker.StakeInfo.StakeCount = getStakeCount();
   worker.StakeInfo.Balance = getBalance();
