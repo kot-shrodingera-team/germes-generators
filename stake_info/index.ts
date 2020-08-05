@@ -12,12 +12,12 @@ export const checkStakeEnabledGenerator = (options: {
     selector: string;
     errorClasses?: {
       className: string;
-      message: string;
+      message?: string;
     }[];
   };
   errorsCheck?: {
     selector: string;
-    message: string;
+    message?: string;
   }[];
 }) => (): boolean => {
   if (options.betCheck) {
@@ -29,16 +29,15 @@ export const checkStakeEnabledGenerator = (options: {
       );
       return false;
     }
-    if ([...betElement.classList].includes('locked')) {
-      return false;
-    }
     if (options.betCheck.errorClasses.length !== 0) {
       const errorClass = options.betCheck.errorClasses.find(({ className }) => {
         return [...betElement.classList].includes(className);
       });
       if (errorClass) {
         log(
-          `Ошибка проверки доступности ставки: ${errorClass.message}`,
+          `Ставка недоступна${
+            errorClass.message ? ` (${errorClass.message})` : ''
+          }`,
           'crimson'
         );
         return false;
@@ -51,7 +50,9 @@ export const checkStakeEnabledGenerator = (options: {
     });
     if (errorCheck) {
       log(
-        `Ошибка проверки доступности ставки: ${errorCheck.message}`,
+        `Ставка недоступна${
+          errorCheck.message ? ` (${errorCheck.message})` : ''
+        }`,
         'crimson'
       );
       return false;
