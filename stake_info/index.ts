@@ -10,7 +10,6 @@ export const checkAuthGenerator = (options: {
 export const checkStakeEnabledGenerator = (options: {
   betCheck?: {
     selector: string;
-    message: string;
     errorClasses?: {
       className: string;
       message: string;
@@ -24,7 +23,10 @@ export const checkStakeEnabledGenerator = (options: {
   if (options.betCheck) {
     const betElement = document.querySelector(options.betCheck.selector);
     if (!betElement) {
-      log(options.betCheck.message, 'crimson');
+      log(
+        'Ошибка проверки доступности ставки: не найдена ставка в купоне',
+        'crimson'
+      );
       return false;
     }
     if ([...betElement.classList].includes('locked')) {
@@ -35,7 +37,10 @@ export const checkStakeEnabledGenerator = (options: {
         return [...betElement.classList].includes(className);
       });
       if (errorClass) {
-        log(errorClass.message, 'crimson');
+        log(
+          `Ошибка проверки доступности ставки: ${errorClass.message}`,
+          'crimson'
+        );
         return false;
       }
     }
@@ -45,7 +50,10 @@ export const checkStakeEnabledGenerator = (options: {
       return Boolean(document.querySelector(selector));
     });
     if (errorCheck) {
-      log(errorCheck.message, 'crimson');
+      log(
+        `Ошибка проверки доступности ставки: ${errorCheck.message}`,
+        'crimson'
+      );
       return false;
     }
   }
