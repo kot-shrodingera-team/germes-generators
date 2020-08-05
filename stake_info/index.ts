@@ -114,14 +114,12 @@ export const getBalanceGenerator = (options: {
   return balance;
 };
 
-export const updateBalance = (getBalance: () => number) => (): void => {
-  worker.JSBalanceChange(getBalance());
-};
-
-export const getCoefficientGenerator = (
-  coefficientSelector: string
-) => (): number => {
-  const coefficientElement = document.querySelector(coefficientSelector);
+export const getCoefficientGenerator = (options: {
+  coefficientSelector: string;
+}) => (): number => {
+  const coefficientElement = document.querySelector(
+    options.coefficientSelector
+  );
   if (!coefficientElement) {
     log('Коэффициент не найден', 'crimson');
     return 0;
