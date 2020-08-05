@@ -173,10 +173,10 @@ export const getMaximumStakeGenerator = (options: {
 };
 
 export const getMinimumStakeGenerator = (options: {
-  minimumStakeSelector: string;
+  minimumStakeElementSelector: string;
 }) => (): number => {
   const minimumStakeElement = document.querySelector(
-    options.minimumStakeSelector
+    options.minimumStakeElementSelector
   );
   if (!minimumStakeElement) {
     log('Не найдена минимальная сумма ставки', 'crimson');
