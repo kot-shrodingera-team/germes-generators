@@ -11,7 +11,8 @@ export const initializeGenerator = (
   checkAuth: () => boolean,
   balanceReady: () => Promise<boolean>,
   updateBalance: () => void,
-  authorize: () => Promise<void>
+  authorize: () => Promise<void>,
+  ifLoginOk?: () => Promise<void>
 ) => async (): Promise<void> => {
   if (worker.LoginTry > 3) {
     log('Превышен лимит попыток авторизации', 'crimson');
@@ -31,9 +32,12 @@ export const initializeGenerator = (
     } else {
       updateBalance();
     }
-    return;
+    if (ifLoginOk) {
+      ifLoginOk();
+    }
+  } else {
+    authorize();
   }
-  authorize();
 };
 
 export const authCheckReadyGenerator = (options: {
@@ -63,6 +67,7 @@ export const authorizeGenerator = (options: {
   captchaSelector?: string;
   loginedWait?: {
     loginedSelector: string;
+    balanceReady: () => Promise<boolean>;
     updateBalance: () => void;
   };
   afterSuccesfulLogin?: () => Promise<void>;
@@ -157,7 +162,12 @@ export const authorizeGenerator = (options: {
     log('Авторизация успешна', 'green');
     worker.Islogin = true;
     worker.JSLogined();
-    options.loginedWait.updateBalance();
+    const balanceLoaded = await options.loginedWait.balanceReady();
+    if (!balanceLoaded) {
+      log(`Баланс не появился`, 'crimson');
+    } else {
+      options.loginedWait.updateBalance();
+    }
     if (options.afterSuccesfulLogin) {
       options.afterSuccesfulLogin();
     }
