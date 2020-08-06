@@ -4,6 +4,17 @@ const setStakeSumGenerator = (options: { sumInputSelector: string }) => (
   sum: number
 ): boolean => {
   log(`Вводим сумму ставки: "${sum}"`, 'orange');
+  if (sum > worker.StakeInfo.Balance) {
+    log('Ошибка ввода суммы ставки: вводимая сумма больше баланса', 'crimson');
+    return false;
+  }
+  if (sum > worker.StakeInfo.MaxSumm) {
+    log(
+      'Ошибка ввода суммы ставки: вводимая сумма больше максимальной ставки',
+      'crimson'
+    );
+    return false;
+  }
   const inputElement = document.querySelector(
     options.sumInputSelector
   ) as HTMLInputElement;
