@@ -8,6 +8,7 @@ export const checkAuthGenerator = (options: {
 };
 
 export const checkStakeEnabledGenerator = (options: {
+  getStakeCount: () => number;
   betCheck?: {
     selector: string;
     errorClasses?: {
@@ -20,6 +21,14 @@ export const checkStakeEnabledGenerator = (options: {
     message?: string;
   }[];
 }) => (): boolean => {
+  const stakeCount = options.getStakeCount();
+  if (stakeCount !== 1) {
+    log(
+      `Ошибка проверки доступности ставки: в купоне не 1 ставка (${stakeCount})`,
+      'crimson'
+    );
+    return false;
+  }
   if (options.betCheck) {
     const betElement = document.querySelector(options.betCheck.selector);
     if (!betElement) {
