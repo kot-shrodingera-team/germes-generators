@@ -1,25 +1,38 @@
 import { log } from '@kot-shrodingera-team/germes-utils';
 
-const getStakeInfoGenerator = (
-  checkAuth: () => boolean,
-  getStakeCount: () => number,
-  getBalance: () => number,
-  getMinimumStake: () => number,
-  getMaximumStake: () => number,
-  getCurrentSum: () => number,
-  checkStakeEnabled: () => boolean,
-  getCoefficient: () => number,
-  getParameter: () => number
-) => (): void => {
-  worker.StakeInfo.Auth = checkAuth();
-  worker.StakeInfo.StakeCount = getStakeCount();
-  worker.StakeInfo.Balance = getBalance();
-  worker.StakeInfo.MinSumm = getMinimumStake();
-  worker.StakeInfo.MaxSumm = getMaximumStake();
-  worker.StakeInfo.Summ = getCurrentSum();
-  worker.StakeInfo.IsEnebled = checkStakeEnabled();
-  worker.StakeInfo.Coef = getCoefficient();
-  worker.StakeInfo.Parametr = getParameter();
+const getStakeInfoGenerator = (options: {
+  preAction?: () => void;
+  isCouponOpenning: () => boolean;
+  showStake: () => Promise<void>;
+  checkAuth: () => boolean;
+  getStakeCount: () => number;
+  getBalance: () => number;
+  getMinimumStake: () => number;
+  getMaximumStake: () => number;
+  getCurrentSum: () => number;
+  checkStakeEnabled: () => boolean;
+  getCoefficient: () => number;
+  getParameter: () => number;
+}) => (): void => {
+  if (options.isCouponOpenning()) {
+    log(
+      'Купон переоткрывается, получение данных о ставке пропущено',
+      'lightgrey'
+    );
+    return;
+  }
+  if (options.preAction) {
+    options.preAction();
+  }
+  worker.StakeInfo.Auth = options.checkAuth();
+  worker.StakeInfo.StakeCount = options.getStakeCount();
+  worker.StakeInfo.Balance = options.getBalance();
+  worker.StakeInfo.MinSumm = options.getMinimumStake();
+  worker.StakeInfo.MaxSumm = options.getMaximumStake();
+  worker.StakeInfo.Summ = options.getCurrentSum();
+  worker.StakeInfo.IsEnebled = options.checkStakeEnabled();
+  worker.StakeInfo.Coef = options.getCoefficient();
+  worker.StakeInfo.Parametr = options.getParameter();
   const message =
     `Информация о ставке:\n` +
     `Авторизация: ${worker.StakeInfo.Auth ? 'Есть' : 'Нет'}\n` +
@@ -31,6 +44,14 @@ const getStakeInfoGenerator = (
     `Коэффициент: ${worker.StakeInfo.Coef}\n` +
     `Параметр: ${worker.StakeInfo.Parametr}`;
   log(message, 'lightgrey');
+
+  if (worker.StakeInfo.StakeCount !== 1) {
+    log(
+      `Количество ставок (${worker.StakeInfo.StakeCount}) в купоне не равно 1 (). Переоткрываем купон`,
+      'lightgrey'
+    );
+    options.showStake();
+  }
 };
 
 export default getStakeInfoGenerator;
