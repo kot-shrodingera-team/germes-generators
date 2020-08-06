@@ -65,6 +65,7 @@ export const authorizeGenerator = (options: {
     loginedSelector: string;
     updateBalance: () => void;
   };
+  afterSuccesfulLogin?: () => Promise<void>;
 }) => async (): Promise<void> => {
   if (options.openForm) {
     const loopCount = 10;
@@ -157,5 +158,8 @@ export const authorizeGenerator = (options: {
     worker.Islogin = true;
     worker.JSLogined();
     options.loginedWait.updateBalance();
+    if (options.afterSuccesfulLogin) {
+      options.afterSuccesfulLogin();
+    }
   }
 };
