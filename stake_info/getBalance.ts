@@ -1,5 +1,8 @@
 import { awaiter, log } from '@kot-shrodingera-team/germes-utils';
 
+const defaultBalanceRegex = /(\d+(?:\.\d+)?)/;
+const removeRegex = /[\s,']/g;
+
 export const balanceReadyGenerator = (options: {
   balanceSelector: string;
   balanceRegex?: RegExp;
@@ -11,13 +14,14 @@ export const balanceReadyGenerator = (options: {
         if (!balanceElement) {
           return false;
         }
-        const balanceText = balanceElement.textContent.trim();
-        if (options.balanceRegex) {
-          const balanceMatch = balanceText.match(options.balanceRegex);
-          return Boolean(balanceMatch);
-        }
-        const balance = Number(balanceText);
-        return !Number.isNaN(balance);
+        const balanceText = balanceElement.textContent
+          .trim()
+          .replace(removeRegex, '');
+        const balanceRegex = options.balanceRegex
+          ? options.balanceRegex
+          : defaultBalanceRegex;
+        const balanceMatch = balanceText.match(balanceRegex);
+        return Boolean(balanceMatch);
       },
       timeout,
       interval
@@ -37,19 +41,16 @@ export const getBalanceGenerator = (options: {
     log('Баланс не найден', 'crimson');
     return 0;
   }
-  const balanceText = balanceElement.textContent.trim();
-  if (options.balanceRegex) {
-    const balanceMatch = balanceText.match(options.balanceRegex);
-    if (!balanceMatch) {
-      log(`Непонятный формат баланса: "${balanceText}"`, 'crimson');
-      return 0;
-    }
-    return Number(balanceMatch[1]);
-  }
-  const balance = Number(balanceText);
-  if (Number.isNaN(balance)) {
+  const balanceText = balanceElement.textContent
+    .trim()
+    .replace(removeRegex, '');
+  const balanceRegex = options.balanceRegex
+    ? options.balanceRegex
+    : defaultBalanceRegex;
+  const balanceMatch = balanceText.match(balanceRegex);
+  if (!balanceMatch) {
     log(`Непонятный формат баланса: "${balanceText}"`, 'crimson');
     return 0;
   }
-  return balance;
+  return Number(balanceMatch[1]);
 };
