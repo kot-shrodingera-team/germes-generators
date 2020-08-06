@@ -6,51 +6,7 @@ import {
   fireEvent,
 } from '@kot-shrodingera-team/germes-utils';
 
-export const initializeGenerator = (
-  authCheckReady: () => Promise<void>,
-  checkAuth: () => boolean,
-  balanceReady: () => Promise<boolean>,
-  updateBalance: () => void,
-  authorize: () => Promise<void>,
-  ifLoginOk?: () => Promise<void>
-) => async (): Promise<void> => {
-  if (worker.LoginTry > 3) {
-    log('Превышен лимит попыток авторизации', 'crimson');
-    return;
-  }
-
-  await authCheckReady();
-  worker.Islogin = checkAuth();
-  worker.JSLogined();
-  if (worker.Islogin) {
-    log('Есть авторизация', 'green');
-    worker.Islogin = true;
-    worker.JSLogined();
-    const balanceLoaded = await balanceReady();
-    if (!balanceLoaded) {
-      log(`Баланс не появился`, 'crimson');
-    } else {
-      updateBalance();
-    }
-    if (ifLoginOk) {
-      ifLoginOk();
-    }
-  } else {
-    authorize();
-  }
-};
-
-export const authCheckReadyGenerator = (options: {
-  authFormSelector: string;
-  accountSelector: string;
-}) => async (timeout = 5000): Promise<void> => {
-  await Promise.race([
-    getElement(options.authFormSelector, timeout),
-    getElement(options.accountSelector, timeout),
-  ]);
-};
-
-export const authorizeGenerator = (options: {
+const authorizeGenerator = (options: {
   openForm?: {
     selector: string;
     openedSelector: string;
@@ -173,3 +129,5 @@ export const authorizeGenerator = (options: {
     }
   }
 };
+
+export default authorizeGenerator;

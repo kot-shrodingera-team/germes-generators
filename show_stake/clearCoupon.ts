@@ -1,7 +1,6 @@
 import { log, awaiter } from '@kot-shrodingera-team/germes-utils';
 
-// eslint-disable-next-line import/prefer-default-export
-export const clearCouponGenerator = (options: {
+const clearCouponGenerator = (options: {
   getStakeCount: () => number;
   clearSingleSelector: string;
   clearAllSelector: string;
@@ -73,3 +72,5 @@ export const clearCouponGenerator = (options: {
   log('Купон пуст', 'steelblue');
   return true;
 };
+
+export default clearCouponGenerator;

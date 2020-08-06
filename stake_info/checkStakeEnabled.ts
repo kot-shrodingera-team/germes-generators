@@ -1,0 +1,70 @@
+import { log } from '@kot-shrodingera-team/germes-utils';
+
+const checkStakeEnabledGenerator = (options: {
+  preCheck?: () => boolean;
+  getStakeCount: () => number;
+  betCheck?: {
+    selector: string;
+    errorClasses?: {
+      className: string;
+      message?: string;
+    }[];
+  };
+  errorsCheck?: {
+    selector: string;
+    message?: string;
+  }[];
+}) => (): boolean => {
+  if (options.preCheck && !options.preCheck()) {
+    return false;
+  }
+  const stakeCount = options.getStakeCount();
+  if (stakeCount !== 1) {
+    log(
+      `Ошибка проверки доступности ставки: в купоне не 1 ставка (${stakeCount})`,
+      'crimson'
+    );
+    return false;
+  }
+  if (options.betCheck) {
+    const betElement = document.querySelector(options.betCheck.selector);
+    if (!betElement) {
+      log(
+        'Ошибка проверки доступности ставки: не найдена ставка в купоне',
+        'crimson'
+      );
+      return false;
+    }
+    if (options.betCheck.errorClasses.length !== 0) {
+      const errorClass = options.betCheck.errorClasses.find(({ className }) => {
+        return [...betElement.classList].includes(className);
+      });
+      if (errorClass) {
+        log(
+          `Ставка недоступна${
+            errorClass.message ? ` (${errorClass.message})` : ''
+          }`,
+          'crimson'
+        );
+        return false;
+      }
+    }
+  }
+  if (options.errorsCheck.length !== 0) {
+    const errorCheck = options.errorsCheck.find(({ selector }) => {
+      return Boolean(document.querySelector(selector));
+    });
+    if (errorCheck) {
+      log(
+        `Ставка недоступна${
+          errorCheck.message ? ` (${errorCheck.message})` : ''
+        }`,
+        'crimson'
+      );
+      return false;
+    }
+  }
+  return true;
+};
+
+export default checkStakeEnabledGenerator;
