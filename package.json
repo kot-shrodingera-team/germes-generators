@@ -1,10 +1,10 @@
 {
   "name": "@kot-shrodingera-team/germes-generators",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "devDependencies": {
     "@kot-shrodingera-team/prettier-config-germes": "^1.0.0",
     "@kot-shrodingera-team/eslint-config-germes": "^1.0.3",
-    "@kot-shrodingera-team/typescript-config-germes": "^1.0.1",
+    "@kot-shrodingera-team/typescript-config-germes": "^1.0.2",
     "@kot-shrodingera-team/worker-declaration": "^1.0.2",
     "@kot-shrodingera-team/germes-utils": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^3.8.0",

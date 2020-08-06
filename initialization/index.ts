@@ -105,29 +105,29 @@ export const authorizeGenerator = (options: {
       }
     }
   }
-  const loginInput = document.querySelector(
+  const loginInput = (await getElement(
     options.phoneLogin.phoneInputSelector
       ? options.phoneLogin.phoneInputSelector
       : options.loginInputSelector
-  ) as HTMLInputElement;
+  )) as HTMLInputElement;
   if (!loginInput) {
     log('Не найдено поле ввода логина');
     return;
   }
   loginInput.value = worker.Login;
   fireEvent(loginInput, 'input');
-  const passwordInput = document.querySelector(
+  const passwordInput = (await getElement(
     options.passwordInputSelector
-  ) as HTMLInputElement;
+  )) as HTMLInputElement;
   if (!passwordInput) {
     log('Не найдено поле ввода пароля', 'crimson');
     return;
   }
   passwordInput.value = worker.Password;
   fireEvent(passwordInput, 'input');
-  const loginSubmitButton = document.querySelector(
+  const loginSubmitButton = (await getElement(
     options.submitButtonSelector
-  ) as HTMLButtonElement;
+  )) as HTMLButtonElement;
   if (!loginSubmitButton) {
     log('Не найдена кнопка входа', 'crimson');
     return;
