@@ -35,7 +35,7 @@ const checkStakeEnabledGenerator = (options: {
       );
       return false;
     }
-    if (options.betCheck.errorClasses.length !== 0) {
+    if (options.betCheck.errorClasses) {
       const errorClass = options.betCheck.errorClasses.find(({ className }) => {
         return [...betElement.classList].includes(className);
       });
@@ -50,7 +50,7 @@ const checkStakeEnabledGenerator = (options: {
       }
     }
   }
-  if (options.errorsCheck.length !== 0) {
+  if (options.errorsCheck) {
     const errorCheck = options.errorsCheck.find(({ selector }) => {
       return Boolean(document.querySelector(selector));
     });
