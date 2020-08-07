@@ -47,8 +47,8 @@ const getStakeInfoGenerator = (options: {
 
   if (worker.StakeInfo.StakeCount !== 1) {
     log(
-      `Количество ставок (${worker.StakeInfo.StakeCount}) в купоне не равно 1 (). Переоткрываем купон`,
-      'lightgrey'
+      `Количество ставок (${worker.StakeInfo.StakeCount}) в купоне не равно 1. Переоткрываем купон`,
+      'orange'
     );
     options.showStake();
   }
