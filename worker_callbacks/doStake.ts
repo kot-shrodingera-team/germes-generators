@@ -19,9 +19,9 @@ const doStakeGenerator = (options: {
     return false;
   }
   const actualCoefficient = options.getCoefficient();
-  worker.Helper.WriteLine(`Коэффициент перед ставкой: ${actualCoefficient}`);
+  log(`Коэффициент перед ставкой: "${actualCoefficient}"`, 'steelblue');
   if (actualCoefficient < worker.StakeInfo.Coef) {
-    worker.Helper.WriteLine('Коэффициент перед ставкой упал');
+    log('Коэффициент перед ставкой упал', 'crimson');
     return false;
   }
   options.clearDoStakeTime();
