@@ -68,7 +68,7 @@ const authorizeGenerator = (options: {
     }
   }
   const loginInput = (await getElement(
-    options.phoneLogin.phoneInputSelector
+    options.phoneLogin && options.phoneLogin.phoneInputSelector
       ? options.phoneLogin.phoneInputSelector
       : options.loginInputSelector
   )) as HTMLInputElement;
