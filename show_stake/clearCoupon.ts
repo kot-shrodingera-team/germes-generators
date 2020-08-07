@@ -2,6 +2,7 @@ import { log, awaiter } from '@kot-shrodingera-team/germes-utils';
 
 const clearCouponGenerator = (options: {
   getStakeCount: () => number;
+  apiClear?: () => void;
   clearSingleSelector: string;
   clearAllSelector: string;
   clearMode: 'all-only' | 'one-only' | 'one and all';
@@ -12,7 +13,9 @@ const clearCouponGenerator = (options: {
   const stakeCount = options.getStakeCount();
   if (stakeCount !== 0) {
     log('Купон не пуст. Очищаем', 'orange');
-    if (options.clearMode === 'all-only') {
+    if (options.apiClear) {
+      options.apiClear();
+    } else if (options.clearMode === 'all-only') {
       const clearAllButton = document.querySelector(
         options.clearAllSelector
       ) as HTMLElement;
@@ -67,6 +70,7 @@ const clearCouponGenerator = (options: {
       }
       return true;
     }
+    log('Не удалось очистить купон', 'crimson');
     return false;
   }
   log('Купон пуст', 'steelblue');
