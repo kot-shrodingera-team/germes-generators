@@ -1,8 +1,10 @@
 import { log, fireEvent } from '@kot-shrodingera-team/germes-utils';
+import { setReactInputValue } from '@kot-shrodingera-team/germes-utils/reactUtils';
 
-const setStakeSumGenerator = (options: { sumInputSelector: string }) => (
-  sum: number
-): boolean => {
+const setStakeSumGenerator = (options: {
+  sumInputSelector: string;
+  inputType?: 'fireEvent' | 'react';
+}) => (sum: number): boolean => {
   log(`Вводим сумму ставки: "${sum}"`, 'orange');
   if (sum > worker.StakeInfo.Balance) {
     log('Ошибка ввода суммы ставки: вводимая сумма больше баланса', 'crimson');
@@ -22,8 +24,12 @@ const setStakeSumGenerator = (options: { sumInputSelector: string }) => (
     log('Поле ввода ставки не найдено', 'crimson');
     return false;
   }
-  inputElement.value = String(sum);
-  fireEvent(inputElement, 'input');
+  if (options.inputType === 'react') {
+    setReactInputValue(inputElement, sum);
+  } else {
+    inputElement.value = String(sum);
+    fireEvent(inputElement, 'input');
+  }
   worker.StakeInfo.Summ = sum;
   return true;
 };
