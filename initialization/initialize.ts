@@ -2,7 +2,7 @@ import { log } from '@kot-shrodingera-team/germes-utils';
 
 const initializeGenerator = (
   authCheckReady: () => Promise<void>,
-  checkAuth: () => boolean,
+  checkAuth: (timeout?: number) => boolean,
   balanceReady: () => Promise<boolean>,
   updateBalance: () => void,
   authorize: () => Promise<void>,
