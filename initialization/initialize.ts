@@ -6,7 +6,7 @@ const initializeGenerator = (options: {
   balanceReady: () => Promise<boolean>;
   updateBalance: () => void;
   authorize: () => Promise<void>;
-  ifLoginOk?: () => Promise<void>;
+  afterSuccesfulLogin?: () => Promise<void>;
 }) => async (): Promise<void> => {
   if (worker.LoginTry > 3) {
     log('Превышен лимит попыток авторизации', 'crimson');
@@ -26,8 +26,8 @@ const initializeGenerator = (options: {
     } else {
       options.updateBalance();
     }
-    if (options.ifLoginOk) {
-      options.ifLoginOk();
+    if (options.afterSuccesfulLogin) {
+      options.afterSuccesfulLogin();
     }
   } else {
     options.authorize();
