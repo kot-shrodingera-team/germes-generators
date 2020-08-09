@@ -5,6 +5,7 @@ import {
   sleep,
   fireEvent,
 } from '@kot-shrodingera-team/germes-utils';
+import { setReactInputValue } from '@kot-shrodingera-team/germes-utils/reactUtils';
 
 const authorizeGenerator = (options: {
   openForm?: {
@@ -19,6 +20,7 @@ const authorizeGenerator = (options: {
   loginInputSelector: string;
   passwordInputSelector: string;
   submitButtonSelector: string;
+  inputType?: 'fireEvent' | 'react';
   beforeSubmitDelay?: number;
   captchaSelector?: string;
   loginedWait?: {
@@ -76,8 +78,16 @@ const authorizeGenerator = (options: {
     log('Не найдено поле ввода логина');
     return;
   }
-  loginInput.value = worker.Login;
-  fireEvent(loginInput, 'input');
+  const input = (element: HTMLInputElement, value: string): void => {
+    if (options.inputType === 'react') {
+      setReactInputValue(element, value);
+    } else {
+      // eslint-disable-next-line no-param-reassign
+      element.value = value;
+      fireEvent(element, 'input');
+    }
+  };
+  input(loginInput, worker.Login);
   const passwordInput = (await getElement(
     options.passwordInputSelector
   )) as HTMLInputElement;
@@ -85,8 +95,7 @@ const authorizeGenerator = (options: {
     log('Не найдено поле ввода пароля', 'crimson');
     return;
   }
-  passwordInput.value = worker.Password;
-  fireEvent(passwordInput, 'input');
+  input(passwordInput, worker.Password);
   const loginSubmitButton = (await getElement(
     options.submitButtonSelector
   )) as HTMLButtonElement;
