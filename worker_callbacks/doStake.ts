@@ -3,6 +3,10 @@ import { log } from '@kot-shrodingera-team/germes-utils';
 const doStakeGenerator = (options: {
   preAction?: () => boolean;
   doStakeButtonSelector: string;
+  errorClasses?: {
+    className: string;
+    message?: string;
+  }[];
   getCoefficient: () => number;
   clearDoStakeTime: () => void;
 }) => (): boolean => {
@@ -23,6 +27,20 @@ const doStakeGenerator = (options: {
   if (actualCoefficient < worker.StakeInfo.Coef) {
     log('Коэффициент перед ставкой упал', 'crimson');
     return false;
+  }
+  if (options.errorClasses) {
+    const errorClass = options.errorClasses.find(({ className }) => {
+      return [...stakeButton.classList].includes(className);
+    });
+    if (errorClass) {
+      log(
+        `Кнопка ставки недоступна${
+          errorClass.message ? ` (${errorClass.message})` : ''
+        }`,
+        'crimson'
+      );
+      return false;
+    }
   }
   options.clearDoStakeTime();
   stakeButton.click();
