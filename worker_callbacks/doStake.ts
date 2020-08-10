@@ -1,17 +1,18 @@
 import { log } from '@kot-shrodingera-team/germes-utils';
 
 const doStakeGenerator = (options: {
-  preAction?: () => boolean;
+  preCheck?: () => boolean;
   doStakeButtonSelector: string;
   errorClasses?: {
     className: string;
     message?: string;
   }[];
   getCoefficient: () => number;
+  postCheck?: () => void;
   clearDoStakeTime: () => void;
 }) => (): boolean => {
   log('Делаем ставку', 'orange');
-  if (options.preAction && !options.preAction()) {
+  if (options.preCheck && !options.preCheck()) {
     return false;
   }
   const stakeButton = document.querySelector(
@@ -41,6 +42,9 @@ const doStakeGenerator = (options: {
       );
       return false;
     }
+  }
+  if (options.postCheck) {
+    options.postCheck();
   }
   options.clearDoStakeTime();
   stakeButton.click();
