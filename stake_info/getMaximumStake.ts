@@ -1,11 +1,40 @@
-import { log } from '@kot-shrodingera-team/germes-utils';
+import { log, awaiter } from '@kot-shrodingera-team/germes-utils';
 
-const defaultMaxRegex = /(\d+(?:\.\d+)?)/;
+const defaultMaximumStakeRegex = /(\d+(?:\.\d+)?)/;
 const removeRegex = /[\s,']/g;
+
+export const maximumStakeReadyGenerator = (options: {
+  maximumStakeElementSelector: string;
+  maximumStakeRegex?: RegExp;
+}) => async (timeout = 5000, interval = 100): Promise<boolean> => {
+  const maximumStakeLoaded = Boolean(
+    await awaiter(
+      () => {
+        const maximumStakeElement = document.querySelector(
+          options.maximumStakeElementSelector
+        );
+        if (!maximumStakeElement) {
+          return false;
+        }
+        const maximumStakeText = maximumStakeElement.textContent
+          .trim()
+          .replace(removeRegex, '');
+        const maximumStakeRegex = options.maximumStakeRegex
+          ? options.maximumStakeRegex
+          : defaultMaximumStakeRegex;
+        const maximumStakeMatch = maximumStakeText.match(maximumStakeRegex);
+        return Boolean(maximumStakeMatch);
+      },
+      timeout,
+      interval
+    )
+  );
+  return maximumStakeLoaded;
+};
 
 const getMaximumStakeGenerator = (options: {
   maximumStakeElementSelector: string;
-  maxRegex?: RegExp;
+  maximumStakeRegex?: RegExp;
 }) => (): number => {
   const maximumStakeElement = document.querySelector(
     options.maximumStakeElementSelector
@@ -17,16 +46,18 @@ const getMaximumStakeGenerator = (options: {
   const maximumStakeText = maximumStakeElement.textContent
     .trim()
     .replace(removeRegex, '');
-  const maxRegex = options.maxRegex ? options.maxRegex : defaultMaxRegex;
-  const maxMatch = maximumStakeText.match(maxRegex);
-  if (!maxMatch) {
+  const maximumStakeRegex = options.maximumStakeRegex
+    ? options.maximumStakeRegex
+    : defaultMaximumStakeRegex;
+  const maximumStakeMatch = maximumStakeText.match(maximumStakeRegex);
+  if (!maximumStakeMatch) {
     log(
       `Непонятный формат максимальной ставки: "${maximumStakeText}"`,
       'crimson'
     );
     return 0;
   }
-  return Number(maxMatch[1]);
+  return Number(maximumStakeMatch[1]);
 };
 
 export default getMaximumStakeGenerator;

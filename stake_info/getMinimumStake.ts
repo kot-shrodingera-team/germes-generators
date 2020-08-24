@@ -1,11 +1,40 @@
-import { log } from '@kot-shrodingera-team/germes-utils';
+import { log, awaiter } from '@kot-shrodingera-team/germes-utils';
 
-const defaultMinRegex = /(\d+(?:\.\d+)?)/;
+const defaultMinimumStakeRegex = /(\d+(?:\.\d+)?)/;
 const removeRegex = /[\s,']/g;
+
+export const minimumStakeReadyGenerator = (options: {
+  minimumStakeElementSelector: string;
+  minimumStakeRegex?: RegExp;
+}) => async (timeout = 5000, interval = 100): Promise<boolean> => {
+  const minimumStakeLoaded = Boolean(
+    await awaiter(
+      () => {
+        const minimumStakeElement = document.querySelector(
+          options.minimumStakeElementSelector
+        );
+        if (!minimumStakeElement) {
+          return false;
+        }
+        const minimumStakeText = minimumStakeElement.textContent
+          .trim()
+          .replace(removeRegex, '');
+        const minimumStakeRegex = options.minimumStakeRegex
+          ? options.minimumStakeRegex
+          : defaultMinimumStakeRegex;
+        const minimumStakeMatch = minimumStakeText.match(minimumStakeRegex);
+        return Boolean(minimumStakeMatch);
+      },
+      timeout,
+      interval
+    )
+  );
+  return minimumStakeLoaded;
+};
 
 const getMinimumStakeGenerator = (options: {
   minimumStakeElementSelector: string;
-  minRegex?: RegExp;
+  minimumStakeRegex?: RegExp;
 }) => (): number => {
   const minimumStakeElement = document.querySelector(
     options.minimumStakeElementSelector
@@ -17,16 +46,18 @@ const getMinimumStakeGenerator = (options: {
   const minimumStakeText = minimumStakeElement.textContent
     .trim()
     .replace(removeRegex, '');
-  const minRegex = options.minRegex ? options.minRegex : defaultMinRegex;
-  const minMatch = minimumStakeText.match(minRegex);
-  if (!minMatch) {
+  const minimumStakeRegex = options.minimumStakeRegex
+    ? options.minimumStakeRegex
+    : defaultMinimumStakeRegex;
+  const minimumStakeMatch = minimumStakeText.match(minimumStakeRegex);
+  if (!minimumStakeMatch) {
     log(
       `Непонятный формат маинимальной ставки: "${minimumStakeText}"`,
       'crimson'
     );
     return 0;
   }
-  return Number(minMatch[1]);
+  return Number(minimumStakeMatch[1]);
 };
 
 export default getMinimumStakeGenerator;
