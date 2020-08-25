@@ -12,7 +12,7 @@ export const authStateReadyGenerator = (options: {
   /**
    * Ожидание элемента наличия авторизации после появления элемента отсутствия авторизации
    */
-  maxDelayAfterNoAuth?: 0;
+  maxDelayAfterNoAuth?: number;
 }) => async (timeout = 5000): Promise<void> => {
   await Promise.race([
     getElement(options.noAuthSelector, timeout),
