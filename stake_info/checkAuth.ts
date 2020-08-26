@@ -16,7 +16,7 @@ export const authStateReadyGenerator = (options: {
   /**
    * Включение логгирования
    */
-  logging: boolean;
+  logging?: boolean;
 }) => async (timeout = 5000): Promise<void> => {
   await Promise.race([
     getElement(options.noAuthElementSelector, timeout),
