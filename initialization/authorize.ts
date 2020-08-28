@@ -4,6 +4,7 @@ import {
   getPhoneCountry,
   sleep,
   fireEvent,
+  nativeInput,
 } from '@kot-shrodingera-team/germes-utils';
 import { setReactInputValue } from '@kot-shrodingera-team/germes-utils/reactUtils';
 
@@ -20,7 +21,7 @@ const authorizeGenerator = (options: {
   loginInputSelector: string;
   passwordInputSelector: string;
   submitButtonSelector: string;
-  inputType?: 'fireEvent' | 'react';
+  inputType?: 'fireEvent' | 'react' | 'nativeInput';
   beforeSubmitDelay?: number;
   captchaSelector?: string;
   loginedWait?: {
@@ -78,13 +79,15 @@ const authorizeGenerator = (options: {
     log('Не найдено поле ввода логина');
     return;
   }
-  const input = (element: HTMLInputElement, value: string): void => {
-    if (options.inputType === 'react') {
-      setReactInputValue(element, value);
-    } else {
+  const input = (inputElement: HTMLInputElement, value: string): void => {
+    if (options.inputType === 'fireEvent') {
       // eslint-disable-next-line no-param-reassign
-      element.value = value;
-      fireEvent(element, 'input');
+      inputElement.value = value;
+      fireEvent(inputElement, 'input');
+    } else if (options.inputType === 'react') {
+      setReactInputValue(inputElement, value);
+    } else {
+      nativeInput(inputElement, value);
     }
   };
   input(loginInput, worker.Login);
