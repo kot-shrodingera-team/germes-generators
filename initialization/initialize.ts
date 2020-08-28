@@ -7,13 +7,16 @@ const initializeGenerator = (options: {
   updateBalance: () => void;
   authorize: () => Promise<void>;
   afterSuccesfulLogin?: () => Promise<void>;
+  authCheckReadyTimeout?: number;
 }) => async (): Promise<void> => {
   if (worker.LoginTry > 3) {
     log('Превышен лимит попыток авторизации', 'crimson');
     return;
   }
-
-  await options.authCheckReady();
+  const timeout = options.authCheckReadyTimeout
+    ? options.authCheckReadyTimeout
+    : 5000;
+  await options.authCheckReady(timeout);
   worker.Islogin = options.checkAuth();
   worker.JSLogined();
   if (worker.Islogin) {
