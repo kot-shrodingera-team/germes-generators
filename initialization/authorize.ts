@@ -80,14 +80,14 @@ const authorizeGenerator = (options: {
     return;
   }
   const input = (inputElement: HTMLInputElement, value: string): void => {
-    if (options.inputType === 'fireEvent') {
-      // eslint-disable-next-line no-param-reassign
-      inputElement.value = value;
-      fireEvent(inputElement, 'input');
+    if (options.inputType === 'nativeInput') {
+      nativeInput(inputElement, value);
     } else if (options.inputType === 'react') {
       setReactInputValue(inputElement, value);
     } else {
-      nativeInput(inputElement, value);
+      // eslint-disable-next-line no-param-reassign
+      inputElement.value = value;
+      fireEvent(inputElement, 'input');
     }
   };
   input(loginInput, worker.Login);

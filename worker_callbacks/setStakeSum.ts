@@ -28,13 +28,13 @@ const setStakeSumGenerator = (options: {
     log('Поле ввода ставки не найдено', 'crimson');
     return false;
   }
-  if (options.inputType === 'fireEvent') {
-    inputElement.value = String(sum);
-    fireEvent(inputElement, 'input');
+  if (options.inputType === 'nativeInput') {
+    nativeInput(inputElement, String(sum));
   } else if (options.inputType === 'react') {
     setReactInputValue(inputElement, sum);
   } else {
-    nativeInput(inputElement, String(sum));
+    inputElement.value = String(sum);
+    fireEvent(inputElement, 'input');
   }
   worker.StakeInfo.Summ = sum;
   return true;
