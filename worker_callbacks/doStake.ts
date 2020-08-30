@@ -7,8 +7,9 @@ const doStakeGenerator = (options: {
     className: string;
     message?: string;
   }[];
+  disabledCheck?: boolean;
   getCoefficient: () => number;
-  postCheck?: () => void;
+  postCheck?: () => boolean;
   clearDoStakeTime: () => void;
 }) => (): boolean => {
   log('Делаем ставку', 'orange');
@@ -17,7 +18,7 @@ const doStakeGenerator = (options: {
   }
   const stakeButton = document.querySelector(
     options.doStakeButtonSelector
-  ) as HTMLElement;
+  ) as HTMLButtonElement;
 
   if (!stakeButton) {
     log('Не найдена кнопка "Сделать ставку"', 'crimson');
@@ -43,8 +44,14 @@ const doStakeGenerator = (options: {
       return false;
     }
   }
-  if (options.postCheck) {
-    options.postCheck();
+  if (options.disabledCheck) {
+    if (stakeButton.disabled) {
+      log('Кнопка ставки недоступна', 'crimson');
+      return false;
+    }
+  }
+  if (options.postCheck && !options.postCheck()) {
+    return false;
   }
   options.clearDoStakeTime();
   stakeButton.click();
