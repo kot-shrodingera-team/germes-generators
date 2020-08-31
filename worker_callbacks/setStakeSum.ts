@@ -8,8 +8,12 @@ import { setReactInputValue } from '@kot-shrodingera-team/germes-utils/reactUtil
 const setStakeSumGenerator = (options: {
   sumInputSelector: string;
   inputType?: 'fireEvent' | 'react' | 'nativeInput';
+  preCheck?: () => boolean;
 }) => (sum: number): boolean => {
   log(`Вводим сумму ставки: "${sum}"`, 'orange');
+  if (options.preCheck && !options.preCheck()) {
+    return false;
+  }
   if (sum > worker.StakeInfo.Balance) {
     log('Ошибка ввода суммы ставки: вводимая сумма больше баланса', 'crimson');
     return false;
