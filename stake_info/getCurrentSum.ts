@@ -1,8 +1,11 @@
 import { log } from '@kot-shrodingera-team/germes-utils';
 
+const defaultCurrentSumRegex = /(\d+(?:\.\d+)?)/;
+
 const getCurrentSumGenerator = (options: {
   sumInput: string;
   zeroValues?: string[];
+  currentSumRegex?: RegExp;
 }) => (): number => {
   const sumInput = document.querySelector(options.sumInput) as HTMLInputElement;
   if (!sumInput) {
@@ -13,12 +16,15 @@ const getCurrentSumGenerator = (options: {
   if (options.zeroValues && options.zeroValues.includes(sumText)) {
     return 0;
   }
-  const sum = Number(sumText);
-  if (Number.isNaN(sum)) {
+  const currentSumRegex = options.currentSumRegex
+    ? options.currentSumRegex
+    : defaultCurrentSumRegex;
+  const sumMatch = sumText.match(currentSumRegex);
+  if (!sumMatch) {
     log(`Непонятный формат текущей суммы ставки: "${sumText}"`, 'crimson');
     return 0;
   }
-  return sum;
+  return Number(sumMatch[1]);
 };
 
 export default getCurrentSumGenerator;
