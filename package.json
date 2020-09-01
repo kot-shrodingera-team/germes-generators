@@ -1,6 +1,6 @@
 {
   "name": "@kot-shrodingera-team/germes-generators",
-  "version": "1.0.52",
+  "version": "1.0.53",
   "devDependencies": {
     "@kot-shrodingera-team/prettier-config-germes": "^1.0.0",
     "@kot-shrodingera-team/eslint-config-germes": "^1.0.3",
