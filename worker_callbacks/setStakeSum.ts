@@ -7,6 +7,7 @@ import { setReactInputValue } from '@kot-shrodingera-team/germes-utils/reactUtil
 
 const setStakeSumGenerator = (options: {
   sumInputSelector: string;
+  alreadySetCheck?: boolean;
   inputType?: 'fireEvent' | 'react' | 'nativeInput';
   preCheck?: () => boolean;
 }) => (sum: number): boolean => {
@@ -31,6 +32,12 @@ const setStakeSumGenerator = (options: {
   if (!inputElement) {
     log('Поле ввода ставки не найдено', 'crimson');
     return false;
+  }
+  if (options.alreadySetCheck) {
+    if (inputElement.value.match(/(\d+(?:\.\d+)?)/)[0] === String(sum)) {
+      log('Уже введена нужная сумма');
+      return true;
+    }
   }
   if (options.inputType === 'nativeInput') {
     nativeInput(inputElement, String(sum));
