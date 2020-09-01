@@ -13,6 +13,9 @@ const getCurrentSumGenerator = (options: {
     return 0;
   }
   const sumText = sumInput.value.trim();
+  if (sumText === '') {
+    return 0;
+  }
   if (options.zeroValues && options.zeroValues.includes(sumText)) {
     return 0;
   }
