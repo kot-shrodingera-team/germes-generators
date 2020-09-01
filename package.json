@@ -1,14 +1,14 @@
 {
   "name": "@kot-shrodingera-team/germes-generators",
-  "version": "1.0.48",
+  "version": "1.0.49",
   "devDependencies": {
     "@kot-shrodingera-team/prettier-config-germes": "^1.0.0",
     "@kot-shrodingera-team/eslint-config-germes": "^1.0.3",
     "@kot-shrodingera-team/typescript-config-germes": "^1.0.2",
     "@kot-shrodingera-team/worker-declaration": "^1.0.3",
-    "@kot-shrodingera-team/germes-utils": "^1.0.7",
-    "@typescript-eslint/eslint-plugin": "^3.10.1",
-    "eslint": "^7.7.0",
+    "@kot-shrodingera-team/germes-utils": "^1.0.8",
+    "@typescript-eslint/eslint-plugin": "^4.0.1",
+    "eslint": "^7.8.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-config-airbnb-typescript": "^9.0.0",
     "eslint-config-prettier": "^6.11.0",

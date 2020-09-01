@@ -9,12 +9,9 @@ const setStakeSumGenerator = (options: {
   sumInputSelector: string;
   alreadySetCheck?: boolean;
   inputType?: 'fireEvent' | 'react' | 'nativeInput';
-  preCheck?: () => boolean;
+  preInputCheck?: () => boolean;
 }) => (sum: number): boolean => {
   log(`Вводим сумму ставки: "${sum}"`, 'orange');
-  if (options.preCheck && !options.preCheck()) {
-    return false;
-  }
   if (sum > worker.StakeInfo.Balance) {
     log('Ошибка ввода суммы ставки: вводимая сумма больше баланса', 'crimson');
     return false;
@@ -38,6 +35,9 @@ const setStakeSumGenerator = (options: {
       log('Уже введена нужная сумма');
       return true;
     }
+  }
+  if (options.preInputCheck && !options.preInputCheck()) {
+    return false;
   }
   if (options.inputType === 'nativeInput') {
     nativeInput(inputElement, String(sum));
