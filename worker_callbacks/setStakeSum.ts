@@ -32,7 +32,7 @@ const setStakeSumGenerator = (options: {
   }
   if (options.alreadySetCheck) {
     const currentSumMatch = inputElement.value.match(/(\d+(?:\.\d+)?)/);
-    if (currentSumMatch && currentSumMatch[0] === String(sum)) {
+    if (currentSumMatch && Number(currentSumMatch[0]) === sum) {
       log('Уже введена нужная сумма');
       return true;
     }
