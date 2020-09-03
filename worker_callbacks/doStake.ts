@@ -1,4 +1,4 @@
-import { log } from '@kot-shrodingera-team/germes-utils';
+import { log, timeString } from '@kot-shrodingera-team/germes-utils';
 
 const doStakeGenerator = (options: {
   preCheck?: () => boolean;
@@ -54,6 +54,7 @@ const doStakeGenerator = (options: {
     return false;
   }
   options.clearDoStakeTime();
+  log(`Время ставки: ${timeString(new Date())}`, 'steelblue');
   stakeButton.click();
   return true;
 };

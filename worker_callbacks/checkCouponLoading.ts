@@ -1,4 +1,8 @@
-import { stakeInfoString, log } from '@kot-shrodingera-team/germes-utils';
+import {
+  stakeInfoString,
+  log,
+  timeString,
+} from '@kot-shrodingera-team/germes-utils';
 
 const checkCouponLoadingGenerator = (options: {
   getDoStakeTime: () => Date;
@@ -6,14 +10,20 @@ const checkCouponLoadingGenerator = (options: {
   timeout?: number;
   check: () => boolean;
 }) => (): boolean => {
-  const timePassedSinceDoStake =
-    new Date().getTime() - options.getDoStakeTime().getTime();
+  const now = new Date();
+  const doStakeTime = options.getDoStakeTime();
+  const timePassedSinceDoStake = now.getTime() - doStakeTime.getTime();
   if (
     timePassedSinceDoStake >
     Object.prototype.hasOwnProperty.call(options, 'timeout')
       ? options.timeout
       : 60000
   ) {
+    log(
+      `Текущее время: ${timeString(now)}, время ставки: ${timeString(
+        doStakeTime
+      )}`
+    );
     const message =
       `В ${options.bookmakerName} очень долгое принятие ставки\n` +
       `Бот засчитает ставку как НЕ принятую\n` +
