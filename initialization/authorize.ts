@@ -1,7 +1,6 @@
 import {
   getElement,
   log,
-  getPhoneCountry,
   sleep,
   fireEvent,
   nativeInput,
@@ -14,10 +13,7 @@ const authorizeGenerator = (options: {
     openedSelector: string;
     afterOpenDelay?: number;
   };
-  phoneLogin?: {
-    changeToPhoneLogin: () => Promise<boolean>;
-    phoneInputSelector?: string;
-  };
+  setLoginType?: () => Promise<boolean>;
   loginInputSelector: string;
   passwordInputSelector: string;
   submitButtonSelector: string;
@@ -59,21 +55,15 @@ const authorizeGenerator = (options: {
     }
   }
 
-  if (options.phoneLogin) {
-    const phoneCountry = getPhoneCountry();
-    if (phoneCountry) {
-      log('Используется номер телефона', 'steelblue');
-      const changedToPhoneLogin = await options.phoneLogin.changeToPhoneLogin();
-      if (!changedToPhoneLogin) {
-        log('Не удалось переключиться на вход по телефону', 'crimson');
-        return;
-      }
+  if (options.setLoginType) {
+    const loginTypeSet = await options.setLoginType();
+    if (!loginTypeSet) {
+      log('Не удалось переключиться на вход по нужному типу логина', 'crimson');
+      return;
     }
   }
   const loginInput = (await getElement(
-    options.phoneLogin && options.phoneLogin.phoneInputSelector
-      ? options.phoneLogin.phoneInputSelector
-      : options.loginInputSelector
+    options.loginInputSelector
   )) as HTMLInputElement;
   if (!loginInput) {
     log('Не найдено поле ввода логина');
