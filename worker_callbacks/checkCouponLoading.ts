@@ -13,12 +13,14 @@ const checkCouponLoadingGenerator = (options: {
   const now = new Date();
   const doStakeTime = options.getDoStakeTime();
   const timePassedSinceDoStake = now.getTime() - doStakeTime.getTime();
-  if (
-    timePassedSinceDoStake >
-    Object.prototype.hasOwnProperty.call(options, 'timeout')
-      ? options.timeout
-      : 60000
-  ) {
+  const timeout = Object.prototype.hasOwnProperty.call(options, 'timeout')
+    ? options.timeout
+    : 60000;
+  if (timePassedSinceDoStake > timeout) {
+    log(`now = ${now.getTime()}`);
+    log(`doStakeTime = ${doStakeTime.getTime()}`);
+    log(`timePassedSinceDoStake = ${timePassedSinceDoStake}`);
+    log(`timeout = ${timeout}`);
     log(
       `Текущее время: ${timeString(now)}, время ставки: ${timeString(
         doStakeTime
