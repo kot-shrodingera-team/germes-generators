@@ -1,6 +1,7 @@
 import { log } from '@kot-shrodingera-team/germes-utils';
 
 const defaultCurrentSumRegex = /(\d+(?:\.\d+)?)/;
+const removeRegex = /[\s,']/g;
 
 const getCurrentSumGenerator = (options: {
   sumInput: string;
@@ -12,7 +13,7 @@ const getCurrentSumGenerator = (options: {
     log('Не найдено поле ввода суммы ставки', 'crimson');
     return 0;
   }
-  const sumText = sumInput.value.trim();
+  const sumText = sumInput.value.trim().replace(removeRegex, '');
   if (sumText === '') {
     return 0;
   }
