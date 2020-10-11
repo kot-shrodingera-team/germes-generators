@@ -66,7 +66,7 @@ const authorizeGenerator = (options: {
     options.loginInputSelector
   )) as HTMLInputElement;
   if (!loginInput) {
-    log('Не найдено поле ввода логина');
+    log('Не найдено поле ввода логина', 'crimson');
     return;
   }
   const input = (inputElement: HTMLInputElement, value: string): void => {
