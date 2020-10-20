@@ -7,8 +7,10 @@ const getCurrentSumGenerator = (options: {
   sumInput: string;
   zeroValues?: string[];
   currentSumRegex?: RegExp;
+  context?: Document | Element;
 }) => (): number => {
-  const sumInput = document.querySelector(options.sumInput) as HTMLInputElement;
+  const context = options.context ? options.context : document;
+  const sumInput = context.querySelector(options.sumInput) as HTMLInputElement;
   if (!sumInput) {
     log('Не найдено поле ввода суммы ставки', 'crimson');
     return 0;

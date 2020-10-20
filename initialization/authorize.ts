@@ -26,20 +26,29 @@ const authorizeGenerator = (options: {
     updateBalance: () => void;
   };
   afterSuccesfulLogin?: () => Promise<void>;
+  context?: Document | Element;
 }) => async (): Promise<void> => {
+  const context = options.context ? options.context : document;
   if (options.openForm) {
     const loopCount = 10;
     for (let i = 1; i <= loopCount; i += 1) {
-      const openLoginFormButton = document.querySelector(
-        options.openForm.selector
-      ) as HTMLButtonElement;
+      // eslint-disable-next-line no-await-in-loop
+      const openLoginFormButton = (await getElement(
+        options.openForm.selector,
+        1000,
+        context
+      )) as HTMLButtonElement;
       if (!openLoginFormButton) {
         log('Не найдена кнопка открытия формы авторизации', 'crimson');
         return;
       }
       openLoginFormButton.click();
       // eslint-disable-next-line no-await-in-loop
-      const authForm = await getElement(options.openForm.openedSelector, 500);
+      const authForm = await getElement(
+        options.openForm.openedSelector,
+        500,
+        context
+      );
       if (!authForm) {
         if (i === loopCount) {
           log('Форма авторизации так и не появилась', 'crimson');
@@ -63,7 +72,9 @@ const authorizeGenerator = (options: {
     }
   }
   const loginInput = (await getElement(
-    options.loginInputSelector
+    options.loginInputSelector,
+    5000,
+    context
   )) as HTMLInputElement;
   if (!loginInput) {
     log('Не найдено поле ввода логина', 'crimson');
@@ -82,7 +93,9 @@ const authorizeGenerator = (options: {
   };
   input(loginInput, worker.Login);
   const passwordInput = (await getElement(
-    options.passwordInputSelector
+    options.passwordInputSelector,
+    5000,
+    context
   )) as HTMLInputElement;
   if (!passwordInput) {
     log('Не найдено поле ввода пароля', 'crimson');
@@ -90,7 +103,9 @@ const authorizeGenerator = (options: {
   }
   input(passwordInput, worker.Password);
   const loginSubmitButton = (await getElement(
-    options.submitButtonSelector
+    options.submitButtonSelector,
+    5000,
+    context
   )) as HTMLButtonElement;
   if (!loginSubmitButton) {
     log('Не найдена кнопка входа', 'crimson');
@@ -104,7 +119,7 @@ const authorizeGenerator = (options: {
   worker.LoginTry += 1;
 
   if (options.captchaSelector) {
-    getElement(options.captchaSelector).then((element) => {
+    getElement(options.captchaSelector, 5000, context).then((element) => {
       if (element) {
         log('Появилась капча', 'orange');
       }
@@ -112,7 +127,11 @@ const authorizeGenerator = (options: {
   }
 
   if (options.loginedWait) {
-    const logined = await getElement(options.loginedWait.loginedSelector);
+    const logined = await getElement(
+      options.loginedWait.loginedSelector,
+      5000,
+      context
+    );
     if (!logined) {
       log('Авторизация не удалась', 'crimson');
       return;

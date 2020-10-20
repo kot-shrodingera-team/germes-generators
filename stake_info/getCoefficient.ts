@@ -2,10 +2,10 @@ import { log } from '@kot-shrodingera-team/germes-utils';
 
 const getCoefficientGenerator = (options: {
   coefficientSelector: string;
+  context?: Document | Element;
 }) => (): number => {
-  const coefficientElement = document.querySelector(
-    options.coefficientSelector
-  );
+  const context = options.context ? options.context : document;
+  const coefficientElement = context.querySelector(options.coefficientSelector);
   if (!coefficientElement) {
     log('Коэффициент не найден', 'crimson');
     return 0;

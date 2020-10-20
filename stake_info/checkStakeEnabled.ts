@@ -14,7 +14,9 @@ const checkStakeEnabledGenerator = (options: {
     selector: string;
     message?: string;
   }[];
+  context?: Document | Element;
 }) => (): boolean => {
+  const context = options.context ? options.context : document;
   if (options.preCheck && !options.preCheck()) {
     return false;
   }
@@ -27,7 +29,7 @@ const checkStakeEnabledGenerator = (options: {
     return false;
   }
   if (options.betCheck) {
-    const betElement = document.querySelector(options.betCheck.selector);
+    const betElement = context.querySelector(options.betCheck.selector);
     if (!betElement) {
       log(
         'Ошибка проверки доступности ставки: не найдена ставка в купоне',
@@ -52,7 +54,7 @@ const checkStakeEnabledGenerator = (options: {
   }
   if (options.errorsCheck) {
     const errorCheck = options.errorsCheck.find(({ selector }) => {
-      return Boolean(document.querySelector(selector));
+      return Boolean(context.querySelector(selector));
     });
     if (errorCheck) {
       log(

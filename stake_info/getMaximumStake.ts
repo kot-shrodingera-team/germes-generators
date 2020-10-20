@@ -6,11 +6,13 @@ const removeRegex = /[\s,']/g;
 export const maximumStakeReadyGenerator = (options: {
   maximumStakeElementSelector: string;
   maximumStakeRegex?: RegExp;
+  context?: Document | Element;
 }) => async (timeout = 5000, interval = 100): Promise<boolean> => {
+  const context = options.context ? options.context : document;
   const maximumStakeLoaded = Boolean(
     await awaiter(
       () => {
-        const maximumStakeElement = document.querySelector(
+        const maximumStakeElement = context.querySelector(
           options.maximumStakeElementSelector
         );
         if (!maximumStakeElement) {
@@ -35,8 +37,10 @@ export const maximumStakeReadyGenerator = (options: {
 const getMaximumStakeGenerator = (options: {
   maximumStakeElementSelector: string;
   maximumStakeRegex?: RegExp;
+  context?: Document | Element;
 }) => (): number => {
-  const maximumStakeElement = document.querySelector(
+  const context = options.context ? options.context : document;
+  const maximumStakeElement = context.querySelector(
     options.maximumStakeElementSelector
   );
   if (!maximumStakeElement) {

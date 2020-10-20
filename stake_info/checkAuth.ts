@@ -17,13 +17,18 @@ export const authStateReadyGenerator = (options: {
    * Включение логгирования
    */
   logging?: boolean;
+  /**
+   * Контекст поиска элементов
+   */
+  context?: Document | Element;
 }) => async (timeout = 5000): Promise<void> => {
+  const context = options.context ? options.context : document;
   await Promise.race([
-    getElement(options.noAuthElementSelector, timeout),
-    getElement(options.authElementSelector, timeout),
+    getElement(options.noAuthElementSelector, timeout, context),
+    getElement(options.authElementSelector, timeout, context),
   ]);
-  const noAuthElement = document.querySelector(options.noAuthElementSelector);
-  const authElement = document.querySelector(options.authElementSelector);
+  const noAuthElement = context.querySelector(options.noAuthElementSelector);
+  const authElement = context.querySelector(options.authElementSelector);
   if (options.maxDelayAfterNoAuthElementAppeared && noAuthElement) {
     if (options.logging) {
       log(
@@ -33,7 +38,8 @@ export const authStateReadyGenerator = (options: {
     }
     const authElementWaited = await getElement(
       options.authElementSelector,
-      options.maxDelayAfterNoAuthElementAppeared
+      options.maxDelayAfterNoAuthElementAppeared,
+      context
     );
     if (options.logging) {
       if (authElementWaited) {
@@ -57,8 +63,10 @@ export const authStateReadyGenerator = (options: {
 
 const checkAuthGenerator = (options: {
   authElementSelector: string;
+  context?: Document | Element;
 }) => (): boolean => {
-  const accountMenu = document.querySelector(options.authElementSelector);
+  const context = options.context ? options.context : document;
+  const accountMenu = context.querySelector(options.authElementSelector);
   return Boolean(accountMenu);
 };
 

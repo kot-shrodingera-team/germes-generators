@@ -9,14 +9,16 @@ const clearCouponGenerator = (options: {
   maxUnload?: {
     getMaximumStake: () => number;
   };
+  context?: Document | Element;
 }) => async (): Promise<boolean> => {
+  const context = options.context ? options.context : document;
   const stakeCount = options.getStakeCount();
   if (stakeCount !== 0) {
     log('Купон не пуст. Очищаем', 'orange');
     if (options.apiClear) {
       options.apiClear();
     } else if (options.clearMode === 'all-only') {
-      const clearAllButton = document.querySelector(
+      const clearAllButton = context.querySelector(
         options.clearAllSelector
       ) as HTMLElement;
       if (!clearAllButton) {
@@ -26,7 +28,7 @@ const clearCouponGenerator = (options: {
       clearAllButton.click();
     } else if (options.clearMode === 'one-only') {
       const clearSingleButton = [
-        ...document.querySelectorAll(options.clearSingleSelector),
+        ...context.querySelectorAll(options.clearSingleSelector),
       ] as HTMLElement[];
       if (clearSingleButton.length === 0) {
         log('Не найдены кнопки удаления ставок из купона', 'crimson');
@@ -35,7 +37,7 @@ const clearCouponGenerator = (options: {
       clearSingleButton.forEach((button) => button.click());
     } else if (options.clearMode === 'one and all') {
       if (stakeCount === 1) {
-        const clearSingleButton = document.querySelector(
+        const clearSingleButton = context.querySelector(
           options.clearSingleSelector
         ) as HTMLElement;
         if (!clearSingleButton) {
@@ -44,7 +46,7 @@ const clearCouponGenerator = (options: {
         }
         clearSingleButton.click();
       } else {
-        const clearAllButton = document.querySelector(
+        const clearAllButton = context.querySelector(
           options.clearAllSelector
         ) as HTMLElement;
         if (!clearAllButton) {

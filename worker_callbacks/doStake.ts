@@ -11,12 +11,14 @@ const doStakeGenerator = (options: {
   getCoefficient: () => number;
   postCheck?: () => boolean;
   clearDoStakeTime: () => void;
+  context?: Document | Element;
 }) => (): boolean => {
+  const context = options.context ? options.context : document;
   log('Делаем ставку', 'orange');
   if (options.preCheck && !options.preCheck()) {
     return false;
   }
-  const stakeButton = document.querySelector(
+  const stakeButton = context.querySelector(
     options.doStakeButtonSelector
   ) as HTMLButtonElement;
 
