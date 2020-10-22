@@ -9,6 +9,7 @@ const setStakeSumGenerator = (options: {
   sumInputSelector: string;
   alreadySetCheck?: boolean;
   inputType?: 'fireEvent' | 'react' | 'nativeInput';
+  fireEventName?: string;
   preInputCheck?: (number?: number) => boolean;
   context?: Document | Element;
 }) => (sum: number): boolean => {
@@ -48,7 +49,10 @@ const setStakeSumGenerator = (options: {
     setReactInputValue(inputElement, sum);
   } else {
     inputElement.value = String(sum);
-    fireEvent(inputElement, 'input');
+    fireEvent(
+      inputElement,
+      options.fireEventName ? options.fireEventName : 'input'
+    );
   }
   worker.StakeInfo.Summ = sum;
   return true;
