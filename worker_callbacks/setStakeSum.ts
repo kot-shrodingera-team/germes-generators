@@ -9,7 +9,7 @@ const setStakeSumGenerator = (options: {
   sumInputSelector: string;
   alreadySetCheck?: boolean;
   inputType?: 'fireEvent' | 'react' | 'nativeInput';
-  preInputCheck?: () => boolean;
+  preInputCheck?: (number?: number) => boolean;
   context?: Document | Element;
 }) => (sum: number): boolean => {
   const context = options.context ? options.context : document;
@@ -39,7 +39,7 @@ const setStakeSumGenerator = (options: {
       return true;
     }
   }
-  if (options.preInputCheck && !options.preInputCheck()) {
+  if (options.preInputCheck && !options.preInputCheck(sum)) {
     return false;
   }
   if (options.inputType === 'nativeInput') {
