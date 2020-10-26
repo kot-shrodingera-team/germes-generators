@@ -6,9 +6,9 @@ const removeRegex = /[\s,']/g;
 export const balanceReadyGenerator = (options: {
   balanceSelector: string;
   balanceRegex?: RegExp;
-  context?: Document | Element;
+  context?: () => Document | Element;
 }) => async (timeout = 5000, interval = 100): Promise<boolean> => {
-  const context = options.context ? options.context : document;
+  const context = options.context ? options.context() : document;
   const balanceLoaded = Boolean(
     await awaiter(
       () => {
@@ -35,9 +35,9 @@ export const balanceReadyGenerator = (options: {
 export const getBalanceGenerator = (options: {
   balanceSelector: string;
   balanceRegex?: RegExp;
-  context?: Document | Element;
+  context?: () => Document | Element;
 }) => (): number => {
-  const context = options.context ? options.context : document;
+  const context = options.context ? options.context() : document;
   const balanceElement = context.querySelector(
     options.balanceSelector
   ) as HTMLElement;

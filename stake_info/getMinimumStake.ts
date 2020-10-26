@@ -6,9 +6,9 @@ const removeRegex = /[\s,']/g;
 export const minimumStakeReadyGenerator = (options: {
   minimumStakeElementSelector: string;
   minimumStakeRegex?: RegExp;
-  context?: Document | Element;
+  context?: () => Document | Element;
 }) => async (timeout = 5000, interval = 100): Promise<boolean> => {
-  const context = options.context ? options.context : document;
+  const context = options.context ? options.context() : document;
   const minimumStakeLoaded = Boolean(
     await awaiter(
       () => {
@@ -37,9 +37,9 @@ export const minimumStakeReadyGenerator = (options: {
 const getMinimumStakeGenerator = (options: {
   minimumStakeElementSelector: string;
   minimumStakeRegex?: RegExp;
-  context?: Document | Element;
+  context?: () => Document | Element;
 }) => (): number => {
-  const context = options.context ? options.context : document;
+  const context = options.context ? options.context() : document;
   const minimumStakeElement = context.querySelector(
     options.minimumStakeElementSelector
   );

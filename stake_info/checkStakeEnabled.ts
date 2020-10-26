@@ -14,9 +14,9 @@ const checkStakeEnabledGenerator = (options: {
     selector: string;
     message?: string;
   }[];
-  context?: Document | Element;
+  context?: () => Document | Element;
 }) => (): boolean => {
-  const context = options.context ? options.context : document;
+  const context = options.context ? options.context() : document;
   if (options.preCheck && !options.preCheck()) {
     return false;
   }

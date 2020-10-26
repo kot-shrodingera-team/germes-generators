@@ -20,9 +20,9 @@ export const authStateReadyGenerator = (options: {
   /**
    * Контекст поиска элементов
    */
-  context?: Document | Element;
+  context?: () => Document | Element;
 }) => async (timeout = 5000): Promise<void> => {
-  const context = options.context ? options.context : document;
+  const context = options.context ? options.context() : document;
   await Promise.race([
     getElement(options.noAuthElementSelector, timeout, context),
     getElement(options.authElementSelector, timeout, context),
@@ -63,9 +63,9 @@ export const authStateReadyGenerator = (options: {
 
 const checkAuthGenerator = (options: {
   authElementSelector: string;
-  context?: Document | Element;
+  context?: () => Document | Element;
 }) => (): boolean => {
-  const context = options.context ? options.context : document;
+  const context = options.context ? options.context() : document;
   const accountMenu = context.querySelector(options.authElementSelector);
   return Boolean(accountMenu);
 };

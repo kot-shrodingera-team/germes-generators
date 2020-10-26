@@ -9,9 +9,9 @@ const clearCouponGenerator = (options: {
   maxUnload?: {
     getMaximumStake: () => number;
   };
-  context?: Document | Element;
+  context?: () => Document | Element;
 }) => async (): Promise<boolean> => {
-  const context = options.context ? options.context : document;
+  const context = options.context ? options.context() : document;
   const stakeCount = options.getStakeCount();
   if (stakeCount !== 0) {
     log('Купон не пуст. Очищаем', 'orange');

@@ -11,9 +11,9 @@ const setStakeSumGenerator = (options: {
   inputType?: 'fireEvent' | 'react' | 'nativeInput';
   fireEventName?: string;
   preInputCheck?: (number?: number) => boolean;
-  context?: Document | Element;
+  context?: () => Document | Element;
 }) => (sum: number): boolean => {
-  const context = options.context ? options.context : document;
+  const context = options.context ? options.context() : document;
   log(`Вводим сумму ставки: "${sum}"`, 'orange');
   if (sum > worker.StakeInfo.Balance) {
     log('Ошибка ввода суммы ставки: вводимая сумма больше баланса', 'crimson');

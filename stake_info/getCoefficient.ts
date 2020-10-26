@@ -6,8 +6,9 @@ const getCoefficientGenerator = (options: {
   coefficientSelector: string;
   getCoefficientText?: () => string;
   coefficientRegex?: RegExp;
-  context?: Document | Element;
+  context?: () => Document | Element;
 }) => (): number => {
+  const context = options.context ? options.context() : document;
   if (options.getCoefficientText) {
     const coefficientText = options.getCoefficientText();
     const coefficient = Number(coefficientText);
@@ -17,7 +18,6 @@ const getCoefficientGenerator = (options: {
     }
     return coefficient;
   }
-  const context = options.context ? options.context : document;
   const coefficientElement = context.querySelector(options.coefficientSelector);
   if (!coefficientElement) {
     log('Коэффициент не найден', 'crimson');

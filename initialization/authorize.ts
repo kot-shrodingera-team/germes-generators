@@ -26,9 +26,9 @@ const authorizeGenerator = (options: {
     updateBalance: () => void;
   };
   afterSuccesfulLogin?: () => Promise<void>;
-  context?: Document | Element;
+  context?: () => Document | Element;
 }) => async (): Promise<void> => {
-  const context = options.context ? options.context : document;
+  const context = options.context ? options.context() : document;
   if (options.openForm) {
     const loopCount = 10;
     for (let i = 1; i <= loopCount; i += 1) {
