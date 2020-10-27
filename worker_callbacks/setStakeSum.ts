@@ -7,7 +7,9 @@ import { setReactInputValue } from '@kot-shrodingera-team/germes-utils/reactUtil
 
 const setStakeSumGenerator = (options: {
   sumInputSelector: string;
-  alreadySetCheck?: boolean;
+  alreadySetCheck?: {
+    falseOnSumChange: boolean;
+  };
   inputType?: 'fireEvent' | 'react' | 'nativeInput';
   fireEventName?: string;
   preInputCheck?: (number?: number) => boolean;
@@ -33,11 +35,15 @@ const setStakeSumGenerator = (options: {
     log('Поле ввода ставки не найдено', 'crimson');
     return false;
   }
+  let falseOnSumChangeCheck = false;
   if (options.alreadySetCheck) {
     const currentSumMatch = inputElement.value.match(/(\d+(?:\.\d+)?)/);
     if (currentSumMatch && Number(currentSumMatch[0]) === sum) {
       log('Уже введена нужная сумма', 'steelblue');
       return true;
+    }
+    if (options.alreadySetCheck.falseOnSumChange) {
+      falseOnSumChangeCheck = true;
     }
   }
   if (options.preInputCheck && !options.preInputCheck(sum)) {
@@ -53,6 +59,10 @@ const setStakeSumGenerator = (options: {
       inputElement,
       options.fireEventName ? options.fireEventName : 'input'
     );
+  }
+  if (falseOnSumChangeCheck) {
+    log('Задержка после изменения суммы в купоне', 'orange');
+    return false;
   }
   worker.StakeInfo.Summ = sum;
   return true;
