@@ -11,6 +11,8 @@ const authorizeGenerator = (options: {
   openForm?: {
     selector: string;
     openedSelector: string;
+    loopCount?: number;
+    triesInterval?: number;
     afterOpenDelay?: number;
   };
   setLoginType?: () => Promise<boolean>;
@@ -30,7 +32,12 @@ const authorizeGenerator = (options: {
 }) => async (): Promise<void> => {
   const context = options.context ? options.context() : document;
   if (options.openForm) {
-    const loopCount = 10;
+    const loopCount = options.openForm.loopCount
+      ? options.openForm.loopCount
+      : 10;
+    const triesInterval = options.openForm.triesInterval
+      ? options.openForm.triesInterval
+      : 1000;
     for (let i = 1; i <= loopCount; i += 1) {
       // eslint-disable-next-line no-await-in-loop
       const openLoginFormButton = (await getElement(
@@ -46,7 +53,7 @@ const authorizeGenerator = (options: {
       // eslint-disable-next-line no-await-in-loop
       const authForm = await getElement(
         options.openForm.openedSelector,
-        500,
+        triesInterval,
         context
       );
       if (!authForm) {
