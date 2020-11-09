@@ -10,7 +10,7 @@ export const balanceReadyGenerator = (options: {
     searchValue: string | RegExp;
     replaceValue: string;
   }[];
-  removeRegex: RegExp;
+  removeRegex?: RegExp;
   context?: () => Document | Element;
 }) => async (timeout = 5000, interval = 100): Promise<boolean> => {
   const context = options.context ? options.context() : document;
@@ -54,7 +54,7 @@ export const getBalanceGenerator = (options: {
     searchValue: string | RegExp;
     replaceValue: string;
   }[];
-  removeRegex: RegExp;
+  removeRegex?: RegExp;
   context?: () => Document | Element;
 }) => (): number => {
   const context = options.context ? options.context() : document;
