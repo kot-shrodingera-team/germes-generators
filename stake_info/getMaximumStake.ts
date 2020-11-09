@@ -1,11 +1,16 @@
 import { log, awaiter } from '@kot-shrodingera-team/germes-utils';
 
 const defaultMaximumStakeRegex = /(\d+(?:\.\d+)?)/;
-const removeRegex = /[\s,']/g;
+const defaultRemoveRegex = /[\s,']/g;
 
 export const maximumStakeReadyGenerator = (options: {
   maximumStakeElementSelector: string;
   maximumStakeRegex?: RegExp;
+  replaceDataArray?: {
+    searchValue: string | RegExp;
+    replaceValue: string;
+  }[];
+  removeRegex?: RegExp;
   context?: () => Document | Element;
 }) => async (timeout = 5000, interval = 100): Promise<boolean> => {
   const context = options.context ? options.context() : document;
@@ -18,9 +23,22 @@ export const maximumStakeReadyGenerator = (options: {
         if (!maximumStakeElement) {
           return false;
         }
-        const maximumStakeText = maximumStakeElement.textContent
-          .trim()
-          .replace(removeRegex, '');
+        let maximumStakeText = maximumStakeElement.textContent.trim();
+        if (options.replaceDataArray) {
+          options.replaceDataArray.forEach((replaceData) => {
+            maximumStakeText = maximumStakeText.replace(
+              replaceData.searchValue,
+              replaceData.replaceValue
+            );
+          });
+        }
+        const removeRegex = options.removeRegex
+          ? options.removeRegex
+          : defaultRemoveRegex;
+        maximumStakeText = maximumStakeElement.textContent.replace(
+          removeRegex,
+          ''
+        );
         const maximumStakeRegex = options.maximumStakeRegex
           ? options.maximumStakeRegex
           : defaultMaximumStakeRegex;
@@ -37,6 +55,11 @@ export const maximumStakeReadyGenerator = (options: {
 const getMaximumStakeGenerator = (options: {
   maximumStakeElementSelector: string;
   maximumStakeRegex?: RegExp;
+  replaceDataArray?: {
+    searchValue: string | RegExp;
+    replaceValue: string;
+  }[];
+  removeRegex?: RegExp;
   context?: () => Document | Element;
 }) => (): number => {
   const context = options.context ? options.context() : document;
@@ -47,9 +70,19 @@ const getMaximumStakeGenerator = (options: {
     log('Не найдена максимальная сумма ставки', 'crimson');
     return 0;
   }
-  const maximumStakeText = maximumStakeElement.textContent
-    .trim()
-    .replace(removeRegex, '');
+  let maximumStakeText = maximumStakeElement.textContent.trim();
+  if (options.replaceDataArray) {
+    options.replaceDataArray.forEach((replaceData) => {
+      maximumStakeText = maximumStakeText.replace(
+        replaceData.searchValue,
+        replaceData.replaceValue
+      );
+    });
+  }
+  const removeRegex = options.removeRegex
+    ? options.removeRegex
+    : defaultRemoveRegex;
+  maximumStakeText = maximumStakeElement.textContent.replace(removeRegex, '');
   const maximumStakeRegex = options.maximumStakeRegex
     ? options.maximumStakeRegex
     : defaultMaximumStakeRegex;
