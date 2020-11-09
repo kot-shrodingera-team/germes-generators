@@ -35,10 +35,7 @@ export const minimumStakeReadyGenerator = (options: {
         const removeRegex = options.removeRegex
           ? options.removeRegex
           : defaultRemoveRegex;
-        minimumStakeText = minimumStakeElement.textContent.replace(
-          removeRegex,
-          ''
-        );
+        minimumStakeText = minimumStakeText.replace(removeRegex, '');
         const minimumStakeRegex = options.minimumStakeRegex
           ? options.minimumStakeRegex
           : defaultMinimumStakeRegex;
@@ -82,7 +79,7 @@ const getMinimumStakeGenerator = (options: {
   const removeRegex = options.removeRegex
     ? options.removeRegex
     : defaultRemoveRegex;
-  minimumStakeText = minimumStakeElement.textContent.replace(removeRegex, '');
+  minimumStakeText = minimumStakeText.replace(removeRegex, '');
   const minimumStakeRegex = options.minimumStakeRegex
     ? options.minimumStakeRegex
     : defaultMinimumStakeRegex;

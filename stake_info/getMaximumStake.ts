@@ -35,10 +35,7 @@ export const maximumStakeReadyGenerator = (options: {
         const removeRegex = options.removeRegex
           ? options.removeRegex
           : defaultRemoveRegex;
-        maximumStakeText = maximumStakeElement.textContent.replace(
-          removeRegex,
-          ''
-        );
+        maximumStakeText = maximumStakeText.replace(removeRegex, '');
         const maximumStakeRegex = options.maximumStakeRegex
           ? options.maximumStakeRegex
           : defaultMaximumStakeRegex;
@@ -82,7 +79,7 @@ const getMaximumStakeGenerator = (options: {
   const removeRegex = options.removeRegex
     ? options.removeRegex
     : defaultRemoveRegex;
-  maximumStakeText = maximumStakeElement.textContent.replace(removeRegex, '');
+  maximumStakeText = maximumStakeText.replace(removeRegex, '');
   const maximumStakeRegex = options.maximumStakeRegex
     ? options.maximumStakeRegex
     : defaultMaximumStakeRegex;
