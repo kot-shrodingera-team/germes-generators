@@ -1,11 +1,16 @@
 import { awaiter, log } from '@kot-shrodingera-team/germes-utils';
 
 const defaultBalanceRegex = /(\d+(?:\.\d+)?)/;
-const removeRegex = /[\s,']/g;
+const defaultRemoveRegex = /[\s,']/g;
 
 export const balanceReadyGenerator = (options: {
   balanceSelector: string;
   balanceRegex?: RegExp;
+  replaceDataArray?: {
+    searchValue: string | RegExp;
+    replaceValue: string;
+  }[];
+  removeRegex: RegExp;
   context?: () => Document | Element;
 }) => async (timeout = 5000, interval = 100): Promise<boolean> => {
   const context = options.context ? options.context() : document;
@@ -16,9 +21,19 @@ export const balanceReadyGenerator = (options: {
         if (!balanceElement) {
           return false;
         }
-        const balanceText = balanceElement.textContent
-          .trim()
-          .replace(removeRegex, '');
+        let balanceText = balanceElement.textContent.trim();
+        if (options.replaceDataArray) {
+          options.replaceDataArray.forEach((replaceData) => {
+            balanceText = balanceText.replace(
+              replaceData.searchValue,
+              replaceData.replaceValue
+            );
+          });
+        }
+        const removeRegex = options.removeRegex
+          ? options.removeRegex
+          : defaultRemoveRegex;
+        balanceText = balanceText.replace(removeRegex, '');
         const balanceRegex = options.balanceRegex
           ? options.balanceRegex
           : defaultBalanceRegex;
@@ -35,6 +50,11 @@ export const balanceReadyGenerator = (options: {
 export const getBalanceGenerator = (options: {
   balanceSelector: string;
   balanceRegex?: RegExp;
+  replaceDataArray?: {
+    searchValue: string | RegExp;
+    replaceValue: string;
+  }[];
+  removeRegex: RegExp;
   context?: () => Document | Element;
 }) => (): number => {
   const context = options.context ? options.context() : document;
@@ -45,9 +65,19 @@ export const getBalanceGenerator = (options: {
     log('Баланс не найден', 'crimson');
     return 0;
   }
-  const balanceText = balanceElement.textContent
-    .trim()
-    .replace(removeRegex, '');
+  let balanceText = balanceElement.textContent.trim();
+  if (options.replaceDataArray) {
+    options.replaceDataArray.forEach((replaceData) => {
+      balanceText = balanceText.replace(
+        replaceData.searchValue,
+        replaceData.replaceValue
+      );
+    });
+  }
+  const removeRegex = options.removeRegex
+    ? options.removeRegex
+    : defaultRemoveRegex;
+  balanceText = balanceText.replace(removeRegex, '');
   const balanceRegex = options.balanceRegex
     ? options.balanceRegex
     : defaultBalanceRegex;
