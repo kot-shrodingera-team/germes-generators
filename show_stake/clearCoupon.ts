@@ -1,6 +1,7 @@
 import { log, awaiter } from '@kot-shrodingera-team/germes-utils';
 
 const clearCouponGenerator = (options: {
+  preCheck?: () => boolean;
   getStakeCount: () => number;
   apiClear?: () => void;
   clearSingleSelector: string;
@@ -11,6 +12,9 @@ const clearCouponGenerator = (options: {
   };
   context?: () => Document | Element;
 }) => async (): Promise<boolean> => {
+  if (options.preCheck && options.preCheck()) {
+    return true;
+  }
   const context = options.context ? options.context() : document;
   const stakeCount = options.getStakeCount();
   if (stakeCount !== 0) {
