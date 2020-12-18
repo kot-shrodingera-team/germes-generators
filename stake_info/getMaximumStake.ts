@@ -58,13 +58,16 @@ const getMaximumStakeGenerator = (options: {
   }[];
   removeRegex?: RegExp;
   context?: () => Document | Element;
+  disableLog?: boolean;
 }) => (): number => {
   const context = options.context ? options.context() : document;
   const maximumStakeElement = context.querySelector(
     options.maximumStakeElementSelector
   );
   if (!maximumStakeElement) {
-    log('Не найдена максимальная сумма ставки', 'crimson');
+    if (options.disableLog !== true) {
+      log('Не найдена максимальная сумма ставки', 'crimson');
+    }
     return 0;
   }
   let maximumStakeText = maximumStakeElement.textContent.trim();
@@ -85,10 +88,12 @@ const getMaximumStakeGenerator = (options: {
     : defaultMaximumStakeRegex;
   const maximumStakeMatch = maximumStakeText.match(maximumStakeRegex);
   if (!maximumStakeMatch) {
-    log(
-      `Непонятный формат максимальной ставки: "${maximumStakeText}"`,
-      'crimson'
-    );
+    if (options.disableLog !== true) {
+      log(
+        `Непонятный формат максимальной ставки: "${maximumStakeText}"`,
+        'crimson'
+      );
+    }
     return 0;
   }
   return Number(maximumStakeMatch[1]);

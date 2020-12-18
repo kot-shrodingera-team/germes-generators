@@ -58,13 +58,16 @@ const getMinimumStakeGenerator = (options: {
   }[];
   removeRegex?: RegExp;
   context?: () => Document | Element;
+  disableLog?: boolean;
 }) => (): number => {
   const context = options.context ? options.context() : document;
   const minimumStakeElement = context.querySelector(
     options.minimumStakeElementSelector
   );
   if (!minimumStakeElement) {
-    log('Не найдена минимальная сумма ставки', 'crimson');
+    if (options.disableLog !== true) {
+      log('Не найдена минимальная сумма ставки', 'crimson');
+    }
     return 0;
   }
   let minimumStakeText = minimumStakeElement.textContent.trim();
@@ -85,10 +88,12 @@ const getMinimumStakeGenerator = (options: {
     : defaultMinimumStakeRegex;
   const minimumStakeMatch = minimumStakeText.match(minimumStakeRegex);
   if (!minimumStakeMatch) {
-    log(
-      `Непонятный формат маинимальной ставки: "${minimumStakeText}"`,
-      'crimson'
-    );
+    if (options.disableLog !== true) {
+      log(
+        `Непонятный формат маинимальной ставки: "${minimumStakeText}"`,
+        'crimson'
+      );
+    }
     return 0;
   }
   return Number(minimumStakeMatch[1]);
