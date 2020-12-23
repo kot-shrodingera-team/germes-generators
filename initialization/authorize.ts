@@ -20,6 +20,7 @@ const authorizeGenerator = (options: {
   passwordInputSelector: string;
   submitButtonSelector: string;
   inputType?: 'fireEvent' | 'react' | 'nativeInput';
+  fireEventNames?: string[];
   beforeSubmitDelay?: number;
   captchaSelector?: string;
   loginedWait?: {
@@ -95,7 +96,13 @@ const authorizeGenerator = (options: {
     } else {
       // eslint-disable-next-line no-param-reassign
       inputElement.value = value;
-      fireEvent(inputElement, 'input');
+      if (options.fireEventNames) {
+        options.fireEventNames.forEach((eventName) => {
+          fireEvent(inputElement, eventName);
+        });
+      } else {
+        fireEvent(inputElement, 'input');
+      }
     }
   };
   input(loginInput, worker.Login);
