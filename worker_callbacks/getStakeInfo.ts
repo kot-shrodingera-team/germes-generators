@@ -13,6 +13,7 @@ const getStakeInfoGenerator = (options: {
   checkStakeEnabled: () => boolean;
   getCoefficient: () => number;
   getParameter: () => number;
+  reloadCoupon?: boolean;
 }) => (): void => {
   if (options.isCouponOpenning()) {
     log(
@@ -45,12 +46,14 @@ const getStakeInfoGenerator = (options: {
     `Параметр: ${worker.StakeInfo.Parametr}`;
   log(message, 'lightgrey');
 
-  if (worker.StakeInfo.StakeCount !== 1) {
-    log(
-      `Количество ставок (${worker.StakeInfo.StakeCount}) в купоне не равно 1. Переоткрываем купон`,
-      'orange'
-    );
-    options.showStake();
+  if (!('reloadCoupon' in options) || options.reloadCoupon !== false) {
+    if (worker.StakeInfo.StakeCount !== 1) {
+      log(
+        `Количество ставок (${worker.StakeInfo.StakeCount}) в купоне не равно 1. Переоткрываем купон`,
+        'orange'
+      );
+      options.showStake();
+    }
   }
 };
 
