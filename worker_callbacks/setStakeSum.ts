@@ -11,7 +11,7 @@ const setStakeSumGenerator = (options: {
     falseOnSumChange: boolean;
   };
   inputType?: 'fireEvent' | 'react' | 'nativeInput';
-  fireEventName?: string;
+  fireEventNames?: string[];
   preInputCheck?: (number?: number) => boolean;
   context?: () => Document | Element;
 }) => (sum: number): boolean => {
@@ -55,10 +55,13 @@ const setStakeSumGenerator = (options: {
     setReactInputValue(inputElement, sum);
   } else {
     inputElement.value = String(sum);
-    fireEvent(
-      inputElement,
-      options.fireEventName ? options.fireEventName : 'input'
-    );
+    if (options.fireEventNames) {
+      options.fireEventNames.forEach((eventName) => {
+        fireEvent(inputElement, eventName);
+      });
+    } else {
+      fireEvent(inputElement, 'input');
+    }
   }
   if (falseOnSumChangeCheck) {
     log('Задержка после изменения суммы в купоне', 'orange');
