@@ -10,7 +10,7 @@ const getCurrentSumGenerator = (options: {
   context?: () => Document | Element;
 }) => (): number => {
   const context = options.context ? options.context() : document;
-  const sumInput = context.querySelector(options.sumInput) as HTMLInputElement;
+  const sumInput = context.querySelector<HTMLInputElement>(options.sumInput);
   if (!sumInput) {
     log('Не найдено поле ввода суммы ставки', 'crimson');
     return 0;

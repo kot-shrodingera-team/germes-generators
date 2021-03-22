@@ -28,9 +28,9 @@ const setStakeSumGenerator = (options: {
     );
     return false;
   }
-  const inputElement = context.querySelector(
+  const inputElement = context.querySelector<HTMLInputElement>(
     options.sumInputSelector
-  ) as HTMLInputElement;
+  );
   if (!inputElement) {
     log('Поле ввода ставки не найдено', 'crimson');
     return false;

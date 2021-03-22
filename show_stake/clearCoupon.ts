@@ -34,18 +34,18 @@ const clearCouponGenerator = (options: {
       options.apiClear();
     } else if (stakeCount === 1) {
       if (options.clearSingleSelector) {
-        const clearSingleButton = context.querySelector(
+        const clearSingleButton = context.querySelector<HTMLElement>(
           options.clearSingleSelector
-        ) as HTMLElement;
+        );
         if (!clearSingleButton) {
           log('Не найдена кнопка удаления ставки из купона', 'crimson');
           return false;
         }
         clearSingleButton.click();
       } else {
-        const clearAllButton = context.querySelector(
+        const clearAllButton = context.querySelector<HTMLElement>(
           options.clearAllSelector
-        ) as HTMLElement;
+        );
         if (!clearAllButton) {
           log('Не найдена кнопка очистки купона', 'crimson');
           return false;
@@ -53,9 +53,9 @@ const clearCouponGenerator = (options: {
         clearAllButton.click();
       }
     } else if (options.clearAllSelector) {
-      const clearAllButton = context.querySelector(
+      const clearAllButton = context.querySelector<HTMLElement>(
         options.clearAllSelector
-      ) as HTMLElement;
+      );
       if (!clearAllButton) {
         log('Не найдена кнопка очистки купона', 'crimson');
         return false;
@@ -63,8 +63,8 @@ const clearCouponGenerator = (options: {
       clearAllButton.click();
     } else {
       const clearSingleButtons = [
-        ...context.querySelectorAll(options.clearSingleSelector),
-      ] as HTMLElement[];
+        ...context.querySelectorAll<HTMLElement>(options.clearSingleSelector),
+      ];
       if (clearSingleButtons.length === 0) {
         log('Не найдены кнопки удаления ставок из купона', 'crimson');
         return false;

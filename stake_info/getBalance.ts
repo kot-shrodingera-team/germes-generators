@@ -58,9 +58,9 @@ export const getBalanceGenerator = (options: {
   context?: () => Document | Element;
 }) => (): number => {
   const context = options.context ? options.context() : document;
-  const balanceElement = context.querySelector(
+  const balanceElement = context.querySelector<HTMLElement>(
     options.balanceSelector
-  ) as HTMLElement;
+  );
   if (!balanceElement) {
     log('Баланс не найден', 'crimson');
     return 0;

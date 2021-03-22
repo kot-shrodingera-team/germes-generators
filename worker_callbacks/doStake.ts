@@ -18,9 +18,9 @@ const doStakeGenerator = (options: {
   if (options.preCheck && !options.preCheck()) {
     return false;
   }
-  const stakeButton = context.querySelector(
+  const stakeButton = context.querySelector<HTMLButtonElement>(
     options.doStakeButtonSelector
-  ) as HTMLButtonElement;
+  );
 
   if (!stakeButton) {
     log('Не найдена кнопка "Сделать ставку"', 'crimson');

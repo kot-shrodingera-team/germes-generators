@@ -41,11 +41,11 @@ const authorizeGenerator = (options: {
       : 1000;
     for (let i = 1; i <= loopCount; i += 1) {
       // eslint-disable-next-line no-await-in-loop
-      const openLoginFormButton = (await getElement(
+      const openLoginFormButton = await getElement<HTMLElement>(
         options.openForm.selector,
         1000,
         context
-      )) as HTMLButtonElement;
+      );
       if (!openLoginFormButton) {
         log('Не найдена кнопка открытия формы авторизации', 'crimson');
         return;
@@ -79,11 +79,11 @@ const authorizeGenerator = (options: {
       return;
     }
   }
-  const loginInput = (await getElement(
+  const loginInput = await getElement<HTMLInputElement>(
     options.loginInputSelector,
     5000,
     context
-  )) as HTMLInputElement;
+  );
   if (!loginInput) {
     log('Не найдено поле ввода логина', 'crimson');
     return;
@@ -106,21 +106,21 @@ const authorizeGenerator = (options: {
     }
   };
   input(loginInput, worker.Login);
-  const passwordInput = (await getElement(
+  const passwordInput = await getElement<HTMLInputElement>(
     options.passwordInputSelector,
     5000,
     context
-  )) as HTMLInputElement;
+  );
   if (!passwordInput) {
     log('Не найдено поле ввода пароля', 'crimson');
     return;
   }
   input(passwordInput, worker.Password);
-  const loginSubmitButton = (await getElement(
+  const loginSubmitButton = await getElement<HTMLElement>(
     options.submitButtonSelector,
     5000,
     context
-  )) as HTMLButtonElement;
+  );
   if (!loginSubmitButton) {
     log('Не найдена кнопка входа', 'crimson');
     return;
