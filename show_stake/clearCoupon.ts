@@ -7,9 +7,6 @@ const clearCouponGenerator = (options: {
   clearSingleSelector?: string;
   clearAllSelector?: string;
   postCheck?: () => Promise<boolean>;
-  maxUnload?: {
-    getMaximumStake: () => number;
-  };
   context?: () => Document | Element;
 }) => async (): Promise<boolean> => {
   if (
