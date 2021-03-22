@@ -2,7 +2,6 @@ import { log } from '@kot-shrodingera-team/germes-utils';
 
 const getStakeInfoGenerator = (options: {
   preAction?: () => void;
-  isCouponOpenning: () => boolean;
   showStake: () => Promise<void>;
   checkAuth: () => boolean;
   getStakeCount: () => number;
@@ -13,15 +12,7 @@ const getStakeInfoGenerator = (options: {
   checkStakeEnabled: () => boolean;
   getCoefficient: () => number;
   getParameter: () => number;
-  reloadCoupon?: boolean;
 }) => (): void => {
-  if (options.isCouponOpenning()) {
-    log(
-      'Купон переоткрывается, получение данных о ставке пропущено',
-      'lightgrey'
-    );
-    return;
-  }
   if (options.preAction) {
     options.preAction();
   }
@@ -45,16 +36,6 @@ const getStakeInfoGenerator = (options: {
     `Коэффициент: ${worker.StakeInfo.Coef}\n` +
     `Параметр: ${worker.StakeInfo.Parametr}`;
   log(message, 'lightgrey');
-
-  if (!('reloadCoupon' in options) || options.reloadCoupon !== false) {
-    if (worker.StakeInfo.StakeCount !== 1) {
-      log(
-        `Количество ставок (${worker.StakeInfo.StakeCount}) в купоне не равно 1. Переоткрываем купон`,
-        'orange'
-      );
-      options.showStake();
-    }
-  }
 };
 
 export default getStakeInfoGenerator;
