@@ -2,7 +2,6 @@ import { log } from '@kot-shrodingera-team/germes-utils';
 
 const getStakeInfoGenerator = (options: {
   preAction?: () => void;
-  showStake: () => Promise<void>;
   checkAuth: () => boolean;
   getStakeCount: () => number;
   getBalance: () => number;
