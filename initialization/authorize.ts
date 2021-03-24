@@ -27,8 +27,8 @@ const authorizeGenerator = (options: {
     loginedSelector: string;
     balanceReady: () => Promise<boolean>;
     updateBalance: () => void;
+    afterSuccesfulLogin?: () => Promise<void>;
   };
-  afterSuccesfulLogin?: () => Promise<void>;
   context?: () => Document | Element;
 }) => async (): Promise<void> => {
   const context = options.context ? options.context() : document;
@@ -159,8 +159,8 @@ const authorizeGenerator = (options: {
     } else {
       options.loginedWait.updateBalance();
     }
-    if (options.afterSuccesfulLogin) {
-      options.afterSuccesfulLogin();
+    if (options.loginedWait.afterSuccesfulLogin) {
+      options.loginedWait.afterSuccesfulLogin();
     }
   }
 };
