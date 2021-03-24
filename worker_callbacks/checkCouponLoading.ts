@@ -17,8 +17,8 @@ const checkCouponLoadingGenerator = (options: {
     ? options.timeout
     : 60000;
   if (timePassedSinceDoStake > timeout) {
-    log(`now = ${now.getTime()}`);
-    log(`doStakeTime = ${doStakeTime.getTime()}`);
+    log(`now = ${now.getTime()}`, 'white', true);
+    log(`doStakeTime = ${doStakeTime.getTime()}`, 'white', true);
     log(`timePassedSinceDoStake = ${timePassedSinceDoStake}`);
     log(`timeout = ${timeout}`);
     log(
