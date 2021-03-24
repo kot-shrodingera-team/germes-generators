@@ -10,9 +10,9 @@ const setStakeSumGenerator = (options: {
   alreadySetCheck?: {
     falseOnSumChange: boolean;
   };
+  preInputCheck?: (number?: number) => boolean;
   inputType?: 'fireEvent' | 'react' | 'nativeInput';
   fireEventNames?: string[];
-  preInputCheck?: (number?: number) => boolean;
   context?: () => Document | Element;
 }) => (sum: number): boolean => {
   const context = options.context ? options.context() : document;
