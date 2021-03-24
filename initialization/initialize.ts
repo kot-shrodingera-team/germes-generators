@@ -2,12 +2,12 @@ import { log } from '@kot-shrodingera-team/germes-utils';
 
 const initializeGenerator = (options: {
   authStateReady: (timeout?: number) => Promise<void>;
+  authStateReadyTimeout?: number;
   checkAuth: () => boolean;
   balanceReady: () => Promise<boolean>;
   updateBalance: () => void;
   authorize: () => Promise<void>;
   afterSuccesfulLogin?: () => Promise<void>;
-  authStateReadyTimeout?: number;
 }) => async (): Promise<void> => {
   if (worker.LoginTry > 3) {
     log('Превышен лимит попыток авторизации', 'crimson');
