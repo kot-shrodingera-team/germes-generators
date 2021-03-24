@@ -1,5 +1,19 @@
 import { log } from '@kot-shrodingera-team/germes-utils';
 
+/**
+ * Генератор колбэка getStakeInfo (сбор информации о ставке)
+ * @param options Опции:
+ * - preAction - Функция, выполняющаяся перед сбором информации
+ * - checkAuth - Функция определения авторизации
+ * - getStakeCount - Функция получения количества ставок в купоне
+ * - getBalance - Функция получения баланса
+ * - getMinimumStake - Функция получения минимальной ставки
+ * - getMaximumStake - Функция получения максимальной ставки
+ * - getCurrentSum - Функция получения текущей суммы в купоне
+ * - checkStakeEnabled - Функция проверки доступности ставки
+ * - getCoefficient - Функция получения коэффициента
+ * - getParameter - Функция получения параметра ставки
+ */
 const getStakeInfoGenerator = (options: {
   preAction?: () => void;
   checkAuth: () => boolean;

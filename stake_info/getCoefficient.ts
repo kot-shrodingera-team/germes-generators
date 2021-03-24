@@ -1,6 +1,19 @@
 import { log } from '@kot-shrodingera-team/germes-utils';
 import { defaultRemoveRegex, defaultNumberRegex } from './defaultRegexes';
 
+/**
+ * Генератор функции получения коэффициента
+ * @param options Опции:
+ * - coefficientSelector - Селектор элемента коэффициента
+ * - getCoefficientText - Функция получения текста коэффициента, если указана, то используется она, а не поиск элемента по селектору
+ * - replaceDataArray - Массив заменяемых значений в тексте элемента коэффициента
+ * -- searchValue - Искомое значение
+ * -- replaceValue - Значение, на которое заменяется
+ * - removeRegex - Регулярное выражение для удаления символов из текста элемента коэффициента, по умолчанию /[\s,']/g;
+ * - coefficientRegex - Регулярное выражение для получения значения коэффициента из полученного текста, по умолчанию /(\d+(?:\.\d+)?)/
+ * - context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
+ * @returns Функция, которая возвращает коэффициент
+ */
 const getCoefficientGenerator = (options: {
   coefficientSelector: string;
   getCoefficientText?: () => string;

@@ -1,5 +1,17 @@
 import { log, awaiter } from '@kot-shrodingera-team/germes-utils';
 
+/**
+ * Генератор функции очистки купона
+ * @param options Опции:
+ * - preCheck - Функция проверки перед очисткой, если вернёт false, очистка считается не успешной
+ * - getStakeCount - Функция получения количеста ставок в купоне
+ * - apiClear - Функция очистки купона по Api
+ * - clearSingleSelector - Селектор элемента удаления одной ставки из купона
+ * - clearAllSelector -Селектор элемента очистки купона
+ * - postCheck - Функция проверки после очистк, если вернёт false, очистка считается не успешной
+ * - context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
+ * @returns Асинхронная функция, которая возвращает true, если очистка купона успешна, иначе false
+ */
 const clearCouponGenerator = (options: {
   preCheck?: () => Promise<boolean>;
   getStakeCount: () => number;

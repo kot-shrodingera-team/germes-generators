@@ -1,6 +1,21 @@
 import { log, awaiter } from '@kot-shrodingera-team/germes-utils';
 import { defaultRemoveRegex, defaultNumberRegex } from './defaultRegexes';
 
+/**
+ * Генератор функции ожидания появления минимальной ставки
+ * @param options Опции:
+ * - minimumStakeSelector - Селектор элемента минимальной ставки
+ * - replaceDataArray - Массив заменяемых значений в тексте элемента минимальной ставки
+ * -- searchValue - Искомое значение
+ * -- replaceValue - Значение, на которое заменяется
+ * - removeRegex - Регулярное выражение для удаления символов из текста элемента минимальной ставки, по умолчанию /[\s,']/g;
+ * - minimumStakeRegex - Регулярное выражение для получения значения минимальной ставки из полученного текста, по умолчанию /(\d+(?:\.\d+)?)/
+ * - context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
+ * - disableLog - Отключение вывода логов, по умолчанию false
+ * @returns Асинхронная функция, которая возвращает true, если появилась минимальная ставка, иначе false
+ * - timeout - Таймаут проверки, по умолчанию 5000
+ * - interval - Интервал проверки, по умолчанию 100
+ */
 export const minimumStakeReadyGenerator = (options: {
   minimumStakeSelector: string;
   replaceDataArray?: {
@@ -47,6 +62,18 @@ export const minimumStakeReadyGenerator = (options: {
   return minimumStakeLoaded;
 };
 
+/**
+ * Генератор функции получения минимальной ставки
+ * @param options Опции:
+ * - minimumStakeSelector - Селектор элемента минимальной ставки
+ * - replaceDataArray - Массив заменяемых значений в тексте элемента минимальной ставки
+ * -- searchValue - Искомое значение
+ * -- replaceValue - Значение, на которое заменяется
+ * - removeRegex - Регулярное выражение для удаления символов из текста элемента минимальной ставки, по умолчанию /[\s,']/g;
+ * - minimumStakeRegex - Регулярное выражение для получения значения минимальной ставки из полученного текста, по умолчанию /(\d+(?:\.\d+)?)/
+ * - context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
+ * @returns Функция, которая возвращает минимальную ставку
+ */
 const getMinimumStakeGenerator = (options: {
   minimumStakeSelector: string;
   replaceDataArray?: {

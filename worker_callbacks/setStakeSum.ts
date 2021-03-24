@@ -5,6 +5,18 @@ import {
 } from '@kot-shrodingera-team/germes-utils';
 import { setReactInputValue } from '@kot-shrodingera-team/germes-utils/reactUtils';
 
+/**
+ * Генератор колбэка setStakeSum (ввод суммы ставки)
+ * @param options Опции:
+ * - sumInputSelector - Селектор элемента ввода суммы в купоне
+ * - alreadySetCheck - Проверка, введена ли уже нужная сумма
+ * -- falseOnSumChange - Считать ввод суммы не успешным, после смены суммы в купоне, по умолчанию false
+ * - preInputCheck - Функция проверки перед вводом суммы ставки, если вернёт false, ввод считается не успешным
+ * - inputType - Тип ввода данных в полe суммы ставки, по умолчанию fireEvent
+ * - fireEventNames - Массив имён событий, вызываемых при использовании inputType = fireEvent, по умолчанию одно событие input
+ * - context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
+ * @returns Функция, которая возвращает true, если ввод суммы ставки успешен, иначе false
+ */
 const setStakeSumGenerator = (options: {
   sumInputSelector: string;
   alreadySetCheck?: {

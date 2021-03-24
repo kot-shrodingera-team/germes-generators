@@ -7,6 +7,30 @@ import {
 } from '@kot-shrodingera-team/germes-utils';
 import { setReactInputValue } from '@kot-shrodingera-team/germes-utils/reactUtils';
 
+/**
+ * Генератор функции авторизации на сайте бк
+ * @param options Опции:
+ * - openForm - Открытие формы авторизации
+ * -- selector - Селектор элемента открытия формы
+ * -- openedSelector - Селектор элемента открытой формы
+ * - - loopCount - Количество попыток открытия формы, по умолчанию 10
+ * -- triesInterval - Интервал попыток открытия формы в мс, по умолчанию 1000
+ * -- afterOpenDelay - Задержка после появления открытой формы, по умолчанию 0
+ * - setLoginType - Функция выбота типа логина (например по телефону, e-mail и тд)
+ * - loginInputSelector - Селектор элемента ввода логина
+ * - passwordInputSelector - Селектор элемента ввода пароля
+ * - submitButtonSelector - Селектор элемента submit (кнопка входа)
+ * - inputType - Тип ввода данных в поля логина и пароля, по умолчанию fireEvent
+ * - fireEventNames - Массив имён событий, вызываемых при использовании inputType = fireEvent, по умолчанию одно событие input
+ * - beforeSubmitDelay - Задержка перед submit (после ввода данных), по умолчанию 0
+ * - captchaSelector - Селектор капчи, если она появляется после попытки входа
+ * - loginedWait - Ожидание появления авторизации (если страница не перезагружается)
+ * -- loginedSelector - Селектор элемента наличия авторизации
+ * -- balanceReady - Функция ожидания появления баланса
+ * -- updateBalance - Функция обновления баланса в боте
+ * -- afterSuccesfulLogin - Функция, выполняющася после успешной авторизации
+ * - context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
+ */
 const authorizeGenerator = (options: {
   openForm?: {
     selector: string;

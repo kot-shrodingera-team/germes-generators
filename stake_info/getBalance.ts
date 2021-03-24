@@ -1,6 +1,20 @@
 import { awaiter, log } from '@kot-shrodingera-team/germes-utils';
 import { defaultRemoveRegex, defaultNumberRegex } from './defaultRegexes';
 
+/**
+ * Генератор функции ожидания появления баланса
+ * @param options Опции:
+ * - balanceSelector - Селектор элемента баланса
+ * - replaceDataArray - Массив заменяемых значений в тексте элемента баланса
+ * -- searchValue - Искомое значение
+ * -- replaceValue - Значение, на которое заменяется
+ * - removeRegex - Регулярное выражение для удаления символов из текста элемента баланса, по умолчанию /[\s,']/g;
+ * - balanceRegex - Регулярное выражение для получения значения баланса из полученного текста, по умолчанию /(\d+(?:\.\d+)?)/
+ * - context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
+ * @returns Асинхронная функция, которая возвращает true, если появился баланс, иначе false
+ * - timeout - Таймаут проверки, по умолчанию 5000
+ * - interval - Интервал проверки, по умолчанию 100
+ */
 export const balanceReadyGenerator = (options: {
   balanceSelector: string;
   replaceDataArray?: {
@@ -45,6 +59,18 @@ export const balanceReadyGenerator = (options: {
   return balanceLoaded;
 };
 
+/**
+ * Генератор функции получения баланса
+ * @param options Опции:
+ * - balanceSelector - Селектор элемента баланса
+ * - replaceDataArray - Массив заменяемых значений в тексте элемента баланса
+ * -- searchValue - Искомое значение
+ * -- replaceValue - Значение, на которое заменяется
+ * - removeRegex - Регулярное выражение для удаления символов из текста элемента баланса, по умолчанию /[\s,']/g;
+ * - balanceRegex - Регулярное выражение для получения значения баланса из полученного текста, по умолчанию /(\d+(?:\.\d+)?)/
+ * - context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
+ * @returns Функция, которая возвращает баланс
+ */
 export const getBalanceGenerator = (options: {
   balanceSelector: string;
   replaceDataArray?: {

@@ -1,25 +1,21 @@
 import { getElement, log } from '@kot-shrodingera-team/germes-utils';
 
+/**
+ * Генератор функции ожидания готовности определения авторизации
+ * @param options Опции:
+ * - noAuthElementSelector - Селектор элемента отсутствия авторизации
+ * - authElementSelector - Селектор элемента наличия авторизации
+ * - maxDelayAfterNoAuthElementAppeared - Таймаут ожидания элемента наличия авторизации после появления элемента отсутствия авторизации, по умолчанию 0
+ * - logging - вывод логов, по умолчанию true
+ * - context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
+ * @returns Асинхронная функция, которая возвращает true, если есть готовность определения авторизации, иначе false
+ * - timeout - Таймаут проверки, по умолчанию 5000
+ */
 export const authStateReadyGenerator = (options: {
-  /**
-   * Селектор элемента отсутствия авторизации, например, кнопка авторизации
-   */
   noAuthElementSelector: string;
-  /**
-   * Селектор элемента наличия авторизации, например, кнопка аккаунта или баланс
-   */
   authElementSelector: string;
-  /**
-   * Ожидание элемента наличия авторизации после появления элемента отсутствия авторизации
-   */
   maxDelayAfterNoAuthElementAppeared?: number;
-  /**
-   * Включение логгирования
-   */
   logging?: boolean;
-  /**
-   * Контекст поиска элементов
-   */
   context?: () => Document | Element;
 }) => async (timeout = 5000): Promise<void> => {
   const context = options.context ? options.context() : document;
@@ -61,6 +57,13 @@ export const authStateReadyGenerator = (options: {
   }
 };
 
+/**
+ * Генератор функции определения авторизации
+ * @param options Опции:
+ * - authElementSelector - Селектор элемента наличия авторизации
+ * - context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
+ * @returns Функция, которая возвращает true, если есть авторизация, иначе false
+ */
 const checkAuthGenerator = (options: {
   authElementSelector: string;
   context?: () => Document | Element;

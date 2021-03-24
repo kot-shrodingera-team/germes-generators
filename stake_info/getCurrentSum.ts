@@ -1,6 +1,19 @@
 import { log } from '@kot-shrodingera-team/germes-utils';
 import { defaultNumberRegex, defaultRemoveRegex } from './defaultRegexes';
 
+/**
+ * Генератор функции получения текущей суммы в купоне
+ * @param options Опции:
+ * - sumInputSelector - Селектор элемента ввода суммы в купоне
+ * - zeroValues - Массив текстовых значений суммы в купоне, которые расцениваются как 0
+ * - replaceDataArray - Массив заменяемых значений в тексте элемента ввода суммы в купоне
+ * -- searchValue - Искомое значение
+ * -- replaceValue - Значение, на которое заменяется
+ * - removeRegex - Регулярное выражение для удаления символов из текста элемента ввода суммы в купоне, по умолчанию /[\s,']/g;
+ * - currentSumRegex - Регулярное выражение для получения значения текущей суммы в купоне из полученного текста, по умолчанию /(\d+(?:\.\d+)?)/
+ * - context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
+ * @returns Функция, которая возвращает текущую сумму в купоне
+ */
 const getCurrentSumGenerator = (options: {
   sumInputSelector: string;
   zeroValues?: string[];

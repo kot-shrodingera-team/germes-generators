@@ -1,5 +1,18 @@
 import { log, timeString } from '@kot-shrodingera-team/germes-utils';
 
+/**
+ * Генератор колбэка doStake (попытка ставки)
+ * @param options Опции:
+ * - preCheck - Функция проверки перед попыткой ставки, если вернёт false, попытка ставки считается не успешной
+ * - doStakeButtonSelector - Селектор элемента кнопки ставки
+ * -- errorClasses - Массив объектов в виде пар className (класс какой-то ошибки кнопки ставки) - message
+ * - disabledCheck - Проверка кнопки ставки на аттрибут disabled, по умолчанию false
+ * - getCoefficient - Функции получения коэффициента, для проверки
+ * - postCheck - Функция проверки после попыткой ставки, если вернёт false, попытка ставки считается не успешной
+ * - clearDoStakeTime - Функция сброса момента начала попытки ставки
+ * - context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
+ * @returns Функция, которая возвращает true, если попытка ставки успешна, иначе false
+ */
 const doStakeGenerator = (options: {
   preCheck?: () => boolean;
   doStakeButtonSelector: string;

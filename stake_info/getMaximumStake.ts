@@ -1,6 +1,20 @@
 import { log, awaiter } from '@kot-shrodingera-team/germes-utils';
 import { defaultRemoveRegex, defaultNumberRegex } from './defaultRegexes';
 
+/**
+ * Генератор функции ожидания появления максимальной ставки
+ * @param options Опции:
+ * - maximumStakeSelector - Селектор элемента максимальной ставки
+ * - replaceDataArray - Массив заменяемых значений в тексте элемента максимальной ставки
+ * -- searchValue - Искомое значение
+ * -- replaceValue - Значение, на которое заменяется
+ * - removeRegex - Регулярное выражение для удаления символов из текста элемента максимальной ставки, по умолчанию /[\s,']/g;
+ * - maximumStakeRegex - Регулярное выражение для получения значения максимальной ставки из полученного текста, по умолчанию /(\d+(?:\.\d+)?)/
+ * - context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
+ * @returns Асинхронная функция, которая возвращает true, если появилась максимальная ставка, иначе false
+ * - timeout - Таймаут проверки, по умолчанию 5000
+ * - interval - Интервал проверки, по умолчанию 100
+ */
 export const maximumStakeReadyGenerator = (options: {
   maximumStakeSelector: string;
   replaceDataArray?: {
@@ -47,6 +61,19 @@ export const maximumStakeReadyGenerator = (options: {
   return maximumStakeLoaded;
 };
 
+/**
+ * Генератор функции получения максимальной ставки
+ * @param options Опции:
+ * - maximumStakeSelector - Селектор элемента максимальной ставки
+ * - replaceDataArray - Массив заменяемых значений в тексте элемента максимальной ставки
+ * -- searchValue - Искомое значение
+ * -- replaceValue - Значение, на которое заменяется
+ * - removeRegex - Регулярное выражение для удаления символов из текста элемента максимальной ставки, по умолчанию /[\s,']/g;
+ * - maximumStakeRegex - Регулярное выражение для получения значения максимальной ставки из полученного текста, по умолчанию /(\d+(?:\.\d+)?)/
+ * - context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
+ * - disableLog - Отключение вывода логов, по умолчанию false
+ * @returns Функция, которая возвращает максимальную ставку
+ */
 const getMaximumStakeGenerator = (options: {
   maximumStakeSelector: string;
   replaceDataArray?: {

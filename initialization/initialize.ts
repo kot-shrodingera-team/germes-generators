@@ -1,5 +1,16 @@
 import { log } from '@kot-shrodingera-team/germes-utils';
 
+/**
+ * Генератор функции проверка авторизации и вызова авторизации, если нужно
+ * @param options Опции:
+ * - authStateReady - Функция ожидания готовности определения авторизации
+ * - authStateReadyTimeout - Таймаут функции ожидания готовности определения авторизации
+ * - checkAuth - Функция проверки наличия авторизации
+ * - balanceReady - Функция ожидания появления баланса
+ * - updateBalance - Функция обновления баланса в боте
+ * - authorize - Функция авторизации на сайте бк
+ * - afterSuccesfulLogin - Функция, выполняющася после успешной авторизации
+ */
 const initializeGenerator = (options: {
   authStateReady: (timeout?: number) => Promise<void>;
   authStateReadyTimeout?: number;
