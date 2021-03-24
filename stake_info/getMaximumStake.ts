@@ -2,13 +2,13 @@ import { log, awaiter } from '@kot-shrodingera-team/germes-utils';
 import { defaultRemoveRegex, defaultNumberRegex } from './defaultRegexes';
 
 export const maximumStakeReadyGenerator = (options: {
-  maximumStakeElementSelector: string;
-  maximumStakeRegex?: RegExp;
+  maximumStakeSelector: string;
   replaceDataArray?: {
     searchValue: string | RegExp;
     replaceValue: string;
   }[];
   removeRegex?: RegExp;
+  maximumStakeRegex?: RegExp;
   context?: () => Document | Element;
 }) => async (timeout = 5000, interval = 100): Promise<boolean> => {
   const context = options.context ? options.context() : document;
@@ -16,7 +16,7 @@ export const maximumStakeReadyGenerator = (options: {
     await awaiter(
       () => {
         const maximumStakeElement = context.querySelector(
-          options.maximumStakeElementSelector
+          options.maximumStakeSelector
         );
         if (!maximumStakeElement) {
           return false;
@@ -48,19 +48,19 @@ export const maximumStakeReadyGenerator = (options: {
 };
 
 const getMaximumStakeGenerator = (options: {
-  maximumStakeElementSelector: string;
-  maximumStakeRegex?: RegExp;
+  maximumStakeSelector: string;
   replaceDataArray?: {
     searchValue: string | RegExp;
     replaceValue: string;
   }[];
   removeRegex?: RegExp;
+  maximumStakeRegex?: RegExp;
   context?: () => Document | Element;
   disableLog?: boolean;
 }) => (): number => {
   const context = options.context ? options.context() : document;
   const maximumStakeElement = context.querySelector(
-    options.maximumStakeElementSelector
+    options.maximumStakeSelector
   );
   if (!maximumStakeElement) {
     if (options.disableLog !== true) {
