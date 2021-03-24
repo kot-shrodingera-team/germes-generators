@@ -2,13 +2,13 @@ import { log, awaiter } from '@kot-shrodingera-team/germes-utils';
 import { defaultRemoveRegex, defaultNumberRegex } from './defaultRegexes';
 
 export const minimumStakeReadyGenerator = (options: {
-  minimumStakeElementSelector: string;
-  minimumStakeRegex?: RegExp;
+  minimumStakeSelector: string;
   replaceDataArray?: {
     searchValue: string | RegExp;
     replaceValue: string;
   }[];
   removeRegex?: RegExp;
+  minimumStakeRegex?: RegExp;
   context?: () => Document | Element;
 }) => async (timeout = 5000, interval = 100): Promise<boolean> => {
   const context = options.context ? options.context() : document;
@@ -16,7 +16,7 @@ export const minimumStakeReadyGenerator = (options: {
     await awaiter(
       () => {
         const minimumStakeElement = context.querySelector(
-          options.minimumStakeElementSelector
+          options.minimumStakeSelector
         );
         if (!minimumStakeElement) {
           return false;
@@ -48,19 +48,19 @@ export const minimumStakeReadyGenerator = (options: {
 };
 
 const getMinimumStakeGenerator = (options: {
-  minimumStakeElementSelector: string;
-  minimumStakeRegex?: RegExp;
+  minimumStakeSelector: string;
   replaceDataArray?: {
     searchValue: string | RegExp;
     replaceValue: string;
   }[];
   removeRegex?: RegExp;
+  minimumStakeRegex?: RegExp;
   context?: () => Document | Element;
   disableLog?: boolean;
 }) => (): number => {
   const context = options.context ? options.context() : document;
   const minimumStakeElement = context.querySelector(
-    options.minimumStakeElementSelector
+    options.minimumStakeSelector
   );
   if (!minimumStakeElement) {
     if (options.disableLog !== true) {
