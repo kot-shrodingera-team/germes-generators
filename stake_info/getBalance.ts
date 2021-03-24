@@ -3,12 +3,12 @@ import { defaultRemoveRegex, defaultNumberRegex } from './defaultRegexes';
 
 export const balanceReadyGenerator = (options: {
   balanceSelector: string;
-  balanceRegex?: RegExp;
   replaceDataArray?: {
     searchValue: string | RegExp;
     replaceValue: string;
   }[];
   removeRegex?: RegExp;
+  balanceRegex?: RegExp;
   context?: () => Document | Element;
 }) => async (timeout = 5000, interval = 100): Promise<boolean> => {
   const context = options.context ? options.context() : document;
@@ -47,12 +47,12 @@ export const balanceReadyGenerator = (options: {
 
 export const getBalanceGenerator = (options: {
   balanceSelector: string;
-  balanceRegex?: RegExp;
   replaceDataArray?: {
     searchValue: string | RegExp;
     replaceValue: string;
   }[];
   removeRegex?: RegExp;
+  balanceRegex?: RegExp;
   context?: () => Document | Element;
 }) => (): number => {
   const context = options.context ? options.context() : document;
