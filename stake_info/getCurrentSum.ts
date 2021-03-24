@@ -1,7 +1,5 @@
 import { log } from '@kot-shrodingera-team/germes-utils';
-
-const defaultCurrentSumRegex = /(\d+(?:\.\d+)?)/;
-const removeRegex = /[\s,']/g;
+import { defaultNumberRegex, defaultRemoveRegex } from './defaultRegexes';
 
 const getCurrentSumGenerator = (options: {
   sumInput: string;
@@ -24,7 +22,7 @@ const getCurrentSumGenerator = (options: {
   }
   const currentSumRegex = options.currentSumRegex
     ? options.currentSumRegex
-    : defaultCurrentSumRegex;
+    : defaultNumberRegex;
   const sumMatch = sumText.match(currentSumRegex);
   if (!sumMatch) {
     log(`Непонятный формат текущей суммы ставки: "${sumText}"`, 'crimson');

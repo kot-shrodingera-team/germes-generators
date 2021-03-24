@@ -1,6 +1,5 @@
 import { log } from '@kot-shrodingera-team/germes-utils';
-
-const defaultCoefficientRegex = /(\d+(?:\.\d+)?)/;
+import { defaultRemoveRegex, defaultNumberRegex } from './defaultRegexes';
 
 const getCoefficientGenerator = (options: {
   coefficientSelector: string;
@@ -26,7 +25,7 @@ const getCoefficientGenerator = (options: {
   const coefficientText = coefficientElement.textContent.trim();
   const coefficientRegex = options.coefficientRegex
     ? options.coefficientRegex
-    : defaultCoefficientRegex;
+    : defaultNumberRegex;
   const coefficientMatch = coefficientText.match(coefficientRegex);
   if (!coefficientMatch) {
     log(`Непонятный формат коэффициента: "${coefficientText}"`, 'crimson');

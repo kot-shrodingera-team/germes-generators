@@ -1,7 +1,5 @@
 import { log, awaiter } from '@kot-shrodingera-team/germes-utils';
-
-const defaultMinimumStakeRegex = /(\d+(?:\.\d+)?)/;
-const defaultRemoveRegex = /[\s,']/g;
+import { defaultRemoveRegex, defaultNumberRegex } from './defaultRegexes';
 
 export const minimumStakeReadyGenerator = (options: {
   minimumStakeElementSelector: string;
@@ -38,7 +36,7 @@ export const minimumStakeReadyGenerator = (options: {
         minimumStakeText = minimumStakeText.replace(removeRegex, '');
         const minimumStakeRegex = options.minimumStakeRegex
           ? options.minimumStakeRegex
-          : defaultMinimumStakeRegex;
+          : defaultNumberRegex;
         const minimumStakeMatch = minimumStakeText.match(minimumStakeRegex);
         return Boolean(minimumStakeMatch);
       },
@@ -85,7 +83,7 @@ const getMinimumStakeGenerator = (options: {
   minimumStakeText = minimumStakeText.replace(removeRegex, '');
   const minimumStakeRegex = options.minimumStakeRegex
     ? options.minimumStakeRegex
-    : defaultMinimumStakeRegex;
+    : defaultNumberRegex;
   const minimumStakeMatch = minimumStakeText.match(minimumStakeRegex);
   if (!minimumStakeMatch) {
     if (options.disableLog !== true) {

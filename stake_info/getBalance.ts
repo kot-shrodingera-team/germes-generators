@@ -1,7 +1,5 @@
 import { awaiter, log } from '@kot-shrodingera-team/germes-utils';
-
-const defaultBalanceRegex = /(\d+(?:\.\d+)?)/;
-const defaultRemoveRegex = /[\s,']/g;
+import { defaultRemoveRegex, defaultNumberRegex } from './defaultRegexes';
 
 export const balanceReadyGenerator = (options: {
   balanceSelector: string;
@@ -36,7 +34,7 @@ export const balanceReadyGenerator = (options: {
         balanceText = balanceText.replace(removeRegex, '');
         const balanceRegex = options.balanceRegex
           ? options.balanceRegex
-          : defaultBalanceRegex;
+          : defaultNumberRegex;
         const balanceMatch = balanceText.match(balanceRegex);
         return Boolean(balanceMatch);
       },
@@ -80,7 +78,7 @@ export const getBalanceGenerator = (options: {
   balanceText = balanceText.replace(removeRegex, '');
   const balanceRegex = options.balanceRegex
     ? options.balanceRegex
-    : defaultBalanceRegex;
+    : defaultNumberRegex;
   const balanceMatch = balanceText.match(balanceRegex);
   if (!balanceMatch) {
     log(`Непонятный формат баланса: "${balanceText}"`, 'crimson');

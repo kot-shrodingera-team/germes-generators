@@ -1,7 +1,5 @@
 import { log, awaiter } from '@kot-shrodingera-team/germes-utils';
-
-const defaultMaximumStakeRegex = /(\d+(?:\.\d+)?)/;
-const defaultRemoveRegex = /[\s,']/g;
+import { defaultRemoveRegex, defaultNumberRegex } from './defaultRegexes';
 
 export const maximumStakeReadyGenerator = (options: {
   maximumStakeElementSelector: string;
@@ -38,7 +36,7 @@ export const maximumStakeReadyGenerator = (options: {
         maximumStakeText = maximumStakeText.replace(removeRegex, '');
         const maximumStakeRegex = options.maximumStakeRegex
           ? options.maximumStakeRegex
-          : defaultMaximumStakeRegex;
+          : defaultNumberRegex;
         const maximumStakeMatch = maximumStakeText.match(maximumStakeRegex);
         return Boolean(maximumStakeMatch);
       },
@@ -85,7 +83,7 @@ const getMaximumStakeGenerator = (options: {
   maximumStakeText = maximumStakeText.replace(removeRegex, '');
   const maximumStakeRegex = options.maximumStakeRegex
     ? options.maximumStakeRegex
-    : defaultMaximumStakeRegex;
+    : defaultNumberRegex;
   const maximumStakeMatch = maximumStakeText.match(maximumStakeRegex);
   if (!maximumStakeMatch) {
     if (options.disableLog !== true) {
