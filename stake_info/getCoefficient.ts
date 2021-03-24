@@ -4,6 +4,11 @@ import { defaultRemoveRegex, defaultNumberRegex } from './defaultRegexes';
 const getCoefficientGenerator = (options: {
   coefficientSelector: string;
   getCoefficientText?: () => string;
+  replaceDataArray?: {
+    searchValue: string | RegExp;
+    replaceValue: string;
+  }[];
+  removeRegex?: RegExp;
   coefficientRegex?: RegExp;
   context?: () => Document | Element;
 }) => (): number => {
@@ -22,7 +27,19 @@ const getCoefficientGenerator = (options: {
     log('Коэффициент не найден', 'crimson');
     return 0;
   }
-  const coefficientText = coefficientElement.textContent.trim();
+  let coefficientText = coefficientElement.textContent.trim();
+  if (options.replaceDataArray) {
+    options.replaceDataArray.forEach((replaceData) => {
+      coefficientText = coefficientText.replace(
+        replaceData.searchValue,
+        replaceData.replaceValue
+      );
+    });
+  }
+  const removeRegex = options.removeRegex
+    ? options.removeRegex
+    : defaultRemoveRegex;
+  coefficientText = coefficientText.replace(removeRegex, '');
   const coefficientRegex = options.coefficientRegex
     ? options.coefficientRegex
     : defaultNumberRegex;
