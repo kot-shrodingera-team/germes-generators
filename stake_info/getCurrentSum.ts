@@ -2,7 +2,7 @@ import { log } from '@kot-shrodingera-team/germes-utils';
 import { defaultNumberRegex, defaultRemoveRegex } from './defaultRegexes';
 
 const getCurrentSumGenerator = (options: {
-  sumInput: string;
+  sumInputSelector: string;
   zeroValues?: string[];
   replaceDataArray?: {
     searchValue: string | RegExp;
@@ -13,21 +13,23 @@ const getCurrentSumGenerator = (options: {
   context?: () => Document | Element;
 }) => (): number => {
   const context = options.context ? options.context() : document;
-  const sumInput = context.querySelector<HTMLInputElement>(options.sumInput);
-  if (!sumInput) {
+  const sumInputElement = context.querySelector<HTMLInputElement>(
+    options.sumInputSelector
+  );
+  if (!sumInputElement) {
     log('Не найдено поле ввода суммы ставки', 'crimson');
     return 0;
   }
-  let sumText = sumInputElement.value.trim();
-  if (sumText === '') {
+  let sumInputText = sumInputElement.value.trim();
+  if (sumInputText === '') {
     return 0;
   }
-  if (options.zeroValues && options.zeroValues.includes(sumText)) {
+  if (options.zeroValues && options.zeroValues.includes(sumInputText)) {
     return 0;
   }
   if (options.replaceDataArray) {
     options.replaceDataArray.forEach((replaceData) => {
-      sumText = sumText.replace(
+      sumInputText = sumInputText.replace(
         replaceData.searchValue,
         replaceData.replaceValue
       );
@@ -36,13 +38,13 @@ const getCurrentSumGenerator = (options: {
   const removeRegex = options.removeRegex
     ? options.removeRegex
     : defaultRemoveRegex;
-  sumText = sumText.replace(removeRegex, '');
+  sumInputText = sumInputText.replace(removeRegex, '');
   const currentSumRegex = options.currentSumRegex
     ? options.currentSumRegex
     : defaultNumberRegex;
-  const sumMatch = sumText.match(currentSumRegex);
+  const sumMatch = sumInputText.match(currentSumRegex);
   if (!sumMatch) {
-    log(`Непонятный формат текущей суммы ставки: "${sumText}"`, 'crimson');
+    log(`Непонятный формат текущей суммы ставки: "${sumInputText}"`, 'crimson');
     return 0;
   }
   return Number(sumMatch[1]);
