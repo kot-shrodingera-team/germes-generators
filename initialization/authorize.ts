@@ -8,53 +8,112 @@ import {
 import { setReactInputValue } from '@kot-shrodingera-team/germes-utils/reactUtils';
 
 /**
- * Генератор функции авторизации на сайте бк
- * @param options Опции:
- * - openForm - Открытие формы авторизации
- * -- selector - Селектор элемента открытия формы
- * -- openedSelector - Селектор элемента открытой формы
- * - - loopCount - Количество попыток открытия формы, по умолчанию 10
- * -- triesInterval - Интервал попыток открытия формы в мс, по умолчанию 1000
- * -- afterOpenDelay - Задержка после появления открытой формы, по умолчанию 0
- * - setLoginType - Функция выбота типа логина (например по телефону, e-mail и тд)
- * - loginInputSelector - Селектор элемента ввода логина
- * - passwordInputSelector - Селектор элемента ввода пароля
- * - submitButtonSelector - Селектор элемента submit (кнопка входа)
- * - inputType - Тип ввода данных в поля логина и пароля, по умолчанию fireEvent
- * - fireEventNames - Массив имён событий, вызываемых при использовании inputType = fireEvent, по умолчанию одно событие input
- * - beforeSubmitDelay - Задержка перед submit (после ввода данных), по умолчанию 0
- * - captchaSelector - Селектор капчи, если она появляется после попытки входа
- * - loginedWait - Ожидание появления авторизации (если страница не перезагружается)
- * -- loginedSelector - Селектор элемента наличия авторизации
- * -- balanceReady - Функция ожидания появления баланса
- * -- updateBalance - Функция обновления баланса в боте
- * -- afterSuccesfulLogin - Функция, выполняющася после успешной авторизации
- * - context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
+ * Опции генератора функции авторизации на сайте бк
  */
-const authorizeGenerator = (options: {
+interface AuthorizeGeneratorOptions {
+  /**
+   * Опции открытия формы авторизации
+   *
+   * Используется если на сайте не отображаются сразу поля логина и пароля,
+   * а есть отдельная кнопка для открытия формы авторизации
+   */
   openForm?: {
+    /**
+     * Селектор элемента открытия формы
+     */
     selector: string;
+    /**
+     * Селектор элемента открытой формы
+     */
     openedSelector: string;
+    /**
+     * Количество попыток открытия формы, по умолчанию 10
+     */
     loopCount?: number;
+    /**
+     * Интервал попыток открытия формы в мс, по умолчанию 1000
+     */
     triesInterval?: number;
+    /**
+     * Задержка в мс после появления открытой формы, перед вводом данных, по умолчанию 0
+     */
     afterOpenDelay?: number;
   };
+  /**
+   * Функция выбора типа логина
+   *
+   * Используется если есть разные типы логина (например по телефону или по почте)
+   * и перед вводом данных нужно переключиться на этот тип
+   */
   setLoginType?: () => Promise<boolean>;
+  /**
+   * Селектор элемента ввода логина
+   */
   loginInputSelector: string;
+  /**
+   * Селектор элемента ввода пароля
+   */
   passwordInputSelector: string;
+  /**
+   * Селектор элемента submit (кнопка входа)
+   */
   submitButtonSelector: string;
+  /**
+   * Тип ввода данных в поля логина и пароля, по умолчанию fireEvent
+   */
   inputType?: 'fireEvent' | 'react' | 'nativeInput';
+  /**
+   * Массив имён инициируемых событих, если тип ввода данных fireEvent, по умолчанию одно событие input
+   *
+   * Используется если нужно инициировать другие события, например keyDown, keyUp и тд.
+   * Выполняются в указанном порядке
+   */
   fireEventNames?: string[];
+  /**
+   * Задержка перед submit (после ввода данных), по умолчанию 0
+   */
   beforeSubmitDelay?: number;
+  /**
+   * Селектор капчи, если она появляется после попытки входа
+   *
+   * Ожидания нет, но если капча появится, будет выведено сообщение в лог
+   */
   captchaSelector?: string;
+  /**
+   * Ожидание появления авторизации
+   *
+   * Используется если авторизация происходит без перезагрузки страницы
+   */
   loginedWait?: {
+    /**
+     * Селектор элемента наличия авторизации
+     */
     loginedSelector: string;
+    /**
+     * Функция ожидания появления баланса
+     */
     balanceReady: () => Promise<boolean>;
+    /**
+     * Функция обновления баланса в боте
+     */
     updateBalance: () => void;
+    /**
+     * Функция, выполняющася после успешной авторизации
+     */
     afterSuccesfulLogin?: () => Promise<void>;
   };
+  /**
+   * context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
+   */
   context?: () => Document | Element;
-}) => async (): Promise<void> => {
+}
+
+/**
+ * Генератор функции авторизации на сайте бк
+ */
+const authorizeGenerator = (
+  options: AuthorizeGeneratorOptions
+) => async (): Promise<void> => {
   const context = options.context ? options.context() : document;
   if (options.openForm) {
     const loopCount = options.openForm.loopCount

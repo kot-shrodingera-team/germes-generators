@@ -2,30 +2,51 @@ import { log, awaiter } from '@kot-shrodingera-team/germes-utils';
 import { defaultRemoveRegex, defaultNumberRegex } from './defaultRegexes';
 
 /**
+ * Опции генератора функции ожидания появления минимальной ставки
+ */
+interface MinimumStakeReadyGeneratorOptions {
+  /**
+   * Селектор элемента минимальной ставки
+   */
+  minimumStakeSelector: string;
+  /**
+   * Заменяемые подстроки в тексте элемента минимальной ставки
+   *
+   * Используется, например, если нужно заменить запятые на точки
+   */
+  replaceDataArray?: {
+    /**
+     * Искомый текст/регулярное выражение
+     */
+    searchValue: string | RegExp;
+    /**
+     * Текст, на который производится замена
+     */
+    replaceValue: string;
+  }[];
+  /**
+   * Регулярное выражение для удаления символов из текста элемента минимальной ставки, по умолчанию /[\s,']/g;
+   */
+  removeRegex?: RegExp;
+  /**
+   * Регулярное выражение для получения значения минимальной ставки из полученного текста, по умолчанию /(\d+(?:\.\d+)?)/
+   */
+  minimumStakeRegex?: RegExp;
+  /**
+   * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
+   */
+  context?: () => Document | Element;
+}
+
+/**
  * Генератор функции ожидания появления минимальной ставки
- * @param options Опции:
- * - minimumStakeSelector - Селектор элемента минимальной ставки
- * - replaceDataArray - Массив заменяемых значений в тексте элемента минимальной ставки
- * -- searchValue - Искомое значение
- * -- replaceValue - Значение, на которое заменяется
- * - removeRegex - Регулярное выражение для удаления символов из текста элемента минимальной ставки, по умолчанию /[\s,']/g;
- * - minimumStakeRegex - Регулярное выражение для получения значения минимальной ставки из полученного текста, по умолчанию /(\d+(?:\.\d+)?)/
- * - context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
- * - disableLog - Отключение вывода логов, по умолчанию false
  * @returns Асинхронная функция, которая возвращает true, если появилась минимальная ставка, иначе false
  * - timeout - Таймаут проверки, по умолчанию 5000
  * - interval - Интервал проверки, по умолчанию 100
  */
-export const minimumStakeReadyGenerator = (options: {
-  minimumStakeSelector: string;
-  replaceDataArray?: {
-    searchValue: string | RegExp;
-    replaceValue: string;
-  }[];
-  removeRegex?: RegExp;
-  minimumStakeRegex?: RegExp;
-  context?: () => Document | Element;
-}) => async (timeout = 5000, interval = 100): Promise<boolean> => {
+export const minimumStakeReadyGenerator = (
+  options: MinimumStakeReadyGeneratorOptions
+) => async (timeout = 5000, interval = 100): Promise<boolean> => {
   const context = options.context ? options.context() : document;
   const minimumStakeLoaded = Boolean(
     await awaiter(
@@ -63,28 +84,54 @@ export const minimumStakeReadyGenerator = (options: {
 };
 
 /**
- * Генератор функции получения минимальной ставки
- * @param options Опции:
- * - minimumStakeSelector - Селектор элемента минимальной ставки
- * - replaceDataArray - Массив заменяемых значений в тексте элемента минимальной ставки
- * -- searchValue - Искомое значение
- * -- replaceValue - Значение, на которое заменяется
- * - removeRegex - Регулярное выражение для удаления символов из текста элемента минимальной ставки, по умолчанию /[\s,']/g;
- * - minimumStakeRegex - Регулярное выражение для получения значения минимальной ставки из полученного текста, по умолчанию /(\d+(?:\.\d+)?)/
- * - context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
- * @returns Функция, которая возвращает минимальную ставку
+ * Опции генератора функции получения минимальной ставки
  */
-const getMinimumStakeGenerator = (options: {
+interface GetMinimumStakeGeneratorOptions {
+  /**
+   * Селектор элемента минимальной ставки
+   */
   minimumStakeSelector: string;
+  /**
+   * Заменяемые подстроки в тексте элемента минимальной ставки
+   *
+   * Используется, например, если нужно заменить запятые на точки
+   */
   replaceDataArray?: {
+    /**
+     * Искомый текст/регулярное выражение
+     */
     searchValue: string | RegExp;
+    /**
+     * Текст, на который производится замена
+     */
     replaceValue: string;
   }[];
+  /**
+   * Регулярное выражение для удаления символов из текста элемента минимальной ставки, по умолчанию /[\s,']/g;
+   */
   removeRegex?: RegExp;
+  /**
+   * Регулярное выражение для получения значения минимальной ставки из полученного текста, по умолчанию /(\d+(?:\.\d+)?)/
+   */
   minimumStakeRegex?: RegExp;
-  context?: () => Document | Element;
+  /**
+   * Флаг отключения вывода логов, по умолчанию false
+   */
   disableLog?: boolean;
-}) => (): number => {
+  /**
+   * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
+   */
+  context?: () => Document | Element;
+}
+
+/**
+ * Генератор функции получения минимальной ставки
+
+ * @returns Функция, которая возвращает минимальную ставку
+ */
+const getMinimumStakeGenerator = (
+  options: GetMinimumStakeGeneratorOptions
+) => (): number => {
   const context = options.context ? options.context() : document;
   const minimumStakeElement = context.querySelector(
     options.minimumStakeSelector

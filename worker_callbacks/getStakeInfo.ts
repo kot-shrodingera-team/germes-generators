@@ -1,31 +1,57 @@
 import { log } from '@kot-shrodingera-team/germes-utils';
 
 /**
- * Генератор колбэка getStakeInfo (сбор информации о ставке)
- * @param options Опции:
- * - preAction - Функция, выполняющаяся перед сбором информации
- * - checkAuth - Функция определения авторизации
- * - getStakeCount - Функция получения количества ставок в купоне
- * - getBalance - Функция получения баланса
- * - getMinimumStake - Функция получения минимальной ставки
- * - getMaximumStake - Функция получения максимальной ставки
- * - getCurrentSum - Функция получения текущей суммы в купоне
- * - checkStakeEnabled - Функция проверки доступности ставки
- * - getCoefficient - Функция получения коэффициента
- * - getParameter - Функция получения параметра ставки
+ * Опции генератора колбэка getStakeInfo (сбор информации о ставке)
  */
-const getStakeInfoGenerator = (options: {
+interface GetStakeInfoGeneratorOptions {
+  /**
+   * Функция, выполняющаяся перед сбором информации
+   */
   preAction?: () => void;
+  /**
+   * Функция определения авторизации
+   */
   checkAuth: () => boolean;
+  /**
+   * Функция получения количества ставок в купоне
+   */
   getStakeCount: () => number;
+  /**
+   * Функция получения баланса
+   */
   getBalance: () => number;
+  /**
+   * Функция получения минимальной ставки
+   */
   getMinimumStake: () => number;
+  /**
+   * Функция получения максимальной ставки
+   */
   getMaximumStake: () => number;
+  /**
+   * Функция получения текущей суммы в купоне
+   */
   getCurrentSum: () => number;
+  /**
+   * Функция проверки доступности ставки
+   */
   checkStakeEnabled: () => boolean;
+  /**
+   * Функция получения коэффициента
+   */
   getCoefficient: () => number;
+  /**
+   * Функция получения параметра ставки
+   */
   getParameter: () => number;
-}) => (): void => {
+}
+
+/**
+ * Генератор колбэка getStakeInfo (сбор информации о ставке)
+ */
+const getStakeInfoGenerator = (
+  options: GetStakeInfoGeneratorOptions
+) => (): void => {
   if (options.preAction) {
     options.preAction();
   }

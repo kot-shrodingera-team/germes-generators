@@ -2,29 +2,54 @@ import { log } from '@kot-shrodingera-team/germes-utils';
 import { defaultRemoveRegex, defaultNumberRegex } from './defaultRegexes';
 
 /**
- * Генератор функции получения коэффициента
- * @param options Опции:
- * - coefficientSelector - Селектор элемента коэффициента
- * - getCoefficientText - Функция получения текста коэффициента, если указана, то используется она, а не поиск элемента по селектору
- * - replaceDataArray - Массив заменяемых значений в тексте элемента коэффициента
- * -- searchValue - Искомое значение
- * -- replaceValue - Значение, на которое заменяется
- * - removeRegex - Регулярное выражение для удаления символов из текста элемента коэффициента, по умолчанию /[\s,']/g;
- * - coefficientRegex - Регулярное выражение для получения значения коэффициента из полученного текста, по умолчанию /(\d+(?:\.\d+)?)/
- * - context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
- * @returns Функция, которая возвращает коэффициент
+ * Опции генератора функции получения коэффициента
  */
-const getCoefficientGenerator = (options: {
+interface GetCoefficientGeneratorOptions {
+  /**
+   * Селектор элемента коэффициента
+   */
   coefficientSelector: string;
+  /**
+   * Функция получения текста коэффициента
+   * Если указана, то используется она, а не поиск элемента по селектору
+   */
   getCoefficientText?: () => string;
+  /**
+   * Заменяемые подстроки в тексте элемента коэффициента
+   *
+   * Используется, например, если нужно заменить запятые на точки
+   */
   replaceDataArray?: {
+    /**
+     * Искомый текст/регулярное выражение
+     */
     searchValue: string | RegExp;
+    /**
+     * Текст, на который производится замена
+     */
     replaceValue: string;
   }[];
+  /**
+   * Регулярное выражение для удаления символов из текста элемента коэффициента, по умолчанию /[\s,']/g;
+   */
   removeRegex?: RegExp;
+  /**
+   * Регулярное выражение для получения значения коэффициента из полученного текста, по умолчанию /(\d+(?:\.\d+)?)/
+   */
   coefficientRegex?: RegExp;
+  /**
+   * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
+   */
   context?: () => Document | Element;
-}) => (): number => {
+}
+
+/**
+ * Генератор функции получения коэффициента
+ * @returns Функция, которая возвращает коэффициент
+ */
+const getCoefficientGenerator = (
+  options: GetCoefficientGeneratorOptions
+) => (): number => {
   const context = options.context ? options.context() : document;
   if (options.getCoefficientText) {
     const coefficientText = options.getCoefficientText();

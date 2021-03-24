@@ -1,14 +1,24 @@
 /**
+ * Опции генератора функции получения количества ставок в купоне
+ */
+interface GetStakeCountGeneratorOptions {
+  /**
+   * Селектор ставки в купоне
+   */
+  stakeSelector: string;
+  /**
+   * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
+   */
+  context?: () => Document | Element;
+}
+
+/**
  * Генератор функции получения количества ставок в купоне
- * @param options Опции:
- * - stakeSelector - Селектор ставки в купоне
- * - context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
  * @returns Функция, которая возвращает количество ставок в купоне
  */
-const getStakeCountGenerator = (options: {
-  stakeSelector: string;
-  context?: () => Document | Element;
-}) => (): number => {
+const getStakeCountGenerator = (
+  options: GetStakeCountGeneratorOptions
+) => (): number => {
   const context = options.context ? options.context() : document;
   return context.querySelectorAll(options.stakeSelector).length;
 };

@@ -1,31 +1,63 @@
 import { log, timeString } from '@kot-shrodingera-team/germes-utils';
 
 /**
- * Генератор колбэка doStake (попытка ставки)
- * @param options Опции:
- * - preCheck - Функция проверки перед попыткой ставки, если вернёт false, попытка ставки считается не успешной
- * - doStakeButtonSelector - Селектор элемента кнопки ставки
- * -- errorClasses - Массив объектов в виде пар className (класс какой-то ошибки кнопки ставки) - message
- * - disabledCheck - Проверка кнопки ставки на аттрибут disabled, по умолчанию false
- * - getCoefficient - Функции получения коэффициента, для проверки
- * - postCheck - Функция проверки после попыткой ставки, если вернёт false, попытка ставки считается не успешной
- * - clearDoStakeTime - Функция сброса момента начала попытки ставки
- * - context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
- * @returns Функция, которая возвращает true, если попытка ставки успешна, иначе false
+ * Опции генератора колбэка doStake (попытка ставки)
  */
-const doStakeGenerator = (options: {
+interface DoStakeGeneratorOptions {
+  /**
+   * Функция проверки перед попыткой ставки
+   *
+   * Если вернёт false, попытка ставки считается не успешной
+   */
   preCheck?: () => boolean;
+  /**
+   * Селектор элемента кнопки ставки
+   */
   doStakeButtonSelector: string;
+  /**
+   * Проверяемые классы ошибок/недоступности кнопки ставки
+   *
+   * Если у элемента кнопки ставки будет хотя бы одни такой класс, попытка ставки считается не успешной
+   */
   errorClasses?: {
+    /**
+     * Имя класса, которое указывает на ошибку/недоступность кнопки ставки
+     */
     className: string;
+    /**
+     * Дополнительное пояснение для этой ошибки
+     */
     message?: string;
   }[];
+  /**
+   * Флаг проверки кнопки ставки на аттрибут disabled, по умолчанию false
+   */
   disabledCheck?: boolean;
+  /**
+   * Функции получения коэффициента
+   */
   getCoefficient: () => number;
+  /**
+   * Функция проверки после попытки ставки
+   *
+   * Если вернёт false, попытка ставки считается не успешной
+   */
   postCheck?: () => boolean;
+  /**
+   * Функция сброса момента начала попытки ставки
+   */
   clearDoStakeTime: () => void;
+  /**
+   * context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
+   */
   context?: () => Document | Element;
-}) => (): boolean => {
+}
+
+/**
+ * Генератор колбэка doStake (попытка ставки)
+ * @returns Функция, которая возвращает true, если попытка ставки успешна, иначе false
+ */
+const doStakeGenerator = (options: DoStakeGeneratorOptions) => (): boolean => {
   const context = options.context ? options.context() : document;
   log('Делаем ставку', 'orange');
   if (options.preCheck && !options.preCheck()) {

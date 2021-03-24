@@ -5,20 +5,38 @@ import {
 } from '@kot-shrodingera-team/germes-utils';
 
 /**
+ * Опции генератора колбэка checkCouponLoading (проверка статуса обработки ставки)
+ */
+interface CheckCouponLoadingGeneratorOptions {
+  /**
+   * Функция получения момента начала попытки ставки
+   *
+   * Используется для определения таймаута попытки
+   */
+  getDoStakeTime: () => Date;
+  /**
+   * Название БК
+   *
+   * Используется в текста информа при таймауте
+   */
+  bookmakerName: string;
+  /**
+   * Таймаут проверки в мс, по истечению которого, обработка считается законченной, по умолчанию 60000
+   */
+  timeout?: number;
+  /**
+   * Функция проверки статуса обработки
+   */
+  check: () => boolean;
+}
+
+/**
  * Генератор колбэка checkCouponLoading (проверка статуса обработки ставки)
- * @param options Опции:
- * - getDoStakeTime - Функция получения момента начала попытки ставки
- * - bookmakerName - Название БК
- * - timeout - Таймаут проверки в мс, по истечению которого, обработка считается законченной, по умолчанию 60000
- * - check - Функция проверки статуса
  * @returns Функция, которая возвращает true, если ставка ещё обрабатывается, иначе false
  */
-const checkCouponLoadingGenerator = (options: {
-  getDoStakeTime: () => Date;
-  bookmakerName: string;
-  timeout?: number;
-  check: () => boolean;
-}) => (): boolean => {
+const checkCouponLoadingGenerator = (
+  options: CheckCouponLoadingGeneratorOptions
+) => (): boolean => {
   const now = new Date();
   const doStakeTime = options.getDoStakeTime();
   const timePassedSinceDoStake = now.getTime() - doStakeTime.getTime();

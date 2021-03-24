@@ -1,25 +1,45 @@
 import { log } from '@kot-shrodingera-team/germes-utils';
 
 /**
- * Генератор функции проверка авторизации и вызова авторизации, если нужно
- * @param options Опции:
- * - authStateReady - Функция ожидания готовности определения авторизации
- * - authStateReadyTimeout - Таймаут функции ожидания готовности определения авторизации
- * - checkAuth - Функция проверки наличия авторизации
- * - balanceReady - Функция ожидания появления баланса
- * - updateBalance - Функция обновления баланса в боте
- * - authorize - Функция авторизации на сайте бк
- * - afterSuccesfulLogin - Функция, выполняющася после успешной авторизации
+ * Опции генератора функции проверки и вызова авторизации
  */
-const initializeGenerator = (options: {
+interface InitializeGeneratorOptions {
+  /**
+   * Функция ожидания готовности определения авторизации
+   */
   authStateReady: (timeout?: number) => Promise<void>;
+  /**
+   * Таймаут функции ожидания готовности определения авторизации
+   */
   authStateReadyTimeout?: number;
+  /**
+   * Функция проверки наличия авторизации
+   */
   checkAuth: () => boolean;
+  /**
+   * Функция ожидания появления баланса
+   */
   balanceReady: () => Promise<boolean>;
+  /**
+   * Функция обновления баланса в боте
+   */
   updateBalance: () => void;
+  /**
+   * Функция авторизации на сайте бк
+   */
   authorize: () => Promise<void>;
+  /**
+   * Функция, выполняющася после успешной авторизации
+   */
   afterSuccesfulLogin?: () => Promise<void>;
-}) => async (): Promise<void> => {
+}
+
+/**
+ * Генератор функции проверки и вызова авторизации
+ */
+const initializeGenerator = (
+  options: InitializeGeneratorOptions
+) => async (): Promise<void> => {
   if (worker.LoginTry > 3) {
     log('Превышен лимит попыток авторизации', 'crimson');
     return;

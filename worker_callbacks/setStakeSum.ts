@@ -6,27 +6,57 @@ import {
 import { setReactInputValue } from '@kot-shrodingera-team/germes-utils/reactUtils';
 
 /**
- * Генератор колбэка setStakeSum (ввод суммы ставки)
- * @param options Опции:
- * - sumInputSelector - Селектор элемента ввода суммы в купоне
- * - alreadySetCheck - Проверка, введена ли уже нужная сумма
- * -- falseOnSumChange - Считать ввод суммы не успешным, после смены суммы в купоне, по умолчанию false
- * - preInputCheck - Функция проверки перед вводом суммы ставки, если вернёт false, ввод считается не успешным
- * - inputType - Тип ввода данных в полe суммы ставки, по умолчанию fireEvent
- * - fireEventNames - Массив имён событий, вызываемых при использовании inputType = fireEvent, по умолчанию одно событие input
- * - context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
- * @returns Функция, которая возвращает true, если ввод суммы ставки успешен, иначе false
+ * Опции генератора колбэка setStakeSum (ввод суммы ставки)
  */
-const setStakeSumGenerator = (options: {
+interface SetStakeSumGeneratorOptions {
+  /**
+   * Селектор элемента ввода суммы в купоне
+   */
   sumInputSelector: string;
+  /**
+   * Проверка, введена ли уже нужная сумма
+   *
+   * Если она уже введена, ввод суммы заканчивается и считается успешным
+   */
   alreadySetCheck?: {
+    /**
+     * Флаг, указывающий на то, считать ли ввод суммы не успешным после ввода, если изначально сумма была иной, по умолчанию false
+     *
+     * Используется, если нужна задержка после изменения суммы в купоне
+     */
     falseOnSumChange: boolean;
   };
+  /**
+   * Функция проверки перед вводом суммы ставки
+   *
+   * Если вернёт false, ввод суммы ставки считается не успешной
+   */
   preInputCheck?: (number?: number) => boolean;
+  /**
+   * Тип ввода данных в поле ввода суммы ставки, по умолчанию fireEvent
+   */
   inputType?: 'fireEvent' | 'react' | 'nativeInput';
+  /**
+   * Массив имён инициируемых событих, если тип ввода данных fireEvent, по умолчанию одно событие input
+   *
+   * Используется если нужно инициировать другие события, например keyDown, keyUp и тд.
+   * Выполняются в указанном порядке
+   */
   fireEventNames?: string[];
+  /**
+   * context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
+   */
   context?: () => Document | Element;
-}) => (sum: number): boolean => {
+}
+
+/**
+ * Генератор колбэка setStakeSum (ввод суммы ставки)
+ * @returns Функция, которая возвращает true, если ввод суммы ставки успешен, иначе false
+ * - sum - вводимая сумма ставки
+ */
+const setStakeSumGenerator = (options: SetStakeSumGeneratorOptions) => (
+  sum: number
+): boolean => {
   const context = options.context ? options.context() : document;
   log(`Вводим сумму ставки: "${sum}"`, 'orange');
   if (sum > worker.StakeInfo.Balance) {

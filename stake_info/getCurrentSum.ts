@@ -2,29 +2,53 @@ import { log } from '@kot-shrodingera-team/germes-utils';
 import { defaultNumberRegex, defaultRemoveRegex } from './defaultRegexes';
 
 /**
- * Генератор функции получения текущей суммы в купоне
- * @param options Опции:
- * - sumInputSelector - Селектор элемента ввода суммы в купоне
- * - zeroValues - Массив текстовых значений суммы в купоне, которые расцениваются как 0
- * - replaceDataArray - Массив заменяемых значений в тексте элемента ввода суммы в купоне
- * -- searchValue - Искомое значение
- * -- replaceValue - Значение, на которое заменяется
- * - removeRegex - Регулярное выражение для удаления символов из текста элемента ввода суммы в купоне, по умолчанию /[\s,']/g;
- * - currentSumRegex - Регулярное выражение для получения значения текущей суммы в купоне из полученного текста, по умолчанию /(\d+(?:\.\d+)?)/
- * - context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
- * @returns Функция, которая возвращает текущую сумму в купоне
+ * Опции генератора функции получения текущей суммы в купоне
  */
-const getCurrentSumGenerator = (options: {
+interface GetCurrentSumGeneratorOptions {
+  /**
+   * Селектор элемента ввода суммы в купоне
+   */
   sumInputSelector: string;
+  /**
+   * Массив текстовых значений суммы в купоне, которые расцениваются как 0
+   */
   zeroValues?: string[];
+  /**
+   * Заменяемые подстроки в тексте элемента ввода суммы в купоне
+   *
+   * Используется, например, если нужно заменить запятые на точки
+   */
   replaceDataArray?: {
+    /**
+     * Искомый текст/регулярное выражение
+     */
     searchValue: string | RegExp;
+    /**
+     * Текст, на который производится замена
+     */
     replaceValue: string;
   }[];
+  /**
+   * Регулярное выражение для удаления символов из текста элемента ввода суммы в купоне, по умолчанию /[\s,']/g;
+   */
   removeRegex?: RegExp;
+  /**
+   * Регулярное выражение для получения значения суммы в купоне из полученного текста, по умолчанию /(\d+(?:\.\d+)?)/
+   */
   currentSumRegex?: RegExp;
+  /**
+   * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
+   */
   context?: () => Document | Element;
-}) => (): number => {
+}
+
+/**
+ * Генератор функции получения текущей суммы в купоне
+ * @returns Функция, которая возвращает текущую сумму в купоне
+ */
+const getCurrentSumGenerator = (
+  options: GetCurrentSumGeneratorOptions
+) => (): number => {
   const context = options.context ? options.context() : document;
   const sumInputElement = context.querySelector<HTMLInputElement>(
     options.sumInputSelector
