@@ -30,7 +30,7 @@ const checkStakeStatusGenerator = (
     getWorkerParameter(options.fakeDoStakeWorkerParameterName)
   ) {
     log('[fake] Ставка принята', 'green');
-    return false;
+    return true;
   }
   if (options.getProcessingStep() === 'success') {
     log('Ставка принята', 'green');
