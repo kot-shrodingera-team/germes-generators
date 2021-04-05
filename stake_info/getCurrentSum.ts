@@ -39,7 +39,7 @@ interface GetCurrentSumGeneratorOptions {
   /**
    * Имя параметра воркера, который включает фейковое определение текущей суммы в купоне
    */
-  fakeCurrentSumtWorkerParameterName?: string;
+  fakeCurrentSumWorkerParameterName?: string;
   /**
    * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
@@ -54,11 +54,11 @@ const getCurrentSumGenerator = (
   options: GetCurrentSumGeneratorOptions
 ) => (): number => {
   if (
-    options.fakeCurrentSumtWorkerParameterName &&
-    getWorkerParameter(options.fakeCurrentSumtWorkerParameterName)
+    options.fakeCurrentSumWorkerParameterName &&
+    getWorkerParameter(options.fakeCurrentSumWorkerParameterName)
   ) {
     return Number(
-      getWorkerParameter(options.fakeCurrentSumtWorkerParameterName)
+      getWorkerParameter(options.fakeCurrentSumWorkerParameterName)
     );
   }
   const context = options.context ? options.context() : document;
