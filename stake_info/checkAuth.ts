@@ -90,8 +90,8 @@ const checkAuthGenerator = (
   options: CheckAuthGeneratorOptions
 ) => (): boolean => {
   const context = options.context ? options.context() : document;
-  const accountMenu = context.querySelector(options.authElementSelector);
-  return Boolean(accountMenu);
+  const authElement = context.querySelector(options.authElementSelector);
+  return Boolean(authElement);
 };
 
 export default checkAuthGenerator;
