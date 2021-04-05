@@ -2,6 +2,7 @@ import {
   log,
   fireEvent,
   nativeInput,
+  getWorkerParameter,
 } from '@kot-shrodingera-team/germes-utils';
 import { setReactInputValue } from '@kot-shrodingera-team/germes-utils/reactUtils';
 
@@ -44,6 +45,10 @@ interface SetStakeSumGeneratorOptions {
    */
   fireEventNames?: string[];
   /**
+   * Имя параметра воркера, который включает фейковое проставление ставки
+   */
+  fakeDoStakeWorkerParameterName?: string;
+  /**
    * context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -57,6 +62,13 @@ interface SetStakeSumGeneratorOptions {
 const setStakeSumGenerator = (options: SetStakeSumGeneratorOptions) => (
   sum: number
 ): boolean => {
+  if (
+    options.fakeDoStakeWorkerParameterName &&
+    getWorkerParameter(options.fakeDoStakeWorkerParameterName)
+  ) {
+    log(`[fake] Вводим сумму ставки: "${sum}"`, 'orange');
+    return true;
+  }
   const context = options.context ? options.context() : document;
   log(`Вводим сумму ставки: "${sum}"`, 'orange');
   if (sum > worker.StakeInfo.Balance) {

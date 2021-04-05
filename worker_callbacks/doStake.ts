@@ -1,4 +1,8 @@
-import { log, timeString } from '@kot-shrodingera-team/germes-utils';
+import {
+  getWorkerParameter,
+  log,
+  timeString,
+} from '@kot-shrodingera-team/germes-utils';
 
 /**
  * Опции генератора колбэка doStake (попытка ставки)
@@ -48,6 +52,10 @@ interface DoStakeGeneratorOptions {
    */
   clearDoStakeTime: () => void;
   /**
+   * Имя параметра воркера, который включает фейковое проставление ставки
+   */
+  fakeDoStakeWorkerParameterName?: string;
+  /**
    * context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -58,6 +66,13 @@ interface DoStakeGeneratorOptions {
  * @returns Функция, которая возвращает true, если попытка ставки успешна, иначе false
  */
 const doStakeGenerator = (options: DoStakeGeneratorOptions) => (): boolean => {
+  if (
+    options.fakeDoStakeWorkerParameterName &&
+    getWorkerParameter(options.fakeDoStakeWorkerParameterName)
+  ) {
+    log('[fake] Делаем ставку', 'orange');
+    return true;
+  }
   const context = options.context ? options.context() : document;
   log('Делаем ставку', 'orange');
   if (options.preCheck && !options.preCheck()) {

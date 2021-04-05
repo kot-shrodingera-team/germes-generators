@@ -2,6 +2,7 @@ import {
   stakeInfoString,
   log,
   timeString,
+  getWorkerParameter,
 } from '@kot-shrodingera-team/germes-utils';
 
 /**
@@ -28,6 +29,10 @@ interface CheckCouponLoadingGeneratorOptions {
    * Функция проверки статуса обработки
    */
   check: () => boolean;
+  /**
+   * Имя параметра воркера, который включает фейковое проставление ставки
+   */
+  fakeDoStakeWorkerParameterName?: string;
 }
 
 /**
@@ -37,6 +42,13 @@ interface CheckCouponLoadingGeneratorOptions {
 const checkCouponLoadingGenerator = (
   options: CheckCouponLoadingGeneratorOptions
 ) => (): boolean => {
+  if (
+    options.fakeDoStakeWorkerParameterName &&
+    getWorkerParameter(options.fakeDoStakeWorkerParameterName)
+  ) {
+    log('[fake] Обработка ставки завершена', 'orange');
+    return false;
+  }
   const now = new Date();
   const doStakeTime = options.getDoStakeTime();
   const timePassedSinceDoStake = now.getTime() - doStakeTime.getTime();

@@ -1,4 +1,4 @@
-import { log } from '@kot-shrodingera-team/germes-utils';
+import { getWorkerParameter, log } from '@kot-shrodingera-team/germes-utils';
 import { defaultRemoveRegex, defaultNumberRegex } from './defaultRegexes';
 
 /**
@@ -38,6 +38,10 @@ interface GetCoefficientGeneratorOptions {
    */
   coefficientRegex?: RegExp;
   /**
+   * Имя параметра воркера, который включает фейковое определение коэффициента
+   */
+  fakeCoefficientWorkerParameterName?: string;
+  /**
    * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -50,6 +54,14 @@ interface GetCoefficientGeneratorOptions {
 const getCoefficientGenerator = (
   options: GetCoefficientGeneratorOptions
 ) => (): number => {
+  if (
+    options.fakeCoefficientWorkerParameterName &&
+    getWorkerParameter(options.fakeCoefficientWorkerParameterName)
+  ) {
+    return Number(
+      getWorkerParameter(options.fakeCoefficientWorkerParameterName)
+    );
+  }
   const context = options.context ? options.context() : document;
   if (options.getCoefficientText) {
     const coefficientText = options.getCoefficientText();

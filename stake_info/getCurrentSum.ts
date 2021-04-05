@@ -1,4 +1,4 @@
-import { log } from '@kot-shrodingera-team/germes-utils';
+import { getWorkerParameter, log } from '@kot-shrodingera-team/germes-utils';
 import { defaultNumberRegex, defaultRemoveRegex } from './defaultRegexes';
 
 /**
@@ -37,6 +37,10 @@ interface GetCurrentSumGeneratorOptions {
    */
   currentSumRegex?: RegExp;
   /**
+   * Имя параметра воркера, который включает фейковое определение текущей суммы в купоне
+   */
+  fakeCurrentSumtWorkerParameterName?: string;
+  /**
    * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -49,6 +53,14 @@ interface GetCurrentSumGeneratorOptions {
 const getCurrentSumGenerator = (
   options: GetCurrentSumGeneratorOptions
 ) => (): number => {
+  if (
+    options.fakeCurrentSumtWorkerParameterName &&
+    getWorkerParameter(options.fakeCurrentSumtWorkerParameterName)
+  ) {
+    return Number(
+      getWorkerParameter(options.fakeCurrentSumtWorkerParameterName)
+    );
+  }
   const context = options.context ? options.context() : document;
   const sumInputElement = context.querySelector<HTMLInputElement>(
     options.sumInputSelector

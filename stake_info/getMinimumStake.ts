@@ -1,4 +1,8 @@
-import { log, awaiter } from '@kot-shrodingera-team/germes-utils';
+import {
+  log,
+  awaiter,
+  getWorkerParameter,
+} from '@kot-shrodingera-team/germes-utils';
 import { defaultRemoveRegex, defaultNumberRegex } from './defaultRegexes';
 
 /**
@@ -33,6 +37,10 @@ interface MinimumStakeReadyGeneratorOptions {
    */
   minimumStakeRegex?: RegExp;
   /**
+   * Имя параметра воркера, который включает фейковое определение минимальной ставки
+   */
+  fakeMinimumStakeWorkerParameterName?: string;
+  /**
    * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -47,6 +55,12 @@ interface MinimumStakeReadyGeneratorOptions {
 export const minimumStakeReadyGenerator = (
   options: MinimumStakeReadyGeneratorOptions
 ) => async (timeout = 5000, interval = 100): Promise<boolean> => {
+  if (
+    options.fakeMinimumStakeWorkerParameterName &&
+    getWorkerParameter(options.fakeMinimumStakeWorkerParameterName)
+  ) {
+    return true;
+  }
   const context = options.context ? options.context() : document;
   const minimumStakeLoaded = Boolean(
     await awaiter(
@@ -119,6 +133,10 @@ interface GetMinimumStakeGeneratorOptions {
    */
   disableLog?: boolean;
   /**
+   * Имя параметра воркера, который включает фейковое определение минимальной ставки
+   */
+  fakeMinimumStakeWorkerParameterName?: string;
+  /**
    * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -132,6 +150,14 @@ interface GetMinimumStakeGeneratorOptions {
 const getMinimumStakeGenerator = (
   options: GetMinimumStakeGeneratorOptions
 ) => (): number => {
+  if (
+    options.fakeMinimumStakeWorkerParameterName &&
+    getWorkerParameter(options.fakeMinimumStakeWorkerParameterName)
+  ) {
+    return Number(
+      getWorkerParameter(options.fakeMinimumStakeWorkerParameterName)
+    );
+  }
   const context = options.context ? options.context() : document;
   const minimumStakeElement = context.querySelector(
     options.minimumStakeSelector

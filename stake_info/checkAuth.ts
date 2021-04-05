@@ -1,4 +1,8 @@
-import { getElement, log } from '@kot-shrodingera-team/germes-utils';
+import {
+  getElement,
+  getWorkerParameter,
+  log,
+} from '@kot-shrodingera-team/germes-utils';
 
 /**
  * Опции генератора функции ожидания готовности определения авторизации
@@ -20,6 +24,10 @@ interface AuthStateReadyGeneratorOptions {
    */
   maxDelayAfterNoAuthElementAppeared?: number;
   /**
+   * Имя параметра воркера, который включает фейковое определение авторизации
+   */
+  fakeAuthWorkerParameterName?: string;
+  /**
    * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -35,6 +43,12 @@ interface AuthStateReadyGeneratorOptions {
 export const authStateReadyGenerator = (
   options: AuthStateReadyGeneratorOptions
 ) => async (timeout = 5000): Promise<void> => {
+  if (
+    options.fakeAuthWorkerParameterName &&
+    getWorkerParameter(options.fakeAuthWorkerParameterName)
+  ) {
+    return;
+  }
   const context = options.context ? options.context() : document;
   await Promise.any([
     getElement(options.noAuthElementSelector, timeout, context),
@@ -77,6 +91,10 @@ interface CheckAuthGeneratorOptions {
    */
   authElementSelector: string;
   /**
+   * Имя параметра воркера, который включает фейковое определение авторизации
+   */
+  fakeAuthWorkerParameterName?: string;
+  /**
    * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -89,6 +107,12 @@ interface CheckAuthGeneratorOptions {
 const checkAuthGenerator = (
   options: CheckAuthGeneratorOptions
 ) => (): boolean => {
+  if (
+    options.fakeAuthWorkerParameterName &&
+    getWorkerParameter(options.fakeAuthWorkerParameterName)
+  ) {
+    return true;
+  }
   const context = options.context ? options.context() : document;
   const authElement = context.querySelector(options.authElementSelector);
   return Boolean(authElement);

@@ -1,4 +1,8 @@
-import { log, awaiter } from '@kot-shrodingera-team/germes-utils';
+import {
+  log,
+  awaiter,
+  getWorkerParameter,
+} from '@kot-shrodingera-team/germes-utils';
 import { defaultRemoveRegex, defaultNumberRegex } from './defaultRegexes';
 
 /**
@@ -33,6 +37,10 @@ interface MaximumStakeReadyGeneratorOptions {
    */
   maximumStakeRegex?: RegExp;
   /**
+   * Имя параметра воркера, который включает фейковое определение максимальной ставки
+   */
+  fakeMaximumStakeWorkerParameterName?: string;
+  /**
    * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -47,6 +55,12 @@ interface MaximumStakeReadyGeneratorOptions {
 export const maximumStakeReadyGenerator = (
   options: MaximumStakeReadyGeneratorOptions
 ) => async (timeout = 5000, interval = 100): Promise<boolean> => {
+  if (
+    options.fakeMaximumStakeWorkerParameterName &&
+    getWorkerParameter(options.fakeMaximumStakeWorkerParameterName)
+  ) {
+    return true;
+  }
   const context = options.context ? options.context() : document;
   const maximumStakeLoaded = Boolean(
     await awaiter(
@@ -119,6 +133,10 @@ interface GetMaximumStakeGeneratorOptions {
    */
   disableLog?: boolean;
   /**
+   * Имя параметра воркера, который включает фейковое определение максимальной ставки
+   */
+  fakeMaximumStakeWorkerParameterName?: string;
+  /**
    * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -131,6 +149,14 @@ interface GetMaximumStakeGeneratorOptions {
 const getMaximumStakeGenerator = (
   options: GetMaximumStakeGeneratorOptions
 ) => (): number => {
+  if (
+    options.fakeMaximumStakeWorkerParameterName &&
+    getWorkerParameter(options.fakeMaximumStakeWorkerParameterName)
+  ) {
+    return Number(
+      getWorkerParameter(options.fakeMaximumStakeWorkerParameterName)
+    );
+  }
   const context = options.context ? options.context() : document;
   const maximumStakeElement = context.querySelector(
     options.maximumStakeSelector

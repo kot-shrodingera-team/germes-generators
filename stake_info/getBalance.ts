@@ -1,4 +1,8 @@
-import { awaiter, log } from '@kot-shrodingera-team/germes-utils';
+import {
+  awaiter,
+  getWorkerParameter,
+  log,
+} from '@kot-shrodingera-team/germes-utils';
 import { defaultRemoveRegex, defaultNumberRegex } from './defaultRegexes';
 
 /**
@@ -33,6 +37,10 @@ interface BalanceReadyGeneratorOptions {
    */
   balanceRegex?: RegExp;
   /**
+   * Имя параметра воркера, который включает фейковое определение баланса
+   */
+  fakeBalanceWorkerParameterName?: string;
+  /**
    * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -47,6 +55,12 @@ interface BalanceReadyGeneratorOptions {
 export const balanceReadyGenerator = (
   options: BalanceReadyGeneratorOptions
 ) => async (timeout = 5000, interval = 100): Promise<boolean> => {
+  if (
+    options.fakeBalanceWorkerParameterName &&
+    getWorkerParameter(options.fakeBalanceWorkerParameterName)
+  ) {
+    return true;
+  }
   const context = options.context ? options.context() : document;
   const balanceLoaded = Boolean(
     await awaiter(
@@ -113,6 +127,10 @@ interface GetBalanceGeneratorOptions {
    */
   balanceRegex?: RegExp;
   /**
+   * Имя параметра воркера, который включает фейковое определение баланса
+   */
+  fakeBalanceWorkerParameterName?: string;
+  /**
    * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -125,6 +143,12 @@ interface GetBalanceGeneratorOptions {
 export const getBalanceGenerator = (
   options: GetBalanceGeneratorOptions
 ) => (): number => {
+  if (
+    options.fakeBalanceWorkerParameterName &&
+    getWorkerParameter(options.fakeBalanceWorkerParameterName)
+  ) {
+    return Number(getWorkerParameter(options.fakeBalanceWorkerParameterName));
+  }
   const context = options.context ? options.context() : document;
   const balanceElement = context.querySelector<HTMLElement>(
     options.balanceSelector

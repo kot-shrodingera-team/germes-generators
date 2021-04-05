@@ -1,4 +1,4 @@
-import { log } from '@kot-shrodingera-team/germes-utils';
+import { getWorkerParameter, log } from '@kot-shrodingera-team/germes-utils';
 
 /**
  * Опции генератора функции проверки доступности ставки
@@ -62,6 +62,10 @@ interface CheckStakeEnabledGeneratorOptions {
     message?: string;
   }[];
   /**
+   * Имя параметра воркера, который включает фейковое определение доступности ставки
+   */
+  fakeStakeEnabledWorkerParameterName?: string;
+  /**
    * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -74,6 +78,12 @@ interface CheckStakeEnabledGeneratorOptions {
 const checkStakeEnabledGenerator = (
   options: CheckStakeEnabledGeneratorOptions
 ) => (): boolean => {
+  if (
+    options.fakeStakeEnabledWorkerParameterName &&
+    getWorkerParameter(options.fakeStakeEnabledWorkerParameterName)
+  ) {
+    return true;
+  }
   const context = options.context ? options.context() : document;
   if (options.preCheck && !options.preCheck()) {
     return false;
