@@ -58,9 +58,11 @@ const getCoefficientGenerator = (
     options.fakeCoefficientWorkerParameterName &&
     getWorkerParameter(options.fakeCoefficientWorkerParameterName)
   ) {
-    return Number(
-      getWorkerParameter(options.fakeCoefficientWorkerParameterName)
-    );
+    const coefficient = Number(JSON.parse(worker.ForkObj).coefficient);
+    if (Number.isNaN(coefficient)) {
+      return 0;
+    }
+    return coefficient;
   }
   const context = options.context ? options.context() : document;
   if (options.getCoefficientText) {
