@@ -184,6 +184,10 @@ const authorizeGenerator = (
           fireEvent(inputElement, eventName);
         });
       } else {
+        // fireEvent(inputElement, 'focus');
+        // fireEvent(inputElement, 'click');
+        // fireEvent(inputElement, 'keypress');
+        // fireEvent(inputElement, 'keyup');
         fireEvent(inputElement, 'input');
       }
     }
