@@ -53,7 +53,8 @@ export const minimumStakeReadyGenerator = (
 ) => async (timeout = 5000, interval = 100): Promise<boolean> => {
   if (
     getWorkerParameter('fakeMinimumStake') ||
-    getWorkerParameter('fakeAuth')
+    getWorkerParameter('fakeAuth') ||
+    getWorkerParameter('fakeOpenStake')
   ) {
     return true;
   }
@@ -144,7 +145,8 @@ const getMinimumStakeGenerator = (
 ) => (): number => {
   if (
     getWorkerParameter('fakeMinimumStake') ||
-    getWorkerParameter('fakeAuth')
+    getWorkerParameter('fakeAuth') ||
+    getWorkerParameter('fakeOpenStake')
   ) {
     const fakeMinimumStake = getWorkerParameter('fakeMinimumStake');
     if (typeof fakeMinimumStake === 'number') {

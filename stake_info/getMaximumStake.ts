@@ -53,7 +53,8 @@ export const maximumStakeReadyGenerator = (
 ) => async (timeout = 5000, interval = 100): Promise<boolean> => {
   if (
     getWorkerParameter('fakeMaximumStake') ||
-    getWorkerParameter('fakeAuth')
+    getWorkerParameter('fakeAuth') ||
+    getWorkerParameter('fakeOpenStake')
   ) {
     return true;
   }
@@ -143,7 +144,8 @@ const getMaximumStakeGenerator = (
 ) => (): number => {
   if (
     getWorkerParameter('fakeMaximumStake') ||
-    getWorkerParameter('fakeAuth')
+    getWorkerParameter('fakeAuth') ||
+    getWorkerParameter('fakeOpenStake')
   ) {
     const fakeMaximumStake = getWorkerParameter('fakeMaximumStake');
     if (typeof fakeMaximumStake === 'number') {
