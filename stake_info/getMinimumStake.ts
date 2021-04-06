@@ -37,10 +37,6 @@ interface MinimumStakeReadyGeneratorOptions {
    */
   minimumStakeRegex?: RegExp;
   /**
-   * Имя параметра воркера, который включает фейковое определение минимальной ставки
-   */
-  fakeMinimumStakeWorkerParameterName?: string;
-  /**
    * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -56,8 +52,8 @@ export const minimumStakeReadyGenerator = (
   options: MinimumStakeReadyGeneratorOptions
 ) => async (timeout = 5000, interval = 100): Promise<boolean> => {
   if (
-    options.fakeMinimumStakeWorkerParameterName &&
-    getWorkerParameter(options.fakeMinimumStakeWorkerParameterName)
+    getWorkerParameter('fakeMinimumStake') ||
+    getWorkerParameter('fakeAuth')
   ) {
     return true;
   }
@@ -133,10 +129,6 @@ interface GetMinimumStakeGeneratorOptions {
    */
   disableLog?: boolean;
   /**
-   * Имя параметра воркера, который включает фейковое определение минимальной ставки
-   */
-  fakeMinimumStakeWorkerParameterName?: string;
-  /**
    * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -151,12 +143,14 @@ const getMinimumStakeGenerator = (
   options: GetMinimumStakeGeneratorOptions
 ) => (): number => {
   if (
-    options.fakeMinimumStakeWorkerParameterName &&
-    getWorkerParameter(options.fakeMinimumStakeWorkerParameterName)
+    getWorkerParameter('fakeMinimumStake') ||
+    getWorkerParameter('fakeAuth')
   ) {
-    return Number(
-      getWorkerParameter(options.fakeMinimumStakeWorkerParameterName)
-    );
+    const fakeMinimumStake = getWorkerParameter('fakeMinimumStake');
+    if (typeof fakeMinimumStake === 'number') {
+      return fakeMinimumStake;
+    }
+    return 100000;
   }
   const context = options.context ? options.context() : document;
   const minimumStakeElement = context.querySelector(

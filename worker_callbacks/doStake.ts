@@ -52,10 +52,6 @@ interface DoStakeGeneratorOptions {
    */
   clearDoStakeTime: () => void;
   /**
-   * Имя параметра воркера, который включает фейковое проставление ставки
-   */
-  fakeDoStakeWorkerParameterName?: string;
-  /**
    * context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -66,10 +62,7 @@ interface DoStakeGeneratorOptions {
  * @returns Функция, которая возвращает true, если попытка ставки успешна, иначе false
  */
 const doStakeGenerator = (options: DoStakeGeneratorOptions) => (): boolean => {
-  if (
-    options.fakeDoStakeWorkerParameterName &&
-    getWorkerParameter(options.fakeDoStakeWorkerParameterName)
-  ) {
+  if (getWorkerParameter('fakeDoStake')) {
     log('[fake] Делаем ставку', 'orange');
     return true;
   }

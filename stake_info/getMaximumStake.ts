@@ -37,10 +37,6 @@ interface MaximumStakeReadyGeneratorOptions {
    */
   maximumStakeRegex?: RegExp;
   /**
-   * Имя параметра воркера, который включает фейковое определение максимальной ставки
-   */
-  fakeMaximumStakeWorkerParameterName?: string;
-  /**
    * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -56,8 +52,8 @@ export const maximumStakeReadyGenerator = (
   options: MaximumStakeReadyGeneratorOptions
 ) => async (timeout = 5000, interval = 100): Promise<boolean> => {
   if (
-    options.fakeMaximumStakeWorkerParameterName &&
-    getWorkerParameter(options.fakeMaximumStakeWorkerParameterName)
+    getWorkerParameter('fakeMaximumStake') ||
+    getWorkerParameter('fakeAuth')
   ) {
     return true;
   }
@@ -133,10 +129,6 @@ interface GetMaximumStakeGeneratorOptions {
    */
   disableLog?: boolean;
   /**
-   * Имя параметра воркера, который включает фейковое определение максимальной ставки
-   */
-  fakeMaximumStakeWorkerParameterName?: string;
-  /**
    * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -150,12 +142,14 @@ const getMaximumStakeGenerator = (
   options: GetMaximumStakeGeneratorOptions
 ) => (): number => {
   if (
-    options.fakeMaximumStakeWorkerParameterName &&
-    getWorkerParameter(options.fakeMaximumStakeWorkerParameterName)
+    getWorkerParameter('fakeMaximumStake') ||
+    getWorkerParameter('fakeAuth')
   ) {
-    return Number(
-      getWorkerParameter(options.fakeMaximumStakeWorkerParameterName)
-    );
+    const fakeMaximumStake = getWorkerParameter('fakeMaximumStake');
+    if (typeof fakeMaximumStake === 'number') {
+      return fakeMaximumStake;
+    }
+    return 100000;
   }
   const context = options.context ? options.context() : document;
   const maximumStakeElement = context.querySelector(

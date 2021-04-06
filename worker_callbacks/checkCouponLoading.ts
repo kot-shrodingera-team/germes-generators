@@ -29,10 +29,6 @@ interface CheckCouponLoadingGeneratorOptions {
    * Функция проверки статуса обработки
    */
   check: () => boolean;
-  /**
-   * Имя параметра воркера, который включает фейковое проставление ставки
-   */
-  fakeDoStakeWorkerParameterName?: string;
 }
 
 /**
@@ -42,10 +38,7 @@ interface CheckCouponLoadingGeneratorOptions {
 const checkCouponLoadingGenerator = (
   options: CheckCouponLoadingGeneratorOptions
 ) => (): boolean => {
-  if (
-    options.fakeDoStakeWorkerParameterName &&
-    getWorkerParameter(options.fakeDoStakeWorkerParameterName)
-  ) {
+  if (getWorkerParameter('fakeDoStake')) {
     log('[fake] Обработка ставки завершена', 'orange');
     return false;
   }

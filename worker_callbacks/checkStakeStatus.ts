@@ -12,10 +12,6 @@ interface CheckStakeStatusGeneratorOptions {
    * Функция обновления баланса в бк
    */
   updateBalance: () => void;
-  /**
-   * Имя параметра воркера, который включает фейковое проставление ставки
-   */
-  fakeDoStakeWorkerParameterName?: string;
 }
 
 /**
@@ -25,10 +21,7 @@ interface CheckStakeStatusGeneratorOptions {
 const checkStakeStatusGenerator = (
   options: CheckStakeStatusGeneratorOptions
 ) => (): boolean => {
-  if (
-    options.fakeDoStakeWorkerParameterName &&
-    getWorkerParameter(options.fakeDoStakeWorkerParameterName)
-  ) {
+  if (getWorkerParameter('fakeDoStake')) {
     log('[fake] Ставка принята', 'green');
     return true;
   }

@@ -9,10 +9,6 @@ interface GetStakeCountGeneratorOptions {
    */
   stakeSelector: string;
   /**
-   * Имя параметра воркера, который включает фейковое определение количества ставок в купоне
-   */
-  fakeStakeCountWorkerParameterName?: string;
-  /**
    * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -26,8 +22,8 @@ const getStakeCountGenerator = (
   options: GetStakeCountGeneratorOptions
 ) => (): number => {
   if (
-    options.fakeStakeCountWorkerParameterName &&
-    getWorkerParameter(options.fakeStakeCountWorkerParameterName)
+    getWorkerParameter('fakeStakeCount') ||
+    getWorkerParameter('fakeOpenStake')
   ) {
     return 1;
   }

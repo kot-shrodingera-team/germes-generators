@@ -45,10 +45,6 @@ interface SetStakeSumGeneratorOptions {
    */
   fireEventNames?: string[];
   /**
-   * Имя параметра воркера, который включает фейковое проставление ставки
-   */
-  fakeDoStakeWorkerParameterName?: string;
-  /**
    * context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -62,10 +58,7 @@ interface SetStakeSumGeneratorOptions {
 const setStakeSumGenerator = (options: SetStakeSumGeneratorOptions) => (
   sum: number
 ): boolean => {
-  if (
-    options.fakeDoStakeWorkerParameterName &&
-    getWorkerParameter(options.fakeDoStakeWorkerParameterName)
-  ) {
+  if (getWorkerParameter('fakeDoStake')) {
     log(`[fake] Вводим сумму ставки: "${sum}"`, 'orange');
     return true;
   }

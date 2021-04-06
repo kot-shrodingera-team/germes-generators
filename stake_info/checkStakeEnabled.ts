@@ -62,10 +62,6 @@ interface CheckStakeEnabledGeneratorOptions {
     message?: string;
   }[];
   /**
-   * Имя параметра воркера, который включает фейковое определение доступности ставки
-   */
-  fakeStakeEnabledWorkerParameterName?: string;
-  /**
    * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -79,8 +75,8 @@ const checkStakeEnabledGenerator = (
   options: CheckStakeEnabledGeneratorOptions
 ) => (): boolean => {
   if (
-    options.fakeStakeEnabledWorkerParameterName &&
-    getWorkerParameter(options.fakeStakeEnabledWorkerParameterName)
+    getWorkerParameter('fakeStakeEnabled') ||
+    getWorkerParameter('fakeShowStake')
   ) {
     return true;
   }

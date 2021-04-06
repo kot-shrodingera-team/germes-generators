@@ -24,10 +24,6 @@ interface AuthStateReadyGeneratorOptions {
    */
   maxDelayAfterNoAuthElementAppeared?: number;
   /**
-   * Имя параметра воркера, который включает фейковое определение авторизации
-   */
-  fakeAuthWorkerParameterName?: string;
-  /**
    * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -43,10 +39,7 @@ interface AuthStateReadyGeneratorOptions {
 export const authStateReadyGenerator = (
   options: AuthStateReadyGeneratorOptions
 ) => async (timeout = 5000): Promise<void> => {
-  if (
-    options.fakeAuthWorkerParameterName &&
-    getWorkerParameter(options.fakeAuthWorkerParameterName)
-  ) {
+  if (getWorkerParameter('fakeAuth')) {
     return;
   }
   const context = options.context ? options.context() : document;
@@ -91,10 +84,6 @@ interface CheckAuthGeneratorOptions {
    */
   authElementSelector: string;
   /**
-   * Имя параметра воркера, который включает фейковое определение авторизации
-   */
-  fakeAuthWorkerParameterName?: string;
-  /**
    * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -107,10 +96,7 @@ interface CheckAuthGeneratorOptions {
 const checkAuthGenerator = (
   options: CheckAuthGeneratorOptions
 ) => (): boolean => {
-  if (
-    options.fakeAuthWorkerParameterName &&
-    getWorkerParameter(options.fakeAuthWorkerParameterName)
-  ) {
+  if (getWorkerParameter('fakeAuth')) {
     return true;
   }
   const context = options.context ? options.context() : document;

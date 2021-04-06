@@ -38,10 +38,6 @@ interface GetCoefficientGeneratorOptions {
    */
   coefficientRegex?: RegExp;
   /**
-   * Имя параметра воркера, который включает фейковое определение коэффициента
-   */
-  fakeCoefficientWorkerParameterName?: string;
-  /**
    * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -55,8 +51,8 @@ const getCoefficientGenerator = (
   options: GetCoefficientGeneratorOptions
 ) => (): number => {
   if (
-    options.fakeCoefficientWorkerParameterName &&
-    getWorkerParameter(options.fakeCoefficientWorkerParameterName)
+    getWorkerParameter('fakeCoefficient') ||
+    getWorkerParameter('fakeOpenStake')
   ) {
     const coefficient = Number(JSON.parse(worker.ForkObj).coefficient);
     if (Number.isNaN(coefficient)) {

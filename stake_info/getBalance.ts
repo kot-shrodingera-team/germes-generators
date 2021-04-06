@@ -37,10 +37,6 @@ interface BalanceReadyGeneratorOptions {
    */
   balanceRegex?: RegExp;
   /**
-   * Имя параметра воркера, который включает фейковое определение баланса
-   */
-  fakeBalanceWorkerParameterName?: string;
-  /**
    * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -55,10 +51,7 @@ interface BalanceReadyGeneratorOptions {
 export const balanceReadyGenerator = (
   options: BalanceReadyGeneratorOptions
 ) => async (timeout = 5000, interval = 100): Promise<boolean> => {
-  if (
-    options.fakeBalanceWorkerParameterName &&
-    getWorkerParameter(options.fakeBalanceWorkerParameterName)
-  ) {
+  if (getWorkerParameter('fakeBalance') || getWorkerParameter('fakeAuth')) {
     return true;
   }
   const context = options.context ? options.context() : document;
@@ -127,10 +120,6 @@ interface GetBalanceGeneratorOptions {
    */
   balanceRegex?: RegExp;
   /**
-   * Имя параметра воркера, который включает фейковое определение баланса
-   */
-  fakeBalanceWorkerParameterName?: string;
-  /**
    * Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -143,11 +132,12 @@ interface GetBalanceGeneratorOptions {
 export const getBalanceGenerator = (
   options: GetBalanceGeneratorOptions
 ) => (): number => {
-  if (
-    options.fakeBalanceWorkerParameterName &&
-    getWorkerParameter(options.fakeBalanceWorkerParameterName)
-  ) {
-    return Number(getWorkerParameter(options.fakeBalanceWorkerParameterName));
+  if (getWorkerParameter('fakeBalance') || getWorkerParameter('fakeAuth')) {
+    const fakeBalance = getWorkerParameter('fakeBalance');
+    if (typeof fakeBalance === 'number') {
+      return fakeBalance;
+    }
+    return 100000;
   }
   const context = options.context ? options.context() : document;
   const balanceElement = context.querySelector<HTMLElement>(
