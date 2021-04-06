@@ -49,8 +49,15 @@ interface GetCurrentSumGeneratorOptions {
 const getCurrentSumGenerator = (
   options: GetCurrentSumGeneratorOptions
 ) => (): number => {
-  if (getWorkerParameter('fakeCurrentSum')) {
-    return Number(getWorkerParameter('fakeCurrentSum'));
+  if (
+    getWorkerParameter('fakeCurrentSum') ||
+    getWorkerParameter('fakeOpenStake')
+  ) {
+    const fakeCurrentSum = getWorkerParameter('fakeCurrentSum');
+    if (typeof fakeCurrentSum === 'number') {
+      return fakeCurrentSum;
+    }
+    return 100000;
   }
   const context = options.context ? options.context() : document;
   const sumInputElement = context.querySelector<HTMLInputElement>(
