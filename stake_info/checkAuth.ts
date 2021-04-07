@@ -43,7 +43,7 @@ export const authStateReadyGenerator = (
     return;
   }
   const context = options.context ? options.context() : document;
-  await Promise.any([
+  await Promise.race([
     getElement(options.noAuthElementSelector, timeout, context),
     getElement(options.authElementSelector, timeout, context),
   ]);
