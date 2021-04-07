@@ -152,7 +152,7 @@ const getMinimumStakeGenerator = (
     if (typeof fakeMinimumStake === 'number') {
       return fakeMinimumStake;
     }
-    return 100000;
+    return 0;
   }
   const context = options.context ? options.context() : document;
   const minimumStakeElement = context.querySelector(
