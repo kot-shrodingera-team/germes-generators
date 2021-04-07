@@ -76,7 +76,7 @@ const checkStakeEnabledGenerator = (
 ) => (): boolean => {
   if (
     getWorkerParameter('fakeStakeEnabled') ||
-    getWorkerParameter('fakeShowStake')
+    getWorkerParameter('fakeOpenStake')
   ) {
     return true;
   }
