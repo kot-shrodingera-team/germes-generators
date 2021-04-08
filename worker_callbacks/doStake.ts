@@ -48,10 +48,6 @@ interface DoStakeGeneratorOptions {
    */
   postCheck?: () => boolean;
   /**
-   * Функция сброса момента начала попытки ставки
-   */
-  clearDoStakeTime: () => void;
-  /**
    * context - Функция, возвращающая контекст для поиска элементов DOM, по умолчанию document
    */
   context?: () => Document | Element;
@@ -108,9 +104,13 @@ const doStakeGenerator = (options: DoStakeGeneratorOptions) => (): boolean => {
   if (options.postCheck && !options.postCheck()) {
     return false;
   }
-  options.clearDoStakeTime();
-  log(`Время ставки: ${timeString(new Date())}`, 'steelblue');
+  window.germesData.doStakeTime = new Date();
+  log(
+    `Время ставки: ${timeString(window.germesData.doStakeTime)}`,
+    'steelblue'
+  );
   stakeButton.click();
+  window.germesData.betProcessingStep = 'beforeStart';
   return true;
 };
 
