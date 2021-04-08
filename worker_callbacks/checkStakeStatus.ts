@@ -5,10 +5,6 @@ import { getWorkerParameter, log } from '@kot-shrodingera-team/germes-utils';
  */
 interface CheckStakeStatusGeneratorOptions {
   /**
-   * Функция получения текущего состояния обработки ставки
-   */
-  getProcessingStep: () => string;
-  /**
    * Функция обновления баланса в бк
    */
   updateBalance: () => void;
@@ -25,7 +21,7 @@ const checkStakeStatusGenerator = (
     log('[fake] Ставка принята', 'green');
     return true;
   }
-  if (options.getProcessingStep() === 'success') {
+  if (window.germesData.betProcessingStep === 'success') {
     log('Ставка принята', 'green');
     options.updateBalance();
     return true;
