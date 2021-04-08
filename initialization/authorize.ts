@@ -90,6 +90,10 @@ interface AuthorizeGeneratorOptions {
      */
     loginedSelector: string;
     /**
+     * Таймаут ожидания появления авторизации
+     */
+    timeout?: number;
+    /**
      * Функция ожидания появления баланса
      */
     balanceReady: () => Promise<boolean>;
@@ -228,9 +232,10 @@ const authorizeGenerator = (
   }
 
   if (options.loginedWait) {
+    const timeout = options.loginedWait.timeout || 5000;
     const logined = await getElement(
       options.loginedWait.loginedSelector,
-      5000,
+      timeout,
       context
     );
     if (!logined) {
