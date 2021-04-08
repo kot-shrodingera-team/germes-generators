@@ -10,22 +10,6 @@ import {
  */
 interface CheckCouponLoadingGeneratorOptions {
   /**
-   * Функция получения момента начала попытки ставки
-   *
-   * Используется для определения таймаута попытки
-   */
-  getDoStakeTime: () => Date;
-  /**
-   * Название БК
-   *
-   * Используется в текста информа при таймауте
-   */
-  bookmakerName: string;
-  /**
-   * Таймаут проверки в мс, по истечению которого, обработка считается законченной, по умолчанию 60000
-   */
-  timeout?: number;
-  /**
    * Функция проверки статуса обработки
    */
   check: () => boolean;
@@ -43,23 +27,23 @@ const checkCouponLoadingGenerator = (
     return false;
   }
   const now = new Date();
-  const doStakeTime = options.getDoStakeTime();
+  const { doStakeTime } = window.germesData;
   const timePassedSinceDoStake = now.getTime() - doStakeTime.getTime();
-  const timeout = Object.prototype.hasOwnProperty.call(options, 'timeout')
-    ? options.timeout
-    : 60000;
+  const timeout = window.germesData.betProcessingTimeout
+    ? window.germesData.betProcessingTimeout + 10000
+    : 50000;
   if (timePassedSinceDoStake > timeout) {
     log(`now = ${now.getTime()}`, 'white', true);
     log(`doStakeTime = ${doStakeTime.getTime()}`, 'white', true);
-    log(`timePassedSinceDoStake = ${timePassedSinceDoStake}`);
-    log(`timeout = ${timeout}`);
+    log(`timePassedSinceDoStake = ${timePassedSinceDoStake}`, 'white', true);
+    log(`timeout = ${timeout}`, 'white', true);
     log(
-      `Текущее время: ${timeString(now)}, время ставки: ${timeString(
-        doStakeTime
+      `Время ставки: ${timeString(doStakeTime)}\nТекущее время: ${timeString(
+        now
       )}`
     );
     const message =
-      `В ${options.bookmakerName} очень долгое принятие ставки\n` +
+      `В ${window.germesData.bookmakerName} очень долгое принятие ставки\n` +
       `Бот засчитает ставку как НЕ принятую\n` +
       `${stakeInfoString()}\n` +
       `Пожалуйста, проверьте самостоятельно. Если всё плохо - пишите в ТП`;
