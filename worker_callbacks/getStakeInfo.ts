@@ -76,6 +76,7 @@ const getStakeInfoGenerator = (
     if (options.reShowStake.isNeeded()) {
       log('Переоткрываем купон', 'orange');
       options.reShowStake.showStake();
+      worker.StakeInfo.IsEnebled = false;
       return;
     }
   }
