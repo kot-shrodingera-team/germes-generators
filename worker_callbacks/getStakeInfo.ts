@@ -5,6 +5,19 @@ import { log } from '@kot-shrodingera-team/germes-utils';
  */
 interface GetStakeInfoGeneratorOptions {
   /**
+   * Опции переоткрытия купона
+   */
+  reShowStake?: {
+    /**
+     * Функция, определяющая, нужно ли переоткрытие купона
+     */
+    isNeeded: () => boolean;
+    /**
+     * Функция открытия купона
+     */
+    showStake: () => Promise<void>;
+  };
+  /**
    * Функция, выполняющаяся перед сбором информации
    */
   preAction?: () => void;
@@ -52,6 +65,20 @@ interface GetStakeInfoGeneratorOptions {
 const getStakeInfoGenerator = (
   options: GetStakeInfoGeneratorOptions
 ) => (): void => {
+  if (
+    worker.GetSessionData(`${window.germesData.bookmakerName}.ShowStake`) ===
+    '1'
+  ) {
+    log('Купон переоткрывается', 'tan');
+    return;
+  }
+  if (options.reShowStake) {
+    if (options.reShowStake.isNeeded()) {
+      log('Переоткрываем купон', 'orange');
+      options.reShowStake.showStake();
+      return;
+    }
+  }
   if (options.preAction) {
     options.preAction();
   }
