@@ -50,14 +50,17 @@ const getCurrentSumGenerator = (
   options: GetCurrentSumGeneratorOptions
 ) => (): number => {
   if (
-    getWorkerParameter('fakeCurrentSum') ||
+    getWorkerParameter('fakeCurrentSum', 'number') ||
     getWorkerParameter('fakeOpenStake')
   ) {
-    const fakeCurrentSum = getWorkerParameter('fakeCurrentSum');
-    if (typeof fakeCurrentSum === 'number') {
+    const fakeCurrentSum = getWorkerParameter(
+      'fakeCurrentSum',
+      'number'
+    ) as number;
+    if (fakeCurrentSum !== undefined) {
       return fakeCurrentSum;
     }
-    return 100000;
+    return 0;
   }
   const context = options.context ? options.context() : document;
   const sumInputElement = context.querySelector<HTMLInputElement>(

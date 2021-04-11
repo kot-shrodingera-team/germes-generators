@@ -51,7 +51,10 @@ interface BalanceReadyGeneratorOptions {
 export const balanceReadyGenerator = (
   options: BalanceReadyGeneratorOptions
 ) => async (timeout = 5000, interval = 100): Promise<boolean> => {
-  if (getWorkerParameter('fakeBalance') || getWorkerParameter('fakeAuth')) {
+  if (
+    getWorkerParameter('fakeBalance', 'number') ||
+    getWorkerParameter('fakeAuth')
+  ) {
     return true;
   }
   const context = options.context ? options.context() : document;
@@ -132,9 +135,12 @@ interface GetBalanceGeneratorOptions {
 export const getBalanceGenerator = (
   options: GetBalanceGeneratorOptions
 ) => (): number => {
-  if (getWorkerParameter('fakeBalance') || getWorkerParameter('fakeAuth')) {
-    const fakeBalance = getWorkerParameter('fakeBalance');
-    if (typeof fakeBalance === 'number') {
+  if (
+    getWorkerParameter('fakeBalance', 'number') ||
+    getWorkerParameter('fakeAuth')
+  ) {
+    const fakeBalance = getWorkerParameter('fakeBalance', 'number') as number;
+    if (fakeBalance !== undefined) {
       return fakeBalance;
     }
     return 100000;
