@@ -84,12 +84,18 @@ const getStakeInfoGenerator = (
     options.preAction();
   }
   worker.StakeInfo.Auth = options.checkAuth();
+  if (!worker.StakeInfo.Auth) {
+    return;
+  }
+  worker.StakeInfo.IsEnebled = options.checkStakeEnabled();
+  if (!worker.StakeInfo.Auth) {
+    return;
+  }
   worker.StakeInfo.StakeCount = options.getStakeCount();
   worker.StakeInfo.Balance = options.getBalance();
   worker.StakeInfo.MinSumm = options.getMinimumStake();
   worker.StakeInfo.MaxSumm = options.getMaximumStake();
   worker.StakeInfo.Summ = options.getCurrentSum();
-  worker.StakeInfo.IsEnebled = options.checkStakeEnabled();
   worker.StakeInfo.Coef = options.getCoefficient();
   worker.StakeInfo.Parametr = options.getParameter();
   const message =
