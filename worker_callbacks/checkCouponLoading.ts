@@ -10,9 +10,9 @@ import {
  */
 interface CheckCouponLoadingGeneratorOptions {
   /**
-   * Функция проверки статуса обработки
+   * Асинхронная функция проверки статуса обработки
    */
-  check: () => boolean;
+  asyncCheck: () => Promise<void>;
 }
 
 /**
@@ -51,7 +51,26 @@ const checkCouponLoadingGenerator = (
     log('Слишком долгая обработка, считаем ставку непринятой', 'crimson');
     return false;
   }
-  return options.check();
+  const step = window.germesData.betProcessingStep;
+  const additionalInfo = window.germesData.betProcessingAdditionalInfo
+    ? ` (${window.germesData.betProcessingAdditionalInfo})`
+    : '';
+  switch (step) {
+    case 'beforeStart':
+      options.asyncCheck();
+      window.germesData.betProcessingStep = 'waitingForLoaderOrResult';
+      return true;
+    case 'error':
+    case 'success':
+    case 'reopened':
+      log(`Обработка ставки завершена${additionalInfo}`, 'orange');
+      // log(step, 'orange', true);
+      return false;
+    default:
+      log(`Обработка ставки${additionalInfo}`, 'tan');
+      // log(step, 'tan', true);
+      return true;
+  }
 };
 
 export default checkCouponLoadingGenerator;
