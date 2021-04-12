@@ -66,6 +66,9 @@ const checkCouponLoadingGenerator = (
       log(`Обработка ставки завершена${additionalInfo}`, 'orange');
       // log(step, 'orange', true);
       return false;
+    case 'reopen':
+      log(`Переоткрытие купона${additionalInfo}`, 'orange');
+      return true;
     default:
       log(`Обработка ставки${additionalInfo}`, 'tan');
       // log(step, 'tan', true);
