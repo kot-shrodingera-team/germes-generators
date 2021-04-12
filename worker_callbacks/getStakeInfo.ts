@@ -88,7 +88,7 @@ const getStakeInfoGenerator = (
     return;
   }
   worker.StakeInfo.IsEnebled = options.checkStakeEnabled();
-  if (!worker.StakeInfo.Auth) {
+  if (!worker.StakeInfo.IsEnebled) {
     return;
   }
   worker.StakeInfo.StakeCount = options.getStakeCount();
