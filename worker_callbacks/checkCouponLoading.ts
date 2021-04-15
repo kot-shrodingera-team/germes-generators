@@ -1,7 +1,6 @@
 import {
   stakeInfoString,
   log,
-  timeString,
   getWorkerParameter,
 } from '@kot-shrodingera-team/germes-utils';
 
@@ -33,22 +32,18 @@ const checkCouponLoadingGenerator = (
     ? window.germesData.betProcessingTimeout + 10000
     : 50000;
   if (timePassedSinceDoStake > timeout) {
-    log(`now = ${now.getTime()}`, 'white', true);
-    log(`doStakeTime = ${doStakeTime.getTime()}`, 'white', true);
-    log(`timePassedSinceDoStake = ${timePassedSinceDoStake}`, 'white', true);
-    log(`timeout = ${timeout}`, 'white', true);
-    log(
-      `Время ставки: ${timeString(doStakeTime)}\nТекущее время: ${timeString(
-        now
-      )}`
-    );
     const message =
       `В ${window.germesData.bookmakerName} очень долгое принятие ставки\n` +
       `Бот засчитает ставку как НЕ принятую\n` +
       `${stakeInfoString()}\n` +
       `Пожалуйста, проверьте самостоятельно. Если всё плохо - пишите в ТП`;
     worker.Helper.SendInformedMessage(message);
-    log('Слишком долгая обработка, считаем ставку непринятой', 'crimson');
+    log(
+      `Слишком долгая обработка (> ${
+        timeout / 1000
+      }), считаем ставку непринятой`,
+      'crimson'
+    );
     return false;
   }
   const step = window.germesData.betProcessingStep;
