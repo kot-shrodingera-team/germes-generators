@@ -80,6 +80,10 @@ const checkStakeEnabledGenerator = (
   ) {
     return true;
   }
+  if (window.germesData.stakeDisabled) {
+    log('Ставка недоступна [forced]', 'crimson');
+    return false;
+  }
   const context = options.context ? options.context() : document;
   if (options.preCheck && !options.preCheck()) {
     return false;
