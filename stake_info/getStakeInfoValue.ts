@@ -83,12 +83,6 @@ const getStakeInfoValueGenerator = (
       return window.germesData.minimumStake;
     }
   }
-  if ('fakeValue' in options) {
-    const fakeValue = options.fakeValue();
-    if (fakeValue !== null) {
-      return fakeValue;
-    }
-  }
   if ('fixedValue' in options) {
     return options.fixedValue();
   }
