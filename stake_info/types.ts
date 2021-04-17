@@ -66,12 +66,6 @@ interface StakeInfoValueBasicOptions {
     | 'maximumStake'
     | 'minimumStake';
   /**
-   * Функция возврата фейкового значения
-   *
-   * Если результат не null, используется не фейковое значение
-   */
-  fakeValue?: () => number;
-  /**
    * Функция модификации результата
    *
    * @param value промежуточное значение
