@@ -52,7 +52,8 @@ export const authStateReadyGenerator = (
   if (options.maxDelayAfterNoAuthElementAppeared && noAuthElement) {
     log(
       `Появился элемент отсутсвия авторизации, ожидаем элемент наличия авторизации`,
-      'steelblue'
+      'cadetblue',
+      true
     );
     const authElementWaited = await getElement(
       options.authElementSelector,
@@ -60,18 +61,22 @@ export const authStateReadyGenerator = (
       context
     );
     if (authElementWaited) {
-      log(`Появился элемент наличия авторизации`, 'steelblue');
+      log(`Появился элемент наличия авторизации`, 'cadetblue', true);
     } else {
-      log(`Элемент наличия авторизации не появился`, 'steelblue');
+      log(`Элемент наличия авторизации не появился`, 'cadetblue', true);
     }
     return;
   }
   if (noAuthElement) {
-    log(`Появился элемент отсутствия авторизации`, 'steelblue');
+    log(`Появился элемент отсутствия авторизации`, 'cadetblue', true);
   } else if (authElement) {
-    log(`Появился элемент наличия авторизации`, 'steelblue');
+    log(`Появился элемент наличия авторизации`, 'cadetblue', true);
   } else {
-    log(`Не найден элемент наличия или отсутствия авторизации`, 'steelblue');
+    log(
+      `Не найден элемент наличия или отсутствия авторизации`,
+      'crimson',
+      true
+    );
   }
 };
 
