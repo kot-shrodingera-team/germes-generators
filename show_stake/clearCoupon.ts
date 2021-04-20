@@ -119,7 +119,7 @@ const clearCouponGenerator = (
       log('Не удалось очистить купон', 'crimson');
       return false;
     }
-    log('Купон очищен', 'steelblue');
+    log('Купон очищен', 'cadetblue', true);
     if (options.postCheck) {
       const result = await options.postCheck();
       if (!result) {
@@ -127,7 +127,7 @@ const clearCouponGenerator = (
       }
     }
   }
-  log('Купон пуст', 'steelblue');
+  log('Купон пуст', 'cadetblue', true);
   return true;
 };
 
