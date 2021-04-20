@@ -120,7 +120,7 @@ const getStakeInfoValueGenerator = (
       ? valueFromTextOptions.removeRegex
       : defaultRemoveRegex;
     valueText = valueText.replace(removeRegex, '');
-    if (!options.zeroValues.includes(valueText)) {
+    if (!options.zeroValues || !options.zeroValues.includes(valueText)) {
       const matchRegex = valueFromTextOptions.matchRegex
         ? valueFromTextOptions.matchRegex
         : defaultNumberRegex;
