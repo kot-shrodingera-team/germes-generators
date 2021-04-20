@@ -66,6 +66,10 @@ interface StakeInfoValueBasicOptions {
     | 'maximumStake'
     | 'minimumStake';
   /**
+   * Массив значений, которые расцениватся как 0
+   */
+  zeroValues?: string[];
+  /**
    * Функция модификации результата
    *
    * @param value промежуточное значение

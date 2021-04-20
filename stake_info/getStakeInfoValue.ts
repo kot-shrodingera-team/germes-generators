@@ -15,7 +15,7 @@ const getStakeInfoValueGenerator = (
       getWorkerParameter('fakeBalance', 'number') ||
       getWorkerParameter('fakeAuth')
     ) {
-      const fakeBalance = getWorkerParameter('fakeBalance', 'number') as number;
+      const fakeBalance = getWorkerParameter<number>('fakeBalance', 'number');
       if (fakeBalance !== undefined) {
         return fakeBalance;
       }
@@ -37,10 +37,10 @@ const getStakeInfoValueGenerator = (
       getWorkerParameter('fakeCurrentSum', 'number') ||
       getWorkerParameter('fakeOpenStake')
     ) {
-      const fakeCurrentSum = getWorkerParameter(
+      const fakeCurrentSum = getWorkerParameter<number>(
         'fakeCurrentSum',
         'number'
-      ) as number;
+      );
       if (fakeCurrentSum !== undefined) {
         return fakeCurrentSum;
       }
@@ -52,10 +52,10 @@ const getStakeInfoValueGenerator = (
       getWorkerParameter('fakeAuth') ||
       getWorkerParameter('fakeOpenStake')
     ) {
-      const fakeMaximumStake = getWorkerParameter(
+      const fakeMaximumStake = getWorkerParameter<number>(
         'fakeMaximumStake',
         'number'
-      ) as number;
+      );
       if (fakeMaximumStake !== undefined) {
         return fakeMaximumStake;
       }
@@ -70,10 +70,10 @@ const getStakeInfoValueGenerator = (
       getWorkerParameter('fakeAuth') ||
       getWorkerParameter('fakeOpenStake')
     ) {
-      const fakeMinimumStake = getWorkerParameter(
+      const fakeMinimumStake = getWorkerParameter<number>(
         'fakeMinimumStake',
         'number'
-      ) as number;
+      );
       if (fakeMinimumStake !== undefined) {
         return fakeMinimumStake;
       }
@@ -83,62 +83,75 @@ const getStakeInfoValueGenerator = (
       return window.germesData.minimumStake;
     }
   }
+  let preliminaryValue = 0;
+  let extractType = '';
   if ('fixedValue' in options) {
-    return options.fixedValue();
-  }
-  const valueFromTextOptions = options.valueFromText;
-  let valueText = '';
-  if ('getText' in valueFromTextOptions.text) {
-    valueText = valueFromTextOptions.text.getText();
+    preliminaryValue = options.fixedValue();
+    extractType = 'fixed';
   } else {
-    const context = valueFromTextOptions.text.context
-      ? valueFromTextOptions.text.context()
-      : document;
-    const valueElement = context.querySelector(
-      valueFromTextOptions.text.selector
-    );
-    if (!valueElement) {
-      if (options.disableLog !== true) {
-        log(`Не найден элемент ${options.name}`, 'crimson');
+    const valueFromTextOptions = options.valueFromText;
+    let valueText = '';
+    if ('getText' in valueFromTextOptions.text) {
+      valueText = valueFromTextOptions.text.getText();
+    } else {
+      const context = valueFromTextOptions.text.context
+        ? valueFromTextOptions.text.context()
+        : document;
+      const valueElement = context.querySelector(
+        valueFromTextOptions.text.selector
+      );
+      if (!valueElement) {
+        if (options.disableLog !== true) {
+          log(`Не найден элемент ${options.name}`, 'crimson');
+        }
+        return valueFromTextOptions.errorValue;
       }
-      return valueFromTextOptions.errorValue;
+      valueText = text(valueElement);
     }
-    valueText = text(valueElement);
-  }
-  if (valueFromTextOptions.replaceDataArray) {
-    valueFromTextOptions.replaceDataArray.forEach((replaceData) => {
-      valueText = valueText.replace(
-        replaceData.searchValue,
-        replaceData.replaceValue
-      );
-    });
-  }
-  const removeRegex = valueFromTextOptions.removeRegex
-    ? valueFromTextOptions.removeRegex
-    : defaultRemoveRegex;
-  valueText = valueText.replace(removeRegex, '');
-  const matchRegex = valueFromTextOptions.matchRegex
-    ? valueFromTextOptions.matchRegex
-    : defaultNumberRegex;
-  const minimumStakeMatch = valueText.match(matchRegex);
-  if (!minimumStakeMatch) {
-    if (options.disableLog !== true) {
-      log(
-        `Непонятный формат элемента ${options.name}: "${valueText}"`,
-        'crimson'
-      );
+    if (valueFromTextOptions.replaceDataArray) {
+      valueFromTextOptions.replaceDataArray.forEach((replaceData) => {
+        valueText = valueText.replace(
+          replaceData.searchValue,
+          replaceData.replaceValue
+        );
+      });
     }
-    return valueFromTextOptions.errorValue;
+    const removeRegex = valueFromTextOptions.removeRegex
+      ? valueFromTextOptions.removeRegex
+      : defaultRemoveRegex;
+    valueText = valueText.replace(removeRegex, '');
+    if (!options.zeroValues.includes(valueText)) {
+      const matchRegex = valueFromTextOptions.matchRegex
+        ? valueFromTextOptions.matchRegex
+        : defaultNumberRegex;
+      const minimumStakeMatch = valueText.match(matchRegex);
+      if (!minimumStakeMatch) {
+        if (options.disableLog !== true) {
+          log(
+            `Непонятный формат элемента ${options.name}: "${valueText}"`,
+            'crimson'
+          );
+        }
+        return valueFromTextOptions.errorValue;
+      }
+      preliminaryValue = Number(minimumStakeMatch[1]);
+    }
+    extractType = 'text';
   }
-  return Number(minimumStakeMatch[1]);
+  if (options.modifyValue) {
+    return options.modifyValue(preliminaryValue, extractType);
+  }
+  return preliminaryValue;
 };
 
-export const stakeInfoValueReadyGenerator = <T>(
-  getStakeInfoValue: () => T
+export const stakeInfoValueReadyGenerator = (
+  options: StakeInfoValueOptions
 ) => async (timeout = 5000, interval = 100): Promise<boolean> => {
+  const modifiedOptions = { ...options, disableLog: true };
+  const modifiedGetStakeInfoValue = getStakeInfoValueGenerator(modifiedOptions);
   const valueLoaded = await awaiter(
     () => {
-      return getStakeInfoValue() !== null;
+      return modifiedGetStakeInfoValue() !== null;
     },
     timeout,
     interval
