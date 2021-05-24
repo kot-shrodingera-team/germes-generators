@@ -1,4 +1,4 @@
-import { log, awaiter } from '@kot-shrodingera-team/germes-utils';
+import { log, awaiter, fireEvent } from '@kot-shrodingera-team/germes-utils';
 
 /**
  * Опции генератора функции очистки купона
@@ -81,7 +81,7 @@ const clearCouponGenerator = (
           log('Не найдена кнопка удаления ставки из купона', 'crimson');
           return false;
         }
-        clearSingleButton.click();
+        fireEvent(clearSingleButton, 'click');
       } else {
         const clearAllButton = context.querySelector<HTMLElement>(
           options.clearAllSelector
@@ -90,7 +90,7 @@ const clearCouponGenerator = (
           log('Не найдена кнопка очистки купона', 'crimson');
           return false;
         }
-        clearAllButton.click();
+        fireEvent(clearAllButton, 'click');
       }
     } else if (options.clearAllSelector) {
       const clearAllButton = context.querySelector<HTMLElement>(
@@ -100,7 +100,7 @@ const clearCouponGenerator = (
         log('Не найдена кнопка очистки купона', 'crimson');
         return false;
       }
-      clearAllButton.click();
+      fireEvent(clearAllButton, 'click');
     } else {
       const clearSingleButtons = [
         ...context.querySelectorAll<HTMLElement>(options.clearSingleSelector),
@@ -109,7 +109,7 @@ const clearCouponGenerator = (
         log('Не найдены кнопки удаления ставок из купона', 'crimson');
         return false;
       }
-      clearSingleButtons.forEach((button) => button.click());
+      clearSingleButtons.forEach((button) => fireEvent(button, 'click'));
     }
 
     const couponCleared = Boolean(
