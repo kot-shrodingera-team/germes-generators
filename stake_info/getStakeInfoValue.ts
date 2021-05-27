@@ -147,7 +147,14 @@ const getStakeInfoValueGenerator = (
 export const stakeInfoValueReadyGenerator = (
   options: StakeInfoValueOptions
 ) => async (timeout = 5000, interval = 100): Promise<boolean> => {
-  const modifiedOptions = { ...options, disableLog: true };
+  const modifiedOptions = {
+    ...options,
+    valueFromText: {
+      ...options.valueFromText,
+      errorValue: null,
+    },
+    disableLog: true,
+  } as StakeInfoValueOptions;
   const modifiedGetStakeInfoValue = getStakeInfoValueGenerator(modifiedOptions);
   const valueLoaded = await awaiter(
     () => {
