@@ -74,6 +74,12 @@ interface AuthorizeGeneratorOptions {
    */
   beforeSubmitDelay?: number;
   /**
+   * Функция проверки перед попыткой входа (нажатием кнопки)
+   *
+   * Если вернёт false, авторизация считается не успешной
+   */
+  beforeSubmitCheck?: () => Promise<boolean>;
+  /**
    * Селектор капчи, если она появляется после попытки входа
    *
    * Ожидания нет, но если капча появится, будет выведено сообщение в лог
@@ -218,6 +224,13 @@ const authorizeGenerator = (
   }
   if (options.beforeSubmitDelay) {
     await sleep(options.beforeSubmitDelay);
+  }
+  if (options.beforeSubmitCheck) {
+    const check = await options.beforeSubmitCheck();
+    if (!check) {
+      log('Не удалось пройти проверку перед попыткой входа', 'crimson');
+      return;
+    }
   }
   log('Нажимаем на кнопку входа', 'orange');
   loginSubmitButton.click();
