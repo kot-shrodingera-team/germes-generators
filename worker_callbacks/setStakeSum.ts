@@ -126,4 +126,36 @@ const setStakeSumGenerator = (options: SetStakeSumGeneratorOptions) => (
   return true;
 };
 
+export const clearStakeSumGenerator = (
+  options: SetStakeSumGeneratorOptions
+) => (disableLog = false): boolean => {
+  const context = options.context ? options.context() : document;
+  if (!disableLog) {
+    log('Очищаем сумму ставки', 'orange');
+  }
+  const inputElement = context.querySelector<HTMLInputElement>(
+    options.sumInputSelector
+  );
+  if (!inputElement) {
+    log('Поле ввода суммы ставки не найдено', 'crimson');
+    return false;
+  }
+  if (options.inputType === 'nativeInput') {
+    nativeInput(inputElement, '');
+  } else if (options.inputType === 'react') {
+    setReactInputValue(inputElement, '');
+  } else {
+    inputElement.value = '';
+    if (options.fireEventNames) {
+      options.fireEventNames.forEach((eventName) => {
+        fireEvent(inputElement, eventName);
+      });
+    } else {
+      fireEvent(inputElement, 'input');
+    }
+  }
+  worker.StakeInfo.Summ = 0;
+  return true;
+};
+
 export default setStakeSumGenerator;
