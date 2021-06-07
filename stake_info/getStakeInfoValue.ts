@@ -77,7 +77,7 @@ const getStakeInfoValueGenerator = (
       if (fakeMinimumStake !== undefined) {
         return fakeMinimumStake;
       }
-      return 100000;
+      return 0;
     }
     if (window.germesData.minimumStake !== undefined) {
       return window.germesData.minimumStake;
