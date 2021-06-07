@@ -126,6 +126,10 @@ const setStakeSumGenerator = (options: SetStakeSumGeneratorOptions) => (
   return true;
 };
 
+/**
+ * Генератор функции clearStakeSum (очистка поля ввода суммы ставки)
+ * @returns Функция, которая возвращает true, если очистка поля ввода суммы ставки успешна, иначе false
+ */
 export const clearStakeSumGenerator = (
   options: SetStakeSumGeneratorOptions
 ) => (disableLog = false): boolean => {
