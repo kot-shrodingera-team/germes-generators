@@ -56,19 +56,23 @@ interface SetStakeSumGeneratorOptions {
  * - sum - вводимая сумма ставки
  */
 const setStakeSumGenerator = (options: SetStakeSumGeneratorOptions) => (
-  sum: number
+  sum: number,
+  disableLog = false,
+  skipChecks = false
 ): boolean => {
   if (getWorkerParameter('fakeDoStake')) {
     log(`[fake] Вводим сумму ставки: "${sum}"`, 'orange');
     return true;
   }
   const context = options.context ? options.context() : document;
-  log(`Вводим сумму ставки: "${sum}"`, 'orange');
-  if (sum > worker.StakeInfo.Balance) {
+  if (!disableLog) {
+    log(`Вводим сумму ставки: "${sum}"`, 'orange');
+  }
+  if (!skipChecks && sum > worker.StakeInfo.Balance) {
     log('Ошибка ввода суммы ставки: вводимая сумма больше баланса', 'crimson');
     return false;
   }
-  if (sum > worker.StakeInfo.MaxSumm) {
+  if (!skipChecks && sum > worker.StakeInfo.MaxSumm) {
     log(
       'Ошибка ввода суммы ставки: вводимая сумма больше максимальной ставки',
       'crimson'
@@ -79,21 +83,23 @@ const setStakeSumGenerator = (options: SetStakeSumGeneratorOptions) => (
     options.sumInputSelector
   );
   if (!inputElement) {
-    log('Поле ввода ставки не найдено', 'crimson');
+    log('Поле ввода суммы ставки не найдено', 'crimson');
     return false;
   }
   let falseOnSumChangeCheck = false;
-  if (options.alreadySetCheck) {
+  if (!skipChecks && options.alreadySetCheck) {
     const currentSumMatch = inputElement.value.match(/(\d+(?:\.\d+)?)/);
     if (currentSumMatch && Number(currentSumMatch[0]) === sum) {
-      log('Уже введена нужная сумма', 'steelblue');
+      if (!disableLog) {
+        log('Уже введена нужная сумма', 'steelblue');
+      }
       return true;
     }
     if (options.alreadySetCheck.falseOnSumChange) {
       falseOnSumChangeCheck = true;
     }
   }
-  if (options.preInputCheck && !options.preInputCheck(sum)) {
+  if (!skipChecks && options.preInputCheck && !options.preInputCheck(sum)) {
     return false;
   }
   if (options.inputType === 'nativeInput') {
@@ -111,7 +117,9 @@ const setStakeSumGenerator = (options: SetStakeSumGeneratorOptions) => (
     }
   }
   if (falseOnSumChangeCheck) {
-    log('Задержка после изменения суммы в купоне', 'orange');
+    if (!disableLog) {
+      log('Задержка после изменения суммы в купоне', 'orange');
+    }
     return false;
   }
   worker.StakeInfo.Summ = sum;
