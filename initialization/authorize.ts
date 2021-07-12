@@ -40,12 +40,14 @@ interface AuthorizeGeneratorOptions {
     afterOpenDelay?: number;
   };
   /**
-   * Функция выбора типа логина
+   * Функция проверки перед вводом данных
    *
-   * Используется если есть разные типы логина (например по телефону или по почте)
-   * и перед вводом данных нужно переключиться на этот тип
+   * Используется, если, например, нужно переключить типа логина (по почте, логину или телефону)
+   * Или какие-то другие проверки
+   *
+   * Если вернёт false, авторизация считается не успешной
    */
-  setLoginType?: () => Promise<boolean>;
+  preInputCheck?: () => Promise<boolean>;
   /**
    * Селектор элемента ввода логина
    */
@@ -165,10 +167,10 @@ const authorizeGenerator = (
     }
   }
 
-  if (options.setLoginType) {
-    const loginTypeSet = await options.setLoginType();
-    if (!loginTypeSet) {
-      log('Не удалось переключиться на вход по нужному типу логина', 'crimson');
+  if (options.preInputCheck) {
+    const preInputCheckSuccesful = await options.preInputCheck();
+    if (!preInputCheckSuccesful) {
+      log('Не пройдена проверка перед вводом данных авторизации', 'crimson');
       return;
     }
   }
