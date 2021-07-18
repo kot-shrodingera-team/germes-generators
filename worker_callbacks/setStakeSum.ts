@@ -21,6 +21,10 @@ interface SetStakeSumGeneratorOptions {
    */
   alreadySetCheck?: {
     /**
+     * Функция получения текущей суммы в купоне
+     */
+    getCurrentSum: () => number;
+    /**
      * Флаг, указывающий на то, считать ли ввод суммы не успешным после ввода, если изначально сумма была иной, по умолчанию false
      *
      * Используется, если нужна задержка после изменения суммы в купоне
@@ -88,8 +92,8 @@ const setStakeSumGenerator = (options: SetStakeSumGeneratorOptions) => (
   }
   let falseOnSumChangeCheck = false;
   if (!skipChecks && options.alreadySetCheck) {
-    const currentSumMatch = inputElement.value.match(/(\d+(?:\.\d+)?)/);
-    if (currentSumMatch && Number(currentSumMatch[0]) === sum) {
+    const currentSum = options.alreadySetCheck.getCurrentSum();
+    if (currentSum === sum) {
       if (!disableLog) {
         log('Уже введена нужная сумма', 'steelblue');
       }
