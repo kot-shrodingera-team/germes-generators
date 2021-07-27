@@ -29,6 +29,14 @@ interface ShowStakeGeneratorOptions {
    * Функция установки режима принятия ставки
    */
   setBetAcceptMode: () => Promise<void>;
+  /**
+   * Функция получения максимальной ставки
+   */
+  getMaximumStake: (disableLog: boolean) => number;
+  /**
+   * Функция получения коэффициента
+   */
+  getCoefficient: (disableLog: boolean) => number;
 }
 
 const showStakeGenerator = (
@@ -53,6 +61,32 @@ const showStakeGenerator = (
     await options.setBetAcceptMode();
     log('Ставка успешно открыта', 'green');
     worker.SetSessionData(`${window.germesData.bookmakerName}.ShowStake`, '0');
+    if (worker.JSMaxChange && worker.JSCoefChange) {
+      window.germesData.updateMaximumIntervalId = setInterval(() => {
+        const newMax = options.getMaximumStake(true);
+        if (newMax && newMax !== window.germesData.manualMax) {
+          log(
+            `Обновляем макс ${window.germesData.manualMax} => ${newMax}`,
+            'orange'
+          );
+          window.germesData.manualMax = newMax;
+          worker.StakeInfo.MaxSumm = newMax;
+          worker.JSMaxChange(newMax);
+        }
+      }, 200);
+      window.germesData.updateCoefIntervalId = setInterval(() => {
+        const newCoef = options.getCoefficient(true);
+        if (newCoef && newCoef !== window.germesData.manualCoef) {
+          log(
+            `Обновляем кэф ${window.germesData.manualCoef} => ${newCoef}`,
+            'orange'
+          );
+          window.germesData.manualCoef = newCoef;
+          worker.StakeInfo.Coef = newCoef;
+          worker.JSCoefChange(newCoef);
+        }
+      }, 200);
+    }
     worker.JSStop();
   } catch (error) {
     if (error instanceof JsFailError) {
