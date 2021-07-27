@@ -7,9 +7,9 @@ import {
 import { defaultNumberRegex, defaultRemoveRegex } from './defaultRegexes';
 import { StakeInfoValueOptions } from './types';
 
-const getStakeInfoValueGenerator = (
-  options: StakeInfoValueOptions
-) => (): number => {
+const getStakeInfoValueGenerator = (options: StakeInfoValueOptions) => (
+  disableLog = false
+): number => {
   if (options.name === 'balance') {
     if (
       getWorkerParameter('fakeBalance', 'number') ||
@@ -101,7 +101,7 @@ const getStakeInfoValueGenerator = (
         valueFromTextOptions.text.selector
       );
       if (!valueElement) {
-        if (options.disableLog !== true) {
+        if (options.disableLog !== true && disableLog !== true) {
           log(`Не найден элемент ${options.name}`, 'crimson');
         }
         return valueFromTextOptions.errorValue;
@@ -126,7 +126,7 @@ const getStakeInfoValueGenerator = (
         : defaultNumberRegex;
       const minimumStakeMatch = valueText.match(matchRegex);
       if (!minimumStakeMatch) {
-        if (options.disableLog !== true) {
+        if (options.disableLog !== true && disableLog !== true) {
           log(
             `Непонятный формат элемента ${options.name}: "${valueText}"`,
             'crimson'
