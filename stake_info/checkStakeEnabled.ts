@@ -73,7 +73,7 @@ interface CheckStakeEnabledGeneratorOptions {
  */
 const checkStakeEnabledGenerator = (
   options: CheckStakeEnabledGeneratorOptions
-) => (): boolean => {
+) => (disableLog = false): boolean => {
   if (
     getWorkerParameter('fakeStakeEnabled') ||
     getWorkerParameter('fakeOpenStake')
@@ -90,19 +90,23 @@ const checkStakeEnabledGenerator = (
   }
   const stakeCount = options.getStakeCount();
   if (stakeCount !== 1) {
-    log(
-      `Ошибка проверки доступности ставки: в купоне не 1 ставка (${stakeCount})`,
-      'crimson'
-    );
+    if (!disableLog) {
+      log(
+        `Ошибка проверки доступности ставки: в купоне не 1 ставка (${stakeCount})`,
+        'crimson'
+      );
+    }
     return false;
   }
   if (options.betCheck) {
     const betElement = context.querySelector(options.betCheck.selector);
     if (!betElement) {
-      log(
-        'Ошибка проверки доступности ставки: не найдена ставка в купоне',
-        'crimson'
-      );
+      if (!disableLog) {
+        log(
+          'Ошибка проверки доступности ставки: не найдена ставка в купоне',
+          'crimson'
+        );
+      }
       return false;
     }
     if (options.betCheck.errorClasses) {
@@ -110,12 +114,14 @@ const checkStakeEnabledGenerator = (
         return [...betElement.classList].includes(className);
       });
       if (errorClass) {
-        log(
-          `Ставка недоступна${
-            errorClass.message ? ` (${errorClass.message})` : ''
-          }`,
-          'crimson'
-        );
+        if (!disableLog) {
+          log(
+            `Ставка недоступна${
+              errorClass.message ? ` (${errorClass.message})` : ''
+            }`,
+            'crimson'
+          );
+        }
         return false;
       }
     }
@@ -125,12 +131,14 @@ const checkStakeEnabledGenerator = (
       return Boolean(context.querySelector(selector));
     });
     if (errorCheck) {
-      log(
-        `Ставка недоступна${
-          errorCheck.message ? ` (${errorCheck.message})` : ''
-        }`,
-        'crimson'
-      );
+      if (!disableLog) {
+        log(
+          `Ставка недоступна${
+            errorCheck.message ? ` (${errorCheck.message})` : ''
+          }`,
+          'crimson'
+        );
+      }
       return false;
     }
   }
