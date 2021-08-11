@@ -109,6 +109,7 @@ const doStakeGenerator = (options: DoStakeGeneratorOptions) => (): boolean => {
     `Время ставки: ${timeString(window.germesData.doStakeTime)}`,
     'steelblue'
   );
+  window.germesData.stopUpdateManualData = true;
   stakeButton.click();
   window.germesData.betProcessingStep = 'beforeStart';
   return true;

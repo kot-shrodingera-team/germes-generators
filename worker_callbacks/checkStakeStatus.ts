@@ -27,6 +27,7 @@ const checkStakeStatusGenerator = (
     return true;
   }
   log('Ставка не принята', 'red');
+  window.germesData.stopUpdateManualData = false;
   return false;
 };
 
