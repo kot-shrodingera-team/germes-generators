@@ -70,60 +70,68 @@ const showStakeGenerator = (
     log('Ставка успешно открыта', 'green');
     worker.SetSessionData(`${window.germesData.bookmakerName}.ShowStake`, '0');
     if (
-      worker.JSMaxChange &&
-      worker.JSCoefChange &&
-      worker.JSParameterChange &&
+      worker.JSMaxChange ||
+      worker.JSCoefChange ||
+      worker.JSParameterChange ||
       worker.JSEnabledChange
     ) {
       window.germesData.updateManualDataIntervalId = setInterval(() => {
         if (window.germesData.stopUpdateManualData) {
           return;
         }
-        const newMax = options.getMaximumStake(true);
-        if (newMax && newMax !== window.germesData.manualMaximumStake) {
-          log(
-            `Обновляем макс ${window.germesData.manualMaximumStake} => ${newMax}`,
-            'orange'
-          );
-          window.germesData.manualMaximumStake = newMax;
-          worker.StakeInfo.MaxSumm = newMax;
-          worker.JSMaxChange(newMax);
+        if (worker.JSMaxChange) {
+          const newMax = options.getMaximumStake(true);
+          if (newMax && newMax !== window.germesData.manualMaximumStake) {
+            log(
+              `Обновляем макс ${window.germesData.manualMaximumStake} => ${newMax}`,
+              'orange'
+            );
+            window.germesData.manualMaximumStake = newMax;
+            worker.StakeInfo.MaxSumm = newMax;
+            worker.JSMaxChange(newMax);
+          }
         }
-        const newCoef = options.getCoefficient(true);
-        if (newCoef && newCoef !== window.germesData.manualCoefficient) {
-          log(
-            `Обновляем кэф ${window.germesData.manualCoefficient} => ${newCoef}`,
-            'orange'
-          );
-          window.germesData.manualCoefficient = newCoef;
-          worker.StakeInfo.Coef = newCoef;
-          worker.JSCoefChange(newCoef);
+        if (worker.JSCoefChange) {
+          const newCoef = options.getCoefficient(true);
+          if (newCoef && newCoef !== window.germesData.manualCoefficient) {
+            log(
+              `Обновляем кэф ${window.germesData.manualCoefficient} => ${newCoef}`,
+              'orange'
+            );
+            window.germesData.manualCoefficient = newCoef;
+            worker.StakeInfo.Coef = newCoef;
+            worker.JSCoefChange(newCoef);
+          }
         }
-        const newParameter = options.getParameter(true);
-        if (
-          newParameter &&
-          newParameter !== window.germesData.manualParameter
-        ) {
-          log(
-            `Обновляем кэф ${window.germesData.manualParameter} => ${newParameter}`,
-            'orange'
-          );
-          window.germesData.manualParameter = newParameter;
-          worker.StakeInfo.Parametr = newParameter;
-          worker.JSParameterChange(newParameter);
+        if (worker.JSParameterChange) {
+          const newParameter = options.getParameter(true);
+          if (
+            newParameter &&
+            newParameter !== window.germesData.manualParameter
+          ) {
+            log(
+              `Обновляем кэф ${window.germesData.manualParameter} => ${newParameter}`,
+              'orange'
+            );
+            window.germesData.manualParameter = newParameter;
+            worker.StakeInfo.Parametr = newParameter;
+            worker.JSParameterChange(newParameter);
+          }
         }
-        const newStakeEnabled = options.getStakeEnabled(true);
-        if (
-          newStakeEnabled &&
-          newStakeEnabled !== window.germesData.manualStakeEnabled
-        ) {
-          log(
-            `Обновляем кэф ${window.germesData.manualStakeEnabled} => ${newStakeEnabled}`,
-            'orange'
-          );
-          window.germesData.manualStakeEnabled = newStakeEnabled;
-          worker.StakeInfo.IsEnebled = newStakeEnabled;
-          worker.JSEnabledChange(newStakeEnabled);
+        if (worker.JSEnabledChange) {
+          const newStakeEnabled = options.getStakeEnabled(true);
+          if (
+            newStakeEnabled &&
+            newStakeEnabled !== window.germesData.manualStakeEnabled
+          ) {
+            log(
+              `Обновляем кэф ${window.germesData.manualStakeEnabled} => ${newStakeEnabled}`,
+              'orange'
+            );
+            window.germesData.manualStakeEnabled = newStakeEnabled;
+            worker.StakeInfo.IsEnebled = newStakeEnabled;
+            worker.JSEnabledChange(newStakeEnabled);
+          }
         }
       }, 200);
     }
