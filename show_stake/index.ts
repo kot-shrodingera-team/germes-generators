@@ -110,7 +110,7 @@ const showStakeGenerator = (
             newParameter !== window.germesData.manualParameter
           ) {
             log(
-              `Обновляем кэф ${window.germesData.manualParameter} => ${newParameter}`,
+              `Обновляем параметр ${window.germesData.manualParameter} => ${newParameter}`,
               'orange'
             );
             window.germesData.manualParameter = newParameter;
@@ -120,12 +120,9 @@ const showStakeGenerator = (
         }
         if (worker.JSEnabledChange) {
           const newStakeEnabled = options.getStakeEnabled(true);
-          if (
-            newStakeEnabled &&
-            newStakeEnabled !== window.germesData.manualStakeEnabled
-          ) {
+          if (newStakeEnabled !== window.germesData.manualStakeEnabled) {
             log(
-              `Обновляем кэф ${window.germesData.manualStakeEnabled} => ${newStakeEnabled}`,
+              `Обновляем доступность ставки ${window.germesData.manualStakeEnabled} => ${newStakeEnabled}`,
               'orange'
             );
             window.germesData.manualStakeEnabled = newStakeEnabled;
