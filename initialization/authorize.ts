@@ -4,6 +4,7 @@ import {
   sleep,
   fireEvent,
   nativeInput,
+  resolveRecaptcha,
 } from '@kot-shrodingera-team/germes-utils';
 import { setReactInputValue } from '@kot-shrodingera-team/germes-utils/reactUtils';
 
@@ -238,21 +239,38 @@ const authorizeGenerator = (
   loginSubmitButton.click();
   worker.LoginTry += 1;
 
-  if (options.captchaSelector) {
-    getElement(options.captchaSelector, 5000, context).then((element) => {
-      if (element) {
-        log('Появилась капча', 'orange');
+  if (options.captchaSelector || options.loginedWait) {
+    const timeout =
+      (options.loginedWait && options.loginedWait.timeout) || 5000;
+    await Promise.race([
+      ...(options.captchaSelector
+        ? [getElement(options.captchaSelector, timeout, context)]
+        : []),
+      ...(options.loginedWait
+        ? [getElement(options.loginedWait.loginedSelector, timeout, context)]
+        : []),
+    ]);
+    if (options.captchaSelector) {
+      const captcha = context.querySelector(options.captchaSelector);
+      if (captcha) {
+        log('Есть капча. Пытаемся решить', 'orange');
+        try {
+          await resolveRecaptcha();
+          if (options.loginedWait) {
+            await getElement(
+              options.loginedWait.loginedSelector,
+              timeout,
+              context
+            );
+          }
+        } catch (e) {
+          if (e instanceof Error) {
+            log(e.message, 'red');
+          }
+        }
       }
-    });
-  }
-
-  if (options.loginedWait) {
-    const timeout = options.loginedWait.timeout || 5000;
-    const logined = await getElement(
-      options.loginedWait.loginedSelector,
-      timeout,
-      context
-    );
+    }
+    const logined = context.querySelector(options.loginedWait.loginedSelector);
     if (!logined) {
       log('Авторизация не удалась', 'crimson');
       return;
