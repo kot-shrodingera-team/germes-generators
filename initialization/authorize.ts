@@ -137,11 +137,20 @@ const authorizeGenerator = (
       : 1000;
     for (let i = 1; i <= loopCount; i += 1) {
       // eslint-disable-next-line no-await-in-loop
-      const openLoginFormButton = await getElement<HTMLElement>(
-        options.openForm.selector,
-        1000,
-        context
+      await Promise.race([
+        getElement(options.openForm.selector, 5000, context),
+        getElement(options.openForm.openedSelector, 5000, context),
+      ]);
+      const openLoginFormButton = context.querySelector<HTMLElement>(
+        options.openForm.selector
       );
+      const openedForm = context.querySelector<HTMLElement>(
+        options.openForm.openedSelector
+      );
+      if (openedForm) {
+        log('Форма авторизации уже открыта', 'cadetblue', true);
+        break;
+      }
       if (!openLoginFormButton) {
         log('Не найдена кнопка открытия формы авторизации', 'crimson');
         return;
