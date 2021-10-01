@@ -68,6 +68,10 @@ const setStakeSumGenerator = (options: SetStakeSumGeneratorOptions) => (
     log(`[fake] Вводим сумму ставки: "${sum}"`, 'orange');
     return true;
   }
+  if (window.germesData.stakeDisabled) {
+    log('Ставка недоступна [forced]. Не вводим сумму', 'crimson');
+    return false;
+  }
   const context = options.context ? options.context() : document;
   if (!disableLog) {
     log(`Вводим сумму ставки: "${sum}"`, 'orange');

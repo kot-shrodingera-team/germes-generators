@@ -62,6 +62,10 @@ const doStakeGenerator = (options: DoStakeGeneratorOptions) => (): boolean => {
     log('[fake] Делаем ставку', 'orange');
     return true;
   }
+  if (window.germesData.stakeDisabled) {
+    log('Ставка недоступна [forced]. Не делаем ставку', 'crimson');
+    return false;
+  }
   const context = options.context ? options.context() : document;
   log('Делаем ставку', 'orange');
   if (options.preCheck && !options.preCheck()) {
