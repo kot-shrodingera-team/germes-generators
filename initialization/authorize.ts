@@ -4,7 +4,6 @@ import {
   sleep,
   fireEvent,
   nativeInput,
-  resolveRecaptcha,
 } from '@kot-shrodingera-team/germes-utils';
 import { setReactInputValue } from '@kot-shrodingera-team/germes-utils/reactUtils';
 
@@ -83,11 +82,11 @@ interface AuthorizeGeneratorOptions {
    */
   beforeSubmitCheck?: () => Promise<boolean>;
   /**
-   * Селектор капчи, если она появляется после попытки входа
+   * Функция проверки после попыткой входа (нажатия кнопки)
    *
-   * Ожидания нет, но если капча появится, будет выведено сообщение в лог
+   * Если вернёт false, авторизация считается не успешной
    */
-  captchaSelector?: string;
+  afterSubmitCheck?: () => Promise<boolean>;
   /**
    * Ожидание появления авторизации
    *
@@ -248,38 +247,21 @@ const authorizeGenerator = (
   loginSubmitButton.click();
   worker.LoginTry += 1;
 
-  if (options.captchaSelector || options.loginedWait) {
-    const timeout =
-      (options.loginedWait && options.loginedWait.timeout) || 5000;
-    await Promise.race([
-      ...(options.captchaSelector
-        ? [getElement(options.captchaSelector, timeout, context)]
-        : []),
-      ...(options.loginedWait
-        ? [getElement(options.loginedWait.loginedSelector, timeout, context)]
-        : []),
-    ]);
-    if (options.captchaSelector) {
-      const captcha = context.querySelector(options.captchaSelector);
-      if (captcha) {
-        log('Есть капча. Пытаемся решить', 'orange');
-        try {
-          await resolveRecaptcha();
-          if (options.loginedWait) {
-            await getElement(
-              options.loginedWait.loginedSelector,
-              timeout,
-              context
-            );
-          }
-        } catch (e) {
-          if (e instanceof Error) {
-            log(e.message, 'red');
-          }
-        }
-      }
+  if (options.afterSubmitCheck) {
+    const check = await options.afterSubmitCheck();
+    if (!check) {
+      log('Не удалось пройти проверку после попыткой входа', 'crimson');
+      return;
     }
-    const logined = context.querySelector(options.loginedWait.loginedSelector);
+  }
+
+  if (options.loginedWait) {
+    const timeout = options.loginedWait.timeout || 5000;
+    const logined = await getElement(
+      options.loginedWait.loginedSelector,
+      timeout,
+      context
+    );
     if (!logined) {
       log('Авторизация не удалась', 'crimson');
       return;
