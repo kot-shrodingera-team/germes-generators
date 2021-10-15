@@ -27,6 +27,10 @@ interface AuthorizeGeneratorOptions {
      */
     openedSelector: string;
     /**
+     * Задержка в мс после перед открытием формы, по умолчанию 0
+     */
+    beforeOpenDelay?: number;
+    /**
      * Количество попыток открытия формы, по умолчанию 10
      */
     loopCount?: number;
@@ -127,6 +131,11 @@ const authorizeGenerator = (
   options: AuthorizeGeneratorOptions
 ) => async (): Promise<void> => {
   const context = options.context ? options.context() : document;
+
+  /* ========================================================================== */
+  /*                         Открытие формы авторизации                         */
+  /* ========================================================================== */
+
   if (options.openForm) {
     const loopCount = options.openForm.loopCount
       ? options.openForm.loopCount
@@ -134,12 +143,27 @@ const authorizeGenerator = (
     const triesInterval = options.openForm.triesInterval
       ? options.openForm.triesInterval
       : 1000;
+
+    /* --------------- Ожидание перед открытием формы авторизации --------------- */
+
+    if (options.openForm.beforeOpenDelay) {
+      log(
+        `Ожидание ${options.openForm.beforeOpenDelay} мс) перед открытием формы авторизации`,
+        'cadetblue',
+        true
+      );
+      await sleep(options.openForm.beforeOpenDelay);
+    }
+
+    /* ----------------- Цикл попыток открытия формы авторизации ---------------- */
+
     for (let i = 1; i <= loopCount; i += 1) {
       // eslint-disable-next-line no-await-in-loop
       await Promise.race([
         getElement(options.openForm.selector, 5000, context),
         getElement(options.openForm.openedSelector, 5000, context),
       ]);
+
       const openLoginFormButton = context.querySelector<HTMLElement>(
         options.openForm.selector
       );
@@ -154,7 +178,10 @@ const authorizeGenerator = (
         log('Не найдена кнопка открытия формы авторизации', 'crimson');
         return;
       }
+
+      log('Открываем форму авторизации', 'darksalmon', true);
       openLoginFormButton.click();
+
       // eslint-disable-next-line no-await-in-loop
       const authForm = await getElement(
         options.openForm.openedSelector,
@@ -168,13 +195,26 @@ const authorizeGenerator = (
         }
         log('Форма авторизации не появилась. Пробуем ещё раз', 'steelblue');
       } else {
+        log('Появилась форма авторизации', 'cadetblue', true);
         break;
       }
     }
+
+    /* ---------------- Задержка после открытия формы авторизации --------------- */
+
     if (options.openForm.afterOpenDelay) {
+      log(
+        `Ожидание ${options.openForm.afterOpenDelay} мс) после открытия формы авторизации`,
+        'cadetblue',
+        true
+      );
       await sleep(options.openForm.afterOpenDelay);
     }
   }
+
+  /* ========================================================================== */
+  /*                        Проверка перед вводом данных                        */
+  /* ========================================================================== */
 
   if (options.preInputCheck) {
     const preInputCheckSuccesful = await options.preInputCheck();
@@ -183,15 +223,11 @@ const authorizeGenerator = (
       return;
     }
   }
-  const loginInput = await getElement<HTMLInputElement>(
-    options.loginInputSelector,
-    5000,
-    context
-  );
-  if (!loginInput) {
-    log('Не найдено поле ввода логина', 'crimson');
-    return;
-  }
+
+  /* ========================================================================== */
+  /*                                 Ввод данных                                */
+  /* ========================================================================== */
+
   const input = (inputElement: HTMLInputElement, value: string): void => {
     if (options.inputType === 'nativeInput') {
       nativeInput(inputElement, value);
@@ -213,6 +249,18 @@ const authorizeGenerator = (
       }
     }
   };
+
+  log('Вводим данные для авторизации', 'darksalmon', true);
+
+  const loginInput = await getElement<HTMLInputElement>(
+    options.loginInputSelector,
+    5000,
+    context
+  );
+  if (!loginInput) {
+    log('Не найдено поле ввода логина', 'crimson');
+    return;
+  }
   input(loginInput, worker.Login);
   const passwordInput = await getElement<HTMLInputElement>(
     options.passwordInputSelector,
@@ -224,6 +272,36 @@ const authorizeGenerator = (
     return;
   }
   input(passwordInput, worker.Password);
+
+  /* ========================================================================== */
+  /*                    Ожидание перед нажатием кнопки входа                    */
+  /* ========================================================================== */
+
+  if (options.beforeSubmitDelay) {
+    log(
+      `Ожидание ${options.beforeSubmitDelay} мс) перед нажатием кнопки входа`,
+      'cadetblue',
+      true
+    );
+    await sleep(options.beforeSubmitDelay);
+  }
+
+  /* ========================================================================== */
+  /*                    Проверка перед нажатием кнопки входа                    */
+  /* ========================================================================== */
+
+  if (options.beforeSubmitCheck) {
+    const check = await options.beforeSubmitCheck();
+    if (!check) {
+      log('Не удалось пройти проверку перед попыткой входа', 'crimson');
+      return;
+    }
+  }
+
+  /* ========================================================================== */
+  /*                            Нажатие кнопки входа                            */
+  /* ========================================================================== */
+
   const loginSubmitButton = await getElement<HTMLElement>(
     options.submitButtonSelector,
     5000,
@@ -233,19 +311,14 @@ const authorizeGenerator = (
     log('Не найдена кнопка входа', 'crimson');
     return;
   }
-  if (options.beforeSubmitDelay) {
-    await sleep(options.beforeSubmitDelay);
-  }
-  if (options.beforeSubmitCheck) {
-    const check = await options.beforeSubmitCheck();
-    if (!check) {
-      log('Не удалось пройти проверку перед попыткой входа', 'crimson');
-      return;
-    }
-  }
-  log('Нажимаем на кнопку входа', 'orange');
+
+  log('Нажимаем на кнопку входа', 'darksalmon', true);
   loginSubmitButton.click();
   worker.LoginTry += 1;
+
+  /* ========================================================================== */
+  /*                     Проверка после нажатия кнопки входа                    */
+  /* ========================================================================== */
 
   if (options.afterSubmitCheck) {
     const check = await options.afterSubmitCheck();
@@ -254,6 +327,10 @@ const authorizeGenerator = (
       return;
     }
   }
+
+  /* ========================================================================== */
+  /*               Ожидание авторизации после нажатия кнопки входа              */
+  /* ========================================================================== */
 
   if (options.loginedWait) {
     const timeout = options.loginedWait.timeout || 5000;
