@@ -61,6 +61,10 @@ interface AuthorizeGeneratorOptions {
    */
   passwordInputSelector: string;
   /**
+   * Задержка перед вводом пароля, по умолчанию 0
+   */
+  beforePasswordInputDelay?: number;
+  /**
    * Селектор элемента submit (кнопка входа)
    */
   submitButtonSelector: string;
@@ -225,7 +229,7 @@ const authorizeGenerator = (
   }
 
   /* ========================================================================== */
-  /*                                 Ввод данных                                */
+  /*                          Определение метода ввода                          */
   /* ========================================================================== */
 
   const input = (inputElement: HTMLInputElement, value: string): void => {
@@ -250,7 +254,13 @@ const authorizeGenerator = (
     }
   };
 
+  /* ========================================================================== */
+  /*                                 Ввод данных                                */
+  /* ========================================================================== */
+
   log('Вводим данные для авторизации', 'darksalmon', true);
+
+  /* ------------------------------- Ввод логина ------------------------------ */
 
   const loginInput = await getElement<HTMLInputElement>(
     options.loginInputSelector,
@@ -262,6 +272,20 @@ const authorizeGenerator = (
     return;
   }
   input(loginInput, worker.Login);
+
+  /* ---------------------- Задержка перед вводом пароля ---------------------- */
+
+  if (options.beforePasswordInputDelay) {
+    log(
+      `Ожидание (${options.beforePasswordInputDelay} мс) перед вводом пароля`,
+      'cadetblue',
+      true
+    );
+    await sleep(options.beforePasswordInputDelay);
+  }
+
+  /* ------------------------------- Ввод пароля ------------------------------ */
+
   const passwordInput = await getElement<HTMLInputElement>(
     options.passwordInputSelector,
     5000,
