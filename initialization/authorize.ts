@@ -148,7 +148,7 @@ const authorizeGenerator = (
 
     if (options.openForm.beforeOpenDelay) {
       log(
-        `Ожидание ${options.openForm.beforeOpenDelay} мс) перед открытием формы авторизации`,
+        `Ожидание (${options.openForm.beforeOpenDelay} мс) перед открытием формы авторизации`,
         'cadetblue',
         true
       );
@@ -204,7 +204,7 @@ const authorizeGenerator = (
 
     if (options.openForm.afterOpenDelay) {
       log(
-        `Ожидание ${options.openForm.afterOpenDelay} мс) после открытия формы авторизации`,
+        `Ожидание (${options.openForm.afterOpenDelay} мс) после открытия формы авторизации`,
         'cadetblue',
         true
       );
@@ -279,7 +279,7 @@ const authorizeGenerator = (
 
   if (options.beforeSubmitDelay) {
     log(
-      `Ожидание ${options.beforeSubmitDelay} мс) перед нажатием кнопки входа`,
+      `Ожидание (${options.beforeSubmitDelay} мс) перед нажатием кнопки входа`,
       'cadetblue',
       true
     );
