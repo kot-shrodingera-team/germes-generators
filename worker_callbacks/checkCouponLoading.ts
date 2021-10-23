@@ -12,6 +12,10 @@ interface CheckCouponLoadingGeneratorOptions {
    * Асинхронная функция проверки статуса обработки
    */
   asyncCheck: () => Promise<void>;
+  /**
+   * Флаг отключения вывода лога "Обработка ставки", по умолчанию false
+   */
+  disableLog?: boolean;
 }
 
 /**
@@ -53,20 +57,27 @@ const checkCouponLoadingGenerator = (
   switch (step) {
     case 'beforeStart':
       options.asyncCheck();
-      window.germesData.betProcessingStep = 'waitingForLoaderOrResult';
+      window.germesData.betProcessingStep = 'processing';
+      return true;
+    case 'processing':
+      if (!options.disableLog) {
+        log(`Обработка ставки${additionalInfo}`, 'tan');
+      }
       return true;
     case 'error':
+      log('Обработка ставки завершена (ошибка)', 'orange');
+      return false;
     case 'success':
+      log('Обработка ставки завершена (принята)', 'orange');
+      return false;
     case 'reopened':
-      log(`Обработка ставки завершена${additionalInfo}`, 'orange');
-      // log(step, 'orange', true);
+      log('Обработка ставки завершена (ставка переоткрыта)', 'orange');
       return false;
     case 'reopen':
-      log(`Переоткрытие купона${additionalInfo}`, 'tan');
+      log('Переоткрытие купона', 'tan');
       return true;
     default:
-      log(`Обработка ставки${additionalInfo}`, 'tan');
-      // log(step, 'tan', true);
+      log(`Обработка ставки (!default)${additionalInfo}`, 'tan');
       return true;
   }
 };
