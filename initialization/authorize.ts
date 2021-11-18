@@ -149,7 +149,7 @@ const authorizeGenerator = (
   /* ======================================================================== */
 
   if (options.preCheck) {
-    const preCheckSuccesful = await options.preInputCheck();
+    const preCheckSuccesful = await options.preCheck();
     if (!preCheckSuccesful) {
       log('Не пройдена проверка перед авторизации', 'crimson');
       return;
