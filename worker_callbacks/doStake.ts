@@ -42,6 +42,12 @@ interface DoStakeGeneratorOptions {
    */
   getCoefficient: () => number;
   /**
+   * API метод попытки ставки. Если присутствует, будет выполняется вместо клика по кнопке
+   *
+   * Если вернёт false, попытка ставки считается не успешной
+   */
+  apiMethod?: () => boolean;
+  /**
    * Функция проверки после попытки ставки
    *
    * Если вернёт false, попытка ставки считается не успешной
@@ -105,16 +111,24 @@ const doStakeGenerator = (options: DoStakeGeneratorOptions) => (): boolean => {
       return false;
     }
   }
-  if (options.postCheck && !options.postCheck()) {
-    return false;
-  }
   window.germesData.doStakeTime = new Date();
   log(
     `Время ставки: ${timeString(window.germesData.doStakeTime)}`,
     'steelblue'
   );
   window.germesData.stopUpdateManualData = true;
-  stakeButton.click();
+  if (options.apiMethod) {
+    if (!options.apiMethod()) {
+      log('Ошибка попытки ставки API методом', 'crimson');
+      return false;
+    }
+  } else {
+    stakeButton.click();
+  }
+
+  if (options.postCheck && !options.postCheck()) {
+    return false;
+  }
   window.germesData.betProcessingStep = 'beforeStart';
   return true;
 };
