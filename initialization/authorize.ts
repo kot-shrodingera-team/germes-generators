@@ -12,6 +12,14 @@ import { setReactInputValue } from '@kot-shrodingera-team/germes-utils/reactUtil
  */
 interface AuthorizeGeneratorOptions {
   /**
+   * Функция проверки перед началом авторизации
+   *
+   * Используется, если, например, нужно дождаться полной загрузки страницы
+   *
+   * Если вернёт false, авторизация считается не успешной
+   */
+  preCheck?: () => Promise<boolean>;
+  /**
    * Опции открытия формы авторизации
    *
    * Используется если на сайте не отображаются сразу поля логина и пароля,
@@ -135,6 +143,18 @@ const authorizeGenerator = (
   options: AuthorizeGeneratorOptions
 ) => async (): Promise<void> => {
   const context = options.context ? options.context() : document;
+
+  /* ======================================================================== */
+  /*                        Проверка перед авторизацией                       */
+  /* ======================================================================== */
+
+  if (options.preCheck) {
+    const preCheckSuccesful = await options.preInputCheck();
+    if (!preCheckSuccesful) {
+      log('Не пройдена проверка перед авторизации', 'crimson');
+      return;
+    }
+  }
 
   /* ========================================================================== */
   /*                         Открытие формы авторизации                         */
