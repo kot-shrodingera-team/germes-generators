@@ -47,117 +47,119 @@ interface ShowStakeGeneratorOptions {
   getStakeEnabled: (disableLog: boolean) => boolean;
 }
 
-const showStakeGenerator = (
-  options: ShowStakeGeneratorOptions
-) => async (): Promise<void> => {
-  if (getWorkerParameter('fakeOpenStake')) {
-    log('[fake] Ставка открыта', 'green');
-    worker.JSStop();
-    return;
-  }
-  worker.SetSessionData(`${window.germesData.bookmakerName}.ShowStake`, '1');
-  options.clearGermesData();
-  try {
-    log(
-      `Открываем ставку:\n${worker.TeamOne} vs ${worker.TeamTwo}\n${worker.BetName}`,
-      'steelblue'
-    );
-    await options.preOpenEvent();
-    await options.openEvent();
-    await options.preOpenBet();
-    await options.openBet();
-    await options.setBetAcceptMode();
-    log('Ставка успешно открыта', 'green');
-    worker.SetSessionData(`${window.germesData.bookmakerName}.ShowStake`, '0');
-    if (
-      worker.JSMaxChange ||
-      worker.JSCoefChange ||
-      worker.JSParameterChange ||
-      worker.JSEnabledChange
-    ) {
-      window.germesData.updateManualDataIntervalId = setInterval(() => {
-        if (window.germesData.stopUpdateManualData) {
-          return;
-        }
-        if (worker.JSMaxChange) {
-          const newMax = options.getMaximumStake(true);
-          if (newMax && newMax !== window.germesData.manualMaximumStake) {
-            log(
-              `Обновляем макс ${window.germesData.manualMaximumStake} => ${newMax}`,
-              'orange'
-            );
-            window.germesData.manualMaximumStake = newMax;
-            worker.StakeInfo.MaxSumm = newMax;
-            worker.JSMaxChange(newMax);
-          }
-        }
-        if (worker.JSCoefChange) {
-          const newCoef = options.getCoefficient(true);
-          if (newCoef && newCoef !== window.germesData.manualCoefficient) {
-            log(
-              `Обновляем кэф ${window.germesData.manualCoefficient} => ${newCoef}`,
-              'orange'
-            );
-            window.germesData.manualCoefficient = newCoef;
-            worker.StakeInfo.Coef = newCoef;
-            worker.JSCoefChange(newCoef);
-          }
-        }
-        if (worker.JSParameterChange) {
-          const newParameter = options.getParameter(true);
-          if (
-            newParameter &&
-            newParameter !== window.germesData.manualParameter
-          ) {
-            log(
-              `Обновляем параметр ${window.germesData.manualParameter} => ${newParameter}`,
-              'orange'
-            );
-            window.germesData.manualParameter = newParameter;
-            worker.StakeInfo.Parametr = newParameter;
-            worker.JSParameterChange(newParameter);
-          }
-        }
-        if (worker.JSEnabledChange) {
-          const newStakeEnabled = options.getStakeEnabled(true);
-          if (newStakeEnabled !== window.germesData.manualStakeEnabled) {
-            log(
-              `Обновляем доступность ставки ${window.germesData.manualStakeEnabled} => ${newStakeEnabled}`,
-              'orange'
-            );
-            window.germesData.manualStakeEnabled = newStakeEnabled;
-            worker.StakeInfo.IsEnebled = newStakeEnabled;
-            worker.JSEnabledChange(newStakeEnabled);
-          }
-        }
-      }, 200);
+const showStakeGenerator =
+  (options: ShowStakeGeneratorOptions) => async (): Promise<void> => {
+    if (getWorkerParameter('fakeOpenStake')) {
+      log('[fake] Ставка открыта', 'green');
+      worker.JSStop();
+      return;
     }
-    worker.JSStop();
-  } catch (error) {
-    if (error instanceof JsFailError) {
-      log(error.message, 'red');
-      worker.SetSessionData(
-        `${window.germesData.bookmakerName}.ShowStake`,
-        '0'
-      );
-      worker.JSFail();
-    } else if (error instanceof NewUrlError) {
-      log(error.message, 'orange');
-    } else {
-      // Любая другая ошибка
+    worker.SetSessionData(`${window.germesData.bookmakerName}.ShowStake`, '1');
+    options.clearGermesData();
+    try {
       log(
-        'Скрипт вызвал исключение. Если часто повторяется, обратитесь в ТП',
-        'red'
+        `Открываем ставку:\n${worker.TeamOne} vs ${worker.TeamTwo}\n${worker.BetName}`,
+        'steelblue'
       );
-      log(error.message, 'red');
+      await options.preOpenEvent();
+      await options.openEvent();
+      await options.preOpenBet();
+      await options.openBet();
+      await options.setBetAcceptMode();
+      log('Ставка успешно открыта', 'green');
       worker.SetSessionData(
         `${window.germesData.bookmakerName}.ShowStake`,
         '0'
       );
-      worker.JSFail();
-      throw error;
+      if (
+        worker.JSMaxChange ||
+        worker.JSCoefChange ||
+        worker.JSParameterChange ||
+        worker.JSEnabledChange
+      ) {
+        window.germesData.updateManualDataIntervalId = setInterval(() => {
+          if (window.germesData.stopUpdateManualData) {
+            return;
+          }
+          if (worker.JSMaxChange) {
+            const newMax = options.getMaximumStake(true);
+            if (newMax && newMax !== window.germesData.manualMaximumStake) {
+              log(
+                `Обновляем макс ${window.germesData.manualMaximumStake} => ${newMax}`,
+                'orange'
+              );
+              window.germesData.manualMaximumStake = newMax;
+              worker.StakeInfo.MaxSumm = newMax;
+              worker.JSMaxChange(newMax);
+            }
+          }
+          if (worker.JSCoefChange) {
+            const newCoef = options.getCoefficient(true);
+            if (newCoef && newCoef !== window.germesData.manualCoefficient) {
+              log(
+                `Обновляем кэф ${window.germesData.manualCoefficient} => ${newCoef}`,
+                'orange'
+              );
+              window.germesData.manualCoefficient = newCoef;
+              worker.StakeInfo.Coef = newCoef;
+              worker.JSCoefChange(newCoef);
+            }
+          }
+          if (worker.JSParameterChange) {
+            const newParameter = options.getParameter(true);
+            if (
+              newParameter &&
+              newParameter !== window.germesData.manualParameter
+            ) {
+              log(
+                `Обновляем параметр ${window.germesData.manualParameter} => ${newParameter}`,
+                'orange'
+              );
+              window.germesData.manualParameter = newParameter;
+              worker.StakeInfo.Parametr = newParameter;
+              worker.JSParameterChange(newParameter);
+            }
+          }
+          if (worker.JSEnabledChange) {
+            const newStakeEnabled = options.getStakeEnabled(true);
+            if (newStakeEnabled !== window.germesData.manualStakeEnabled) {
+              log(
+                `Обновляем доступность ставки ${window.germesData.manualStakeEnabled} => ${newStakeEnabled}`,
+                'orange'
+              );
+              window.germesData.manualStakeEnabled = newStakeEnabled;
+              worker.StakeInfo.IsEnebled = newStakeEnabled;
+              worker.JSEnabledChange(newStakeEnabled);
+            }
+          }
+        }, 200);
+      }
+      worker.JSStop();
+    } catch (error) {
+      if (error instanceof JsFailError) {
+        log(error.message, 'red');
+        worker.SetSessionData(
+          `${window.germesData.bookmakerName}.ShowStake`,
+          '0'
+        );
+        worker.JSFail();
+      } else if (error instanceof NewUrlError) {
+        log(error.message, 'orange');
+      } else {
+        // Любая другая ошибка
+        log(
+          'Скрипт вызвал исключение. Если часто повторяется, обратитесь в ТП',
+          'red'
+        );
+        log(error.message, 'red');
+        worker.SetSessionData(
+          `${window.germesData.bookmakerName}.ShowStake`,
+          '0'
+        );
+        worker.JSFail();
+        throw error;
+      }
     }
-  }
-};
+  };
 
 export default showStakeGenerator;

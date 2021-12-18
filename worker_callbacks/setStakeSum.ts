@@ -1,8 +1,8 @@
 import {
-  log,
-  fireEvent,
-  nativeInput,
   getWorkerParameter,
+  log,
+  nativeInput,
+  fireEvent,
 } from '@kot-shrodingera-team/germes-utils';
 import { setReactInputValue } from '@kot-shrodingera-team/germes-utils/reactUtils';
 
@@ -59,115 +59,116 @@ interface SetStakeSumGeneratorOptions {
  * @returns Функция, которая возвращает true, если ввод суммы ставки успешен, иначе false
  * - sum - вводимая сумма ставки
  */
-const setStakeSumGenerator = (options: SetStakeSumGeneratorOptions) => (
-  sum: number,
-  disableLog = false,
-  skipChecks = false
-): boolean => {
-  if (getWorkerParameter('fakeDoStake')) {
-    log(`[fake] Вводим сумму ставки: "${sum}"`, 'orange');
-    return true;
-  }
-  if (window.germesData.stakeDisabled) {
-    log('Ставка недоступна [forced]. Не вводим сумму', 'crimson');
-    return false;
-  }
-  const context = options.context ? options.context() : document;
-  if (!disableLog) {
-    log(`Вводим сумму ставки: "${sum}"`, 'orange');
-  }
-  if (!skipChecks && sum > worker.StakeInfo.Balance) {
-    log('Ошибка ввода суммы ставки: вводимая сумма больше баланса', 'crimson');
-    return false;
-  }
-  if (!skipChecks && sum > worker.StakeInfo.MaxSumm) {
-    log(
-      'Ошибка ввода суммы ставки: вводимая сумма больше максимальной ставки',
-      'crimson'
-    );
-    return false;
-  }
-  const inputElement = context.querySelector<HTMLInputElement>(
-    options.sumInputSelector
-  );
-  if (!inputElement) {
-    log('Поле ввода суммы ставки не найдено', 'crimson');
-    return false;
-  }
-  let falseOnSumChangeCheck = false;
-  if (!skipChecks && options.alreadySetCheck) {
-    const currentSum = options.alreadySetCheck.getCurrentSum();
-    if (currentSum === sum) {
-      if (!disableLog) {
-        log('Уже введена нужная сумма', 'steelblue');
-      }
+const setStakeSumGenerator =
+  (options: SetStakeSumGeneratorOptions) =>
+  (sum: number, disableLog = false, skipChecks = false): boolean => {
+    if (getWorkerParameter('fakeDoStake')) {
+      log(`[fake] Вводим сумму ставки: "${sum}"`, 'orange');
       return true;
     }
-    if (options.alreadySetCheck.falseOnSumChange) {
-      falseOnSumChangeCheck = true;
+    if (window.germesData.stakeDisabled) {
+      log('Ставка недоступна [forced]. Не вводим сумму', 'crimson');
+      return false;
     }
-  }
-  if (!skipChecks && options.preInputCheck && !options.preInputCheck(sum)) {
-    return false;
-  }
-  if (options.inputType === 'nativeInput') {
-    nativeInput(inputElement, String(sum));
-  } else if (options.inputType === 'react') {
-    setReactInputValue(inputElement, sum);
-  } else {
-    inputElement.value = String(sum);
-    if (options.fireEventNames) {
-      options.fireEventNames.forEach((eventName) => {
-        fireEvent(inputElement, eventName);
-      });
-    } else {
-      fireEvent(inputElement, 'input');
-    }
-  }
-  if (falseOnSumChangeCheck) {
+    const context = options.context ? options.context() : document;
     if (!disableLog) {
-      log('Задержка после изменения суммы в купоне', 'orange');
+      log(`Вводим сумму ставки: "${sum}"`, 'orange');
     }
-    return false;
-  }
-  worker.StakeInfo.Summ = sum;
-  return true;
-};
+    if (!skipChecks && sum > worker.StakeInfo.Balance) {
+      log(
+        'Ошибка ввода суммы ставки: вводимая сумма больше баланса',
+        'crimson'
+      );
+      return false;
+    }
+    if (!skipChecks && sum > worker.StakeInfo.MaxSumm) {
+      log(
+        'Ошибка ввода суммы ставки: вводимая сумма больше максимальной ставки',
+        'crimson'
+      );
+      return false;
+    }
+    const inputElement = context.querySelector<HTMLInputElement>(
+      options.sumInputSelector
+    );
+    if (!inputElement) {
+      log('Поле ввода суммы ставки не найдено', 'crimson');
+      return false;
+    }
+    let falseOnSumChangeCheck = false;
+    if (!skipChecks && options.alreadySetCheck) {
+      const currentSum = options.alreadySetCheck.getCurrentSum();
+      if (currentSum === sum) {
+        if (!disableLog) {
+          log('Уже введена нужная сумма', 'steelblue');
+        }
+        return true;
+      }
+      if (options.alreadySetCheck.falseOnSumChange) {
+        falseOnSumChangeCheck = true;
+      }
+    }
+    if (!skipChecks && options.preInputCheck && !options.preInputCheck(sum)) {
+      return false;
+    }
+    if (options.inputType === 'nativeInput') {
+      nativeInput(inputElement, String(sum));
+    } else if (options.inputType === 'react') {
+      setReactInputValue(inputElement, sum);
+    } else {
+      inputElement.value = String(sum);
+      if (options.fireEventNames) {
+        options.fireEventNames.forEach((eventName) => {
+          fireEvent(inputElement, eventName);
+        });
+      } else {
+        fireEvent(inputElement, 'input');
+      }
+    }
+    if (falseOnSumChangeCheck) {
+      if (!disableLog) {
+        log('Задержка после изменения суммы в купоне', 'orange');
+      }
+      return false;
+    }
+    worker.StakeInfo.Summ = sum;
+    return true;
+  };
 
 /**
  * Генератор функции clearStakeSum (очистка поля ввода суммы ставки)
  * @returns Функция, которая возвращает true, если очистка поля ввода суммы ставки успешна, иначе false
  */
-export const clearStakeSumGenerator = (
-  options: SetStakeSumGeneratorOptions
-) => (disableLog = false): boolean => {
-  const context = options.context ? options.context() : document;
-  if (!disableLog) {
-    log('Очищаем сумму ставки', 'orange');
-  }
-  const inputElement = context.querySelector<HTMLInputElement>(
-    options.sumInputSelector
-  );
-  if (!inputElement) {
-    log('Поле ввода суммы ставки не найдено', 'crimson');
-    return false;
-  }
-  if (options.inputType === 'nativeInput') {
-    nativeInput(inputElement, '');
-  } else if (options.inputType === 'react') {
-    setReactInputValue(inputElement, '');
-  } else {
-    inputElement.value = '';
-    if (options.fireEventNames) {
-      options.fireEventNames.forEach((eventName) => {
-        fireEvent(inputElement, eventName);
-      });
-    } else {
-      fireEvent(inputElement, 'input');
+export const clearStakeSumGenerator =
+  (options: SetStakeSumGeneratorOptions) =>
+  (disableLog = false): boolean => {
+    const context = options.context ? options.context() : document;
+    if (!disableLog) {
+      log('Очищаем сумму ставки', 'orange');
     }
-  }
-  worker.StakeInfo.Summ = 0;
-  return true;
-};
+    const inputElement = context.querySelector<HTMLInputElement>(
+      options.sumInputSelector
+    );
+    if (!inputElement) {
+      log('Поле ввода суммы ставки не найдено', 'crimson');
+      return false;
+    }
+    if (options.inputType === 'nativeInput') {
+      nativeInput(inputElement, '');
+    } else if (options.inputType === 'react') {
+      setReactInputValue(inputElement, '');
+    } else {
+      inputElement.value = '';
+      if (options.fireEventNames) {
+        options.fireEventNames.forEach((eventName) => {
+          fireEvent(inputElement, eventName);
+        });
+      } else {
+        fireEvent(inputElement, 'input');
+      }
+    }
+    worker.StakeInfo.Summ = 0;
+    return true;
+  };
 
 export default setStakeSumGenerator;

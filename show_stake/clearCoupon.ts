@@ -1,4 +1,4 @@
-import { log, awaiter, fireEvent } from '@kot-shrodingera-team/germes-utils';
+import { log, fireEvent, awaiter } from '@kot-shrodingera-team/germes-utils';
 
 /**
  * Опции генератора функции очистки купона
@@ -49,40 +49,49 @@ interface ClearCouponGeneratorOptions {
  * -- Используется clearAllSelector, если определён, иначе clearSingleSelector (для каждой ставки)
  * @returns Асинхронная функция, которая возвращает true, если очистка купона успешна, иначе false
  */
-const clearCouponGenerator = (
-  options: ClearCouponGeneratorOptions
-) => async (): Promise<boolean> => {
-  if (
-    !options.apiClear &&
-    !options.clearSingleSelector &&
-    !options.clearAllSelector
-  ) {
-    log('Ошибка функции очистки купона. Обратитесь в ТП', 'crimson');
-    return false;
-  }
-  if (options.preCheck) {
-    const result = await options.preCheck();
-    if (!result) {
+const clearCouponGenerator =
+  (options: ClearCouponGeneratorOptions) => async (): Promise<boolean> => {
+    if (
+      !options.apiClear &&
+      !options.clearSingleSelector &&
+      !options.clearAllSelector
+    ) {
+      log('Ошибка функции очистки купона. Обратитесь в ТП', 'crimson');
       return false;
     }
-  }
-  const context = options.context ? options.context() : document;
-  const stakeCount = options.getStakeCount();
-  if (stakeCount !== 0) {
-    log('Купон не пуст. Очищаем', 'orange');
-    if (options.apiClear) {
-      options.apiClear();
-    } else if (stakeCount === 1) {
-      if (options.clearSingleSelector) {
-        const clearSingleButton = context.querySelector<HTMLElement>(
-          options.clearSingleSelector
-        );
-        if (!clearSingleButton) {
-          log('Не найдена кнопка удаления ставки из купона', 'crimson');
-          return false;
+    if (options.preCheck) {
+      const result = await options.preCheck();
+      if (!result) {
+        return false;
+      }
+    }
+    const context = options.context ? options.context() : document;
+    const stakeCount = options.getStakeCount();
+    if (stakeCount !== 0) {
+      log('Купон не пуст. Очищаем', 'orange');
+      if (options.apiClear) {
+        options.apiClear();
+      } else if (stakeCount === 1) {
+        if (options.clearSingleSelector) {
+          const clearSingleButton = context.querySelector<HTMLElement>(
+            options.clearSingleSelector
+          );
+          if (!clearSingleButton) {
+            log('Не найдена кнопка удаления ставки из купона', 'crimson');
+            return false;
+          }
+          fireEvent(clearSingleButton, 'click');
+        } else {
+          const clearAllButton = context.querySelector<HTMLElement>(
+            options.clearAllSelector
+          );
+          if (!clearAllButton) {
+            log('Не найдена кнопка очистки купона', 'crimson');
+            return false;
+          }
+          fireEvent(clearAllButton, 'click');
         }
-        fireEvent(clearSingleButton, 'click');
-      } else {
+      } else if (options.clearAllSelector) {
         const clearAllButton = context.querySelector<HTMLElement>(
           options.clearAllSelector
         );
@@ -91,44 +100,34 @@ const clearCouponGenerator = (
           return false;
         }
         fireEvent(clearAllButton, 'click');
+      } else {
+        const clearSingleButtons = [
+          ...context.querySelectorAll<HTMLElement>(options.clearSingleSelector),
+        ];
+        if (clearSingleButtons.length === 0) {
+          log('Не найдены кнопки удаления ставок из купона', 'crimson');
+          return false;
+        }
+        clearSingleButtons.forEach((button) => fireEvent(button, 'click'));
       }
-    } else if (options.clearAllSelector) {
-      const clearAllButton = context.querySelector<HTMLElement>(
-        options.clearAllSelector
-      );
-      if (!clearAllButton) {
-        log('Не найдена кнопка очистки купона', 'crimson');
-        return false;
-      }
-      fireEvent(clearAllButton, 'click');
-    } else {
-      const clearSingleButtons = [
-        ...context.querySelectorAll<HTMLElement>(options.clearSingleSelector),
-      ];
-      if (clearSingleButtons.length === 0) {
-        log('Не найдены кнопки удаления ставок из купона', 'crimson');
-        return false;
-      }
-      clearSingleButtons.forEach((button) => fireEvent(button, 'click'));
-    }
 
-    const couponCleared = Boolean(
-      await awaiter(() => options.getStakeCount() === 0)
-    );
-    if (!couponCleared) {
-      log('Не удалось очистить купон', 'crimson');
-      return false;
-    }
-    log('Купон очищен', 'cadetblue', true);
-    if (options.postCheck) {
-      const result = await options.postCheck();
-      if (!result) {
+      const couponCleared = Boolean(
+        await awaiter(() => options.getStakeCount() === 0)
+      );
+      if (!couponCleared) {
+        log('Не удалось очистить купон', 'crimson');
         return false;
       }
+      log('Купон очищен', 'cadetblue', true);
+      if (options.postCheck) {
+        const result = await options.postCheck();
+        if (!result) {
+          return false;
+        }
+      }
     }
-  }
-  log('Купон пуст', 'cadetblue', true);
-  return true;
-};
+    log('Купон пуст', 'cadetblue', true);
+    return true;
+  };
 
 export default clearCouponGenerator;

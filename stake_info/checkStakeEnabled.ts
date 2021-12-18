@@ -71,53 +71,72 @@ interface CheckStakeEnabledGeneratorOptions {
  * Генератор функции проверки доступности ставки
  * @returns Функция, которая возвращает true, если ставка доступна, иначе false
  */
-const checkStakeEnabledGenerator = (
-  options: CheckStakeEnabledGeneratorOptions
-) => (disableLog = false): boolean => {
-  if (
-    getWorkerParameter('fakeStakeEnabled') ||
-    getWorkerParameter('fakeOpenStake')
-  ) {
-    return true;
-  }
-  if (window.germesData.stakeDisabled) {
-    log('Ставка недоступна [forced]', 'crimson');
-    return false;
-  }
-  const context = options.context ? options.context() : document;
-  if (options.preCheck && !options.preCheck()) {
-    return false;
-  }
-  const stakeCount = options.getStakeCount();
-  if (stakeCount !== 1) {
-    if (!disableLog) {
-      log(
-        `Ошибка проверки доступности ставки: в купоне не 1 ставка (${stakeCount})`,
-        'crimson'
-      );
+const checkStakeEnabledGenerator =
+  (options: CheckStakeEnabledGeneratorOptions) =>
+  (disableLog = false): boolean => {
+    if (
+      getWorkerParameter('fakeStakeEnabled') ||
+      getWorkerParameter('fakeOpenStake')
+    ) {
+      return true;
     }
-    return false;
-  }
-  if (options.betCheck) {
-    const betElement = context.querySelector(options.betCheck.selector);
-    if (!betElement) {
+    if (window.germesData.stakeDisabled) {
+      log('Ставка недоступна [forced]', 'crimson');
+      return false;
+    }
+    const context = options.context ? options.context() : document;
+    if (options.preCheck && !options.preCheck()) {
+      return false;
+    }
+    const stakeCount = options.getStakeCount();
+    if (stakeCount !== 1) {
       if (!disableLog) {
         log(
-          'Ошибка проверки доступности ставки: не найдена ставка в купоне',
+          `Ошибка проверки доступности ставки: в купоне не 1 ставка (${stakeCount})`,
           'crimson'
         );
       }
       return false;
     }
-    if (options.betCheck.errorClasses) {
-      const errorClass = options.betCheck.errorClasses.find(({ className }) => {
-        return [...betElement.classList].includes(className);
+    if (options.betCheck) {
+      const betElement = context.querySelector(options.betCheck.selector);
+      if (!betElement) {
+        if (!disableLog) {
+          log(
+            'Ошибка проверки доступности ставки: не найдена ставка в купоне',
+            'crimson'
+          );
+        }
+        return false;
+      }
+      if (options.betCheck.errorClasses) {
+        const errorClass = options.betCheck.errorClasses.find(
+          ({ className }) => {
+            return [...betElement.classList].includes(className);
+          }
+        );
+        if (errorClass) {
+          if (!disableLog) {
+            log(
+              `Ставка недоступна${
+                errorClass.message ? ` (${errorClass.message})` : ''
+              }`,
+              'crimson'
+            );
+          }
+          return false;
+        }
+      }
+    }
+    if (options.errorsCheck) {
+      const errorCheck = options.errorsCheck.find(({ selector }) => {
+        return Boolean(context.querySelector(selector));
       });
-      if (errorClass) {
+      if (errorCheck) {
         if (!disableLog) {
           log(
             `Ставка недоступна${
-              errorClass.message ? ` (${errorClass.message})` : ''
+              errorCheck.message ? ` (${errorCheck.message})` : ''
             }`,
             'crimson'
           );
@@ -125,24 +144,7 @@ const checkStakeEnabledGenerator = (
         return false;
       }
     }
-  }
-  if (options.errorsCheck) {
-    const errorCheck = options.errorsCheck.find(({ selector }) => {
-      return Boolean(context.querySelector(selector));
-    });
-    if (errorCheck) {
-      if (!disableLog) {
-        log(
-          `Ставка недоступна${
-            errorCheck.message ? ` (${errorCheck.message})` : ''
-          }`,
-          'crimson'
-        );
-      }
-      return false;
-    }
-  }
-  return true;
-};
+    return true;
+  };
 
 export default checkStakeEnabledGenerator;

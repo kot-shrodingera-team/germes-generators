@@ -14,21 +14,20 @@ interface CheckStakeStatusGeneratorOptions {
  * Генератор колбэка checkStakeStatus (определение результата ставки)
  * @returns Функция, которая возвращает true, если ставка принята, иначе false
  */
-const checkStakeStatusGenerator = (
-  options: CheckStakeStatusGeneratorOptions
-) => (): boolean => {
-  if (getWorkerParameter('fakeDoStake')) {
-    log('[fake] Ставка принята', 'green');
-    return true;
-  }
-  if (window.germesData.betProcessingStep === 'success') {
-    log('Ставка принята', 'green');
-    options.updateBalance();
-    return true;
-  }
-  log('Ставка не принята', 'red');
-  window.germesData.stopUpdateManualData = false;
-  return false;
-};
+const checkStakeStatusGenerator =
+  (options: CheckStakeStatusGeneratorOptions) => (): boolean => {
+    if (getWorkerParameter('fakeDoStake')) {
+      log('[fake] Ставка принята', 'green');
+      return true;
+    }
+    if (window.germesData.betProcessingStep === 'success') {
+      log('Ставка принята', 'green');
+      options.updateBalance();
+      return true;
+    }
+    log('Ставка не принята', 'red');
+    window.germesData.stopUpdateManualData = false;
+    return false;
+  };
 
 export default checkStakeStatusGenerator;
