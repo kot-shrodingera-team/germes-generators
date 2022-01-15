@@ -11,6 +11,12 @@ import { setReactInputValue } from '@kot-shrodingera-team/germes-utils/reactUtil
  */
 interface SetStakeSumGeneratorOptions {
   /**
+   * Функция проверки перед вводом суммы ставки
+   *
+   * Если вернёт false, ввод суммы ставки считается не успешной
+   */
+  preCheck?: (number?: number) => boolean;
+  /**
    * Селектор элемента ввода суммы в купоне
    */
   sumInputSelector: string;
@@ -32,7 +38,7 @@ interface SetStakeSumGeneratorOptions {
     falseOnSumChange: boolean;
   };
   /**
-   * Функция проверки перед вводом суммы ставки
+   * Функция проверки перед вводом суммы ставки в найденное поле ввода
    *
    * Если вернёт false, ввод суммы ставки считается не успешной
    */
