@@ -76,6 +76,9 @@ const setStakeSumGenerator =
       log('Ставка недоступна [forced]. Не вводим сумму', 'crimson');
       return false;
     }
+    if (!skipChecks && options.preCheck && !options.preCheck(sum)) {
+      return false;
+    }
     const context = options.context ? options.context() : document;
     if (!disableLog) {
       log(`Вводим сумму ставки: "${sum}"`, 'orange');
